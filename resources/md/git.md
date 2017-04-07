@@ -33,3 +33,15 @@
 **注**：报“Could not open a connection to your authentication agent.”，先执```eval `ssh-agent```或者```ssh-agent bash --login -i```
 
 将```~/.ssh/id_rsa.pub```中的内容添加至git官网
+
+### https存储密码 ###
+
+- 默认15分钟
+
+		git config --global credential.helper cache
+- 自定义存储时间
+
+		git config credential.helper 'cache --timeout=3600'
+-长期存储
+
+		git config --global credential.helper store
