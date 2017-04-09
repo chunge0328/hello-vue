@@ -20,8 +20,10 @@
             </el-col>
         </el-row>
 
-        <el-row class="tac" :gutter="20">
-            <el-col :span="8">
+        <br>
+
+        <el-row class="tac" :gutter="40">
+            <el-col :span="6">
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-submenu index="1">
                         <template slot="title"><i class="el-icon-message"></i>导航一</template>
@@ -43,7 +45,7 @@
                 </el-menu>
             </el-col>
 
-            <el-col :span="16">
+            <el-col :span="18">
                 <markdown :markdown="markdown"></markdown>
             </el-col>
 
