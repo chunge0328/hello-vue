@@ -1,10 +1,12 @@
-/**
- * Created by uo712 on 2017/4/7.
- */
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import Util from 'Js/utils/Util';
+import router from 'Js/config/RouterConfig';
+require('./src/js/config/RequestConfig')
 
-import Util from './src/js/utils/Util'
+/*debugger*/
+console.info("process.env.PRODUCTION => " + process.env.PRODUCTION);
+/*debugger...end*/
 
-Util("div", {});
-
+const app = new Vue({
+    router
+}).$mount(Util("div", {}).html("<router-view></router-view>").appendTo(document.body)[0]);

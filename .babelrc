@@ -1,6 +1,17 @@
 {
   "presets": [
-    ["es2015", { "modules": false }]
+    "es2015"
   ],
-  "plugins": []
+  "plugins": [
+    [
+      "component",
+      [
+        {
+          "libraryName": "element-ui",
+          "styleLibraryName": "theme-default"
+        }
+      ]
+    ]
+  ],
+  "comments": false
 }
