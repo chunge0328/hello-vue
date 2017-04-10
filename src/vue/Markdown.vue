@@ -425,7 +425,7 @@
 <template>
     <div>
 
-        <div v-if="showTextArea()"><textarea v-model="md" @keyup="toHtml(md)"></textarea></div>
+        <div v-if="showTextArea()"><textarea v-model="md" @keyup="toHtml(md)" style="width: 100%;height: 300px;resize:none；"></textarea></div>
 
         <div v-html="md2Html"></div>
     </div>
