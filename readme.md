@@ -280,4 +280,3 @@
 [https://github.com/evilstreak/markdown-js](https://github.com/evilstreak/markdown-js)
 	
 	npm i -S markdown
-			

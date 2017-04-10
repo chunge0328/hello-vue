@@ -9,7 +9,8 @@ let path = require('path'),
 let NODE_ENV = process.env.NODE_ENV,
 
     ROOT_PATH = path.resolve(__dirname, ''),
-    OUTPUT_PATH = path.resolve(ROOT_PATH, 'dist');
+    CONTEXT_ROOT = '/dist',
+    OUTPUT_PATH = path.resolve(ROOT_PATH, CONTEXT_ROOT);
 
 /*debugger*/
 require('colors');
@@ -30,7 +31,7 @@ module.exports = {
     output: {
         filename: './js/[name].js',
         path: OUTPUT_PATH,
-        publicPath: '/dist/'
+        publicPath: CONTEXT_ROOT
     },
     module: {
         rules: [
@@ -51,9 +52,9 @@ module.exports = {
                 use: extractLESS.extract(['css-loader', 'less-loader'])
             },
             {
-             test: /\.scss$/,
-             use: extractSASS.extract(['css-loader', 'sass-loader'])
-             },
+                test: /\.scss$/,
+                use: extractSASS.extract(['css-loader', 'sass-loader'])
+            },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
                 loader: 'file-loader',
@@ -108,7 +109,7 @@ if (NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.BASE_PATH' : JSON.stringify('http://baismusic.com/')
+            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com/')
         })
     ]);
 } else if (NODE_ENV === 'production') {
@@ -117,7 +118,7 @@ if (NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.BASE_PATH' : JSON.stringify('http://localhost:8888/')
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888/')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),
