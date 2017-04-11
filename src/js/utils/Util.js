@@ -1,7 +1,3 @@
-/**
- * Created by uo712 on 2017/4/7.
- */
-
 export default (function (undefined) {
     let Util = function (selector, context) {
         return new Util.fn.init(selector, context);
