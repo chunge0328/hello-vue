@@ -45,3 +45,11 @@
 -长期存储
 
 		git config --global credential.helper store
+
+### 使用git ###
+
+> 如果忘记命令可使用以下命令：
+	
+	git --help
+- 有些情况下我们可能会在不同地点写代码，比如上班时在公司，下班时在家里，可是我们希望工作能够延续，那么代码的一致就很重要。
+[github](https://github.com/)给我们提供了一个仓库，我们可以把代码暂存在[github](https://github.com/)上，同时使用```git```命令帮助我们管理代码，按照一个正常的工作流程...
