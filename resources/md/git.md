@@ -17,6 +17,26 @@
 
 	win安装完成后，可右键打开“Git Bash Here”，可使用linux命令
 
+- linux安装git
+
+	因为笔者的linux是centos7+，所以直接使用yum方式安装
+	
+		yum -y install git
+	> 其他方式
+	
+		yum -y update
+		yum -y install curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker
+		wget https://github.com/git/git/archive/v2.3.0.zip
+		unzip v2.3.0.zip
+		cd git-2.3.0
+		make prefix=/usr/local/git all
+		make prefix=/usr/local/git install
+	> 修改.bash_profile
+	
+		whereis git
+		# 添加内容 export PATH=/usr/local/git/bin:$PATH
+		source .bash_profile
+		
 ### 配置git ###
 
 	git config --global user.name "17717066234"
@@ -45,11 +65,3 @@
 -长期存储
 
 		git config --global credential.helper store
-
-### 使用git ###
-
-> 如果忘记命令可使用以下命令：
-	
-	git --help
-- 有些情况下我们可能会在不同地点写代码，比如上班时在公司，下班时在家里，可是我们希望工作能够延续，那么代码的一致就很重要。
-[github](https://github.com/)给我们提供了一个仓库，我们可以把代码暂存在[github](https://github.com/)上，同时使用```git```命令帮助我们管理代码，按照一个正常的工作流程...

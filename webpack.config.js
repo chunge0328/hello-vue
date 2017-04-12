@@ -9,7 +9,7 @@ let path = require('path'),
 let NODE_ENV = process.env.NODE_ENV,
 
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = '/dist',
+    CONTEXT_ROOT = 'dist',
     OUTPUT_PATH = path.resolve(ROOT_PATH, CONTEXT_ROOT);
 
 /*debugger*/
@@ -31,7 +31,7 @@ module.exports = {
     output: {
         filename: './js/[name].js',
         path: OUTPUT_PATH,
-        publicPath: CONTEXT_ROOT
+        publicPath: '/' + CONTEXT_ROOT
     },
     module: {
         rules: [
