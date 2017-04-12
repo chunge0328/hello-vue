@@ -31,7 +31,7 @@ module.exports = {
     output: {
         filename: './js/[name].js',
         path: OUTPUT_PATH,
-        publicPath: '/' + CONTEXT_ROOT
+        publicPath: '/' + CONTEXT_ROOT + '/'
     },
     module: {
         rules: [
