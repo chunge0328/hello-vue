@@ -1,4 +1,5 @@
-import Vue from 'vue'
+import Vue from 'vue';
+
 export default {
     install(Vue, options) {
         /*Vue.myGlobalMethod = function () {
@@ -8,7 +9,7 @@ export default {
                 console.info(el)
             }
         })*/
-        Vue.component("markdown", require("Vue/Markdown"));
+        Vue.component("markdown", require("../../vue/Markdown"));
         // 3. 注入组件
         Vue.mixin({
             data(){
@@ -17,7 +18,7 @@ export default {
             created(){
                 "use strict";
             }
-        })
+        });
         /*Vue.prototype.$myMethod = function (options) {
             console.info("$myMethod");
         }*/

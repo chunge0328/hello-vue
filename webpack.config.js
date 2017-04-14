@@ -6,21 +6,24 @@ let path = require('path'),
     extractLESS = new ExtractTextPlugin('css/[name]-less.css'),
     extractSASS = new ExtractTextPlugin('css/[name]-sass.css');
 
-let NODE_ENV = process.env.NODE_ENV,
-
+const NODE_ENV = process.env.NODE_ENV,
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = 'dist',
-    OUTPUT_PATH = path.resolve(ROOT_PATH, CONTEXT_ROOT);
+    CONTEXT_ROOT = NODE_ENV === 'production' ? 'dist' : '',
+    CONFIG = {
+        'NODE_ENV': NODE_ENV,
+        'ROOT_PATH': ROOT_PATH,
+        'CONTEXT_ROOT': CONTEXT_ROOT,
+        'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
+        'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
+        'INDEX_HTML': 'index.html'
+    };
 
 /*debugger*/
 require('colors');
-[
-    NODE_ENV,
-    ROOT_PATH,
-    OUTPUT_PATH
-].map(function (dat, ind) {
-    console.info(ind + "=>" + dat.red);
-});
+for (let i in CONFIG) {
+    console.info(String(i + " => " + CONFIG[i]).red);
+}
+;
 /*debugger...end*/
 
 module.exports = {
@@ -30,8 +33,8 @@ module.exports = {
     },
     output: {
         filename: './js/[name].js',
-        path: OUTPUT_PATH,
-        publicPath: '/' + CONTEXT_ROOT + '/'
+        path: CONFIG.OUTPUT_PATH,
+        publicPath: CONFIG.PUBLIC_PATH
     },
     module: {
         rules: [
@@ -91,7 +94,8 @@ module.exports = {
 module.exports.plugins = (module.exports.plugins || []).concat(
     new HtmlWebpackPlugin({
         title: 'hello-vue',
-        hash: true
+        hash: true,
+        filename: CONFIG.INDEX_HTML
     }),
     extractCSS,
     extractLESS,
@@ -99,26 +103,26 @@ module.exports.plugins = (module.exports.plugins || []).concat(
 );
 
 
-if (NODE_ENV === 'development') {
+if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
-        port: 8888
+        port: 7777
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com/')
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888')
         })
     ]);
-} else if (NODE_ENV === 'production') {
+} else if (CONFIG.NODE_ENV === 'production') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888/')
+            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),

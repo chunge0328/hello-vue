@@ -37,19 +37,27 @@
                             <el-menu-item v-for="(dat, ind) in docs" :index="'1-'+ind" :key="'1-'+ind" @click="switchMd(dat, ind)">{{dat}}</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-                    <el-menu-item index="2"><i class="el-icon-menu"></i>没想好二</el-menu-item>
-                    <el-menu-item index="3"><i class="el-icon-setting"></i>没想好三</el-menu-item>
+                    <el-menu-item @click="menuIndex=2" index="2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
+                    <el-menu-item index="3" @click="window.location.href='https://www.baidu.com'"><i class="el-icon-setting"></i>百度</el-menu-item>
                 </el-menu>
             </el-col>
 
             <el-col :span="19">
 
-                <div v-for="(dat, ind) in mds">
-                    <div v-for="(d, i) in dat">
-                        <!--<h3>{{i}}</h3>-->
-                        <markdown :markdown="d" v-show="activeMd == dat"></markdown>
-                    </div>
-                </div>
+
+
+                <el-tabs v-show="1==menuIndex" v-model="editableTabsValue" type="card" editable @edit="handleTabsEdit">
+                    <el-tab-pane
+                            v-for="(item, index) in editableTabs"
+                            :label="item.title"
+                            :name="item.name"
+                            :key="'tab-1-'+index"
+                    >
+                        <markdown :markdown="item.content"></markdown>
+                    </el-tab-pane>
+                </el-tabs>
+
+                <code-utils v-show="2==menuIndex"></code-utils>
             </el-col>
 
         </el-row>
@@ -63,7 +71,7 @@
 
     import Vue from "vue";
     import {
-        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem
+        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane
     }
         from "element-ui";
     Vue.use(Row);
@@ -72,16 +80,20 @@
     Vue.use(Submenu);
     Vue.use(MenuItemGroup);
     Vue.use(MenuItem);
+    Vue.use(Tabs);
+    Vue.use(TabPane);
 
-
-    Vue.use(require("../js/components/Markdown").default)
-
-    import Markdown from "Vue/Markdown.vue";
+    import Markdown from "../js/components/Markdown";
+    import CodeUtils from "../js/components/CodeUtils";
+    Vue.use(Markdown);
+    Vue.use(CodeUtils);
 
     export default {
 
         data(){
             return {
+                menuIndex : 1,
+
                 activeIndex: '1',
                 activeIndex2: '1',
                 activeName2: 'first',
@@ -89,7 +101,11 @@
                 activeMd: {},
                 docs: ["readme.md"],
                 json:{key:"value"},
-                rootPath: "/resources/md/"
+                rootPath: "/resources/md/",
+
+                editableTabsValue: '1',
+                editableTabs: [],
+                tabIndex: 1
             }
         },
         methods: {
@@ -102,16 +118,55 @@
             handleClose(key, keyPath) {
                 console.log(key, keyPath);
             },
-            handleClick(tab, event) {
-                console.log(tab, event);
+            handleClick(e) {
+                alert();
+                this.menuIndex = 1;
+            },
+            handleTabsEdit(targetName, action) {
+                if (action === 'add') {
+                    let newTabName = ++this.tabIndex + '';
+                    this.editableTabs.push({
+                        title: 'New Tab',
+                        name: newTabName,
+                        content: 'New Tab content'
+                    });
+                    this.editableTabsValue = newTabName;
+                }
+                if (action === 'remove') {
+                    let tabs = this.editableTabs;
+                    let activeName = this.editableTabsValue;
+                    if (activeName === targetName) {
+                        tabs.forEach((tab, index) => {
+                            if (tab.name === targetName) {
+                                let nextTab = tabs[index + 1] || tabs[index - 1];
+                                if (nextTab) {
+                                    activeName = nextTab.name;
+                                }
+                            }
+                        });
+                    }
+
+                    this.editableTabsValue = activeName;
+                    this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+                }
+            },
+            addTab(key, val){
+                this.editableTabs.push({
+                    title: key,
+                    name: String(this.mds.length),
+                    content: val
+                });
+                this.editableTabsValue = String(this.editableTabs.length);
             },
             switchMd(dat, ind) {
+                this.menuIndex = 1;
                 let mds = this.mds;
                 for(let i=0; i<mds.length; i++) {
                     let md = mds[i];
                     for(let j in md) {
                         if(j === dat) {
                             this.activeMd = md;
+                            this.editableTabsValue = String(i+ 1);
                             return true;
                         }
                     }
@@ -121,6 +176,7 @@
                     obj[dat] = res.data;
                     this.activeMd = obj;
                     this.mds.push(obj);
+                    this.addTab(dat, obj[dat]);
                 }.bind(this));
             }
         }, created() {
@@ -130,6 +186,7 @@
                 obj[defultDoc] = res.data;
                 this.activeMd = obj;
                 this.mds.push(obj);
+                this.addTab(defultDoc, obj[defultDoc]);
             }.bind(this));
             this.$http.get(this.rootPath, {params: {}}).then(function (res) {
                 this.docs = this.docs.concat(res.data);
