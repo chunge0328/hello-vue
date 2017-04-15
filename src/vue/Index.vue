@@ -30,7 +30,7 @@
 
         <el-row :gutter="80"><!--页面正文部分-->
             <el-col :span="5" class="page-left"><!--页面左侧菜单-->
-                <el-menu default-active="2" class="el-menu-vertical" @open="handleOpen" @close="handleClose">
+                <el-menu default-active="1-0" class="el-menu-vertical" @open="handleOpen" @close="handleClose">
                     <el-submenu index="1">
                         <template slot="title"><i class="el-icon-message"></i>文档</template>
                         <el-menu-item-group v-if="markdowns.length>0">
@@ -49,7 +49,8 @@
             </el-col><!--页面左侧菜单...end-->
 
             <el-col :span="19"><!--页面中间内容-->
-                <el-tabs v-show="1==menuIndex && markdowns.length > 0" v-model="tabIndex" type="card" editable @edit="handleTabsEdit">
+                <el-tabs v-show="1==menuIndex && markdowns.length > 0" v-model="tabIndex" type="card" editable
+                         @edit="handleTabsEdit">
                     <el-tab-pane
                             v-for="(markdown, index) in markdowns"
                             :label="markdown.name"
@@ -108,7 +109,7 @@
                     show: false
                 }],
                 activeMarkdown: {},
-                tabIndex:"",
+                tabIndex: "",
 
                 markdownRootPath: process.env.PAGE_PATH + "/resources/md/"
             }
@@ -140,29 +141,29 @@
                 if (action === 'remove') {
                     let tabs = this.markdowns, prevTab = null, nextTab = null, findTarget = false;
                     this.markdowns = tabs.filter(function (markdown, index, markdowns) {
-                        if(targetName === markdown.name) {
+                        if (targetName === markdown.name) {
                             findTarget = true;
-                            if(!markdown.requestPath) {
+                            if (!markdown.requestPath) {
                                 return false;
                             }
                             markdown.show = false;
-                        }else{
-                            if(markdown.show) {
-                                if(!findTarget) prevTab = markdown;
-                                else if(!nextTab) nextTab = markdown;
+                        } else {
+                            if (markdown.show) {
+                                if (!findTarget) prevTab = markdown;
+                                else if (!nextTab) nextTab = markdown;
                             }
                         }
                         return true;
                     }.bind(this));
-                    if(nextTab || prevTab)
-                    this.tabIndex = nextTab ? nextTab.name : prevTab.name;
+                    if (nextTab || prevTab)
+                        this.tabIndex = nextTab ? nextTab.name : prevTab.name;
                 }
             },
             setMarkdown(curVal, oldVal){/*markdown组件的回调函数*/
                 this.activeMarkdown.content = curVal;
             },
             showMarkdownTab(markdown) {/*是否展示markdown的tab页面*/
-                if(markdown.content || !markdown.requestPath) {
+                if (markdown.content || !markdown.requestPath) {
                     return true;
                 }
                 return false;
@@ -171,14 +172,14 @@
                 this.menuIndex = 1;
                 this.activeMarkdown = markdown;
                 this.tabIndex = markdown.name;
-                if(!this.activeMarkdown.content && this.activeMarkdown.requestPath) {
+                if (!this.activeMarkdown.content && this.activeMarkdown.requestPath) {
                     this.$http.get(markdown.requestPath, {}).then(function (res) {
                         markdown.content = res.data;
                         markdown.show = true;
                         this.markdowns.splice(this.markdowns.length);
-                        if(!markdown.content) markdown.content = "no response data";
+                        if (!markdown.content) markdown.content = "no response data";
                     }.bind(this));
-                }else{
+                } else {
                     markdown.show = true;
                 }
             },
@@ -186,6 +187,12 @@
                 let rootPath = this.markdownRootPath;
                 this.$http.get(this.markdownRootPath, {}).then(function (res) {
                     let data = res.data;
+                    if (Object.prototype.toString.call(data) === "[object Array]") {
+
+                    } else {
+                        console.info(data);
+                        data = this.regHtmlToArr(data);
+                    }
                     let arr = data.map(function (dat, ind, arr) {
                         return {
                             name: dat,
@@ -194,9 +201,19 @@
                     });
                     this.markdowns = this.markdowns.concat(arr);
                 }.bind(this));
+            },
+            regHtmlToArr(html){
+                let reg = /<a\s+?href=\"([^\"]+?)\"/ig,
+                    r,
+                    arr = [];
+                while (r = reg.exec(str)) {
+                    arr.push(r[1])
+                }
+                return arr;
             }
         }, created() {
             this.loadMarkdownOptions();
+            this.switchMarkdown(this.markdowns[0], 0);
         }
     }
 </script>
