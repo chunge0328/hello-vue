@@ -207,6 +207,7 @@
                     r,
                     arr = [];
                 while (r = reg.exec(html)) {
+                    if(r !== '../' && r !== './')
                     arr.push(r[1])
                 }
                 return arr;
@@ -214,9 +215,6 @@
         }, created() {
             this.loadMarkdownOptions();
             this.switchMarkdown(this.markdowns[0], 0);
-
-            this.$http.jsonp("http://www.baismusic.com/resources/md/git.md", {}).then(function (res) {
-            }.bind(this));
         }
     }
 </script>
