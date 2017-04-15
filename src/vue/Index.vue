@@ -34,16 +34,19 @@
                         <template slot="title"><i class="el-icon-message"></i>文档</template>
                         <el-menu-item-group v-if="docs.length>0">
                             <template slot="title">markdown</template>
-                            <el-menu-item v-for="(dat, ind) in docs" :index="'1-'+ind" :key="'1-'+ind" @click="switchMd(dat, ind)">{{dat}}</el-menu-item>
+                            <el-menu-item v-for="(dat, ind) in docs" :index="'1-'+ind" :key="'1-'+ind"
+                                          @click="switchMd(dat, ind)">{{dat}}
+                            </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-menu-item @click="menuIndex=2" index="2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
-                    <el-menu-item index="3" @click="window.location.href='https://www.baidu.com'"><i class="el-icon-setting"></i>百度</el-menu-item>
+                    <el-menu-item index="3" @click="window.location.href='https://www.baidu.com'"><i
+                            class="el-icon-setting"></i>百度
+                    </el-menu-item>
                 </el-menu>
             </el-col>
 
             <el-col :span="19">
-
 
 
                 <el-tabs v-show="1==menuIndex" v-model="editableTabsValue" type="card" editable @edit="handleTabsEdit">
@@ -92,7 +95,7 @@
 
         data(){
             return {
-                menuIndex : 1,
+                menuIndex: 1,
 
                 activeIndex: '1',
                 activeIndex2: '1',
@@ -100,7 +103,7 @@
                 mds: [],
                 activeMd: {},
                 docs: ["readme.md"],
-                json:{key:"value"},
+                json: {key: "value"},
                 rootPath: "/resources/md/",
 
                 editableTabsValue: '1',
@@ -161,12 +164,12 @@
             switchMd(dat, ind) {
                 this.menuIndex = 1;
                 let mds = this.mds;
-                for(let i=0; i<mds.length; i++) {
+                for (let i = 0; i < mds.length; i++) {
                     let md = mds[i];
-                    for(let j in md) {
-                        if(j === dat) {
+                    for (let j in md) {
+                        if (j === dat) {
                             this.activeMd = md;
-                            this.editableTabsValue = String(i+ 1);
+                            this.editableTabsValue = String(i + 1);
                             return true;
                         }
                     }
@@ -181,14 +184,14 @@
             }
         }, created() {
             let defultDoc = this.docs[0];
-            this.$http.get("/"+defultDoc, {params: {}}).then(function (res) {
+            this.$http.get(process.env.PAGE_PATH + "/" + defultDoc, {params: {}}).then(function (res) {
                 let obj = {};
                 obj[defultDoc] = res.data;
                 this.activeMd = obj;
                 this.mds.push(obj);
                 this.addTab(defultDoc, obj[defultDoc]);
             }.bind(this));
-            this.$http.get(this.rootPath, {params: {}}).then(function (res) {
+            this.$http.get(process.env.PAGE_PATH + this.rootPath, {params: {}}).then(function (res) {
                 this.docs = this.docs.concat(res.data);
             }.bind(this));
         }

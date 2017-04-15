@@ -2,7 +2,12 @@
 </style>
 <template>
     <div>
-        <pre>hello codeutils</pre>
+        <div v-for="(code, ind) in javaCode">
+            <div v-for="(sec, key) in code">
+                <h3>{{key}}</h3>
+                <pre v-for="(con, cou) in sec">{{con}}</pre>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -10,20 +15,30 @@
     export default {
         data(){
             return {
+                javaCode: []
             }
         },
         props: ["code"],
-        methods: {
-        },
+        methods: {},
         watch: {
             code(curVal, oldVal) {
 
             }
         },
         created(){
-            this.$http.get("/ma/study/genJavaCode", {params: {}}).then(function (res) {
+            this.$http.post("/ma/study/genJavaCode", {
+                "entityFields": [
+                    {}
+                ],
+                "entityName": "Activity",
+                "moduleName": "act",
+                "packageName": "com.cifm",
+                "projectName": "one",
+                "sectionName": "api",
+                "type": "company"
+            }).then(function (res) {
                 let data = res.data;
-                console.info(data)
+                this.javaCode = data.content;
             }.bind(this));
         }
     }

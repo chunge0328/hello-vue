@@ -15,13 +15,13 @@ const NODE_ENV = process.env.NODE_ENV,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'INDEX_HTML': 'index.html'
+        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html'
     };
 
 /*debugger*/
 require('colors');
 for (let i in CONFIG) {
-    console.info(String(i + " => " + CONFIG[i]).red);
+    console.info(i.yellow + " => ".black + CONFIG[i].red);
 }
 ;
 /*debugger...end*/
@@ -113,7 +113,8 @@ if (CONFIG.NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888')
+            'process.env.PAGE_PATH': JSON.stringify('http://localhost:7777'),
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888/panchaohui')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
@@ -122,7 +123,8 @@ if (CONFIG.NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com')
+            'process.env.PAGE_PATH': JSON.stringify('http://baismusic.com'),
+            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8888/panchaohui')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),
