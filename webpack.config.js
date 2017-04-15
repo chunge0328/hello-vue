@@ -21,7 +21,7 @@ const NODE_ENV = process.env.NODE_ENV,
 /*debugger*/
 require('colors');
 for (let i in CONFIG) {
-    console.info(i.yellow + " => ".black + CONFIG[i].red);
+    console.info(i.yellow + " => ".blue + CONFIG[i].red);
 }
 ;
 /*debugger...end*/
@@ -123,7 +123,7 @@ if (CONFIG.NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.PAGE_PATH': JSON.stringify('http://baismusic.com'),
+            'process.env.PAGE_PATH': JSON.stringify('http://localhost'),
             'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8080/panchaohui')
         }),
         new webpack.optimize.UglifyJsPlugin({

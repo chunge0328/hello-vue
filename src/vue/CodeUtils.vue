@@ -28,7 +28,14 @@
         created(){
             this.$http.post("/ma/study/genJavaCode", {
                 "entityFields": [
-                    {}
+                    {
+                        type: "String",
+                        name: "name"
+                    },
+                    {
+                        type: "Integer",
+                        name: "type"
+                    }
                 ],
                 "entityName": "Activity",
                 "moduleName": "act",
