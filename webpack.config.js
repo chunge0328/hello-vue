@@ -114,7 +114,7 @@ if (CONFIG.NODE_ENV === 'development') {
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
             'process.env.PAGE_PATH': JSON.stringify('http://localhost:7777'),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8888/panchaohui')
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8080/panchaohui')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
@@ -124,7 +124,7 @@ if (CONFIG.NODE_ENV === 'development') {
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
             'process.env.PAGE_PATH': JSON.stringify('http://baismusic.com'),
-            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8888/panchaohui')
+            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8080/panchaohui')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),
