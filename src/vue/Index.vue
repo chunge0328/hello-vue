@@ -30,7 +30,8 @@
 
         <el-row :gutter="80"><!--页面正文部分-->
             <el-col :span="5" class="page-left"><!--页面左侧菜单-->
-                <el-menu default-active="1-0" class="el-menu-vertical" @open="handleOpen" @close="handleClose">
+                <!--default-active="1-0"-->
+                <el-menu :default-active="defaultActiveMenu" class="el-menu-vertical" @open="handleOpen" @close="handleClose">
                     <el-submenu index="1">
                         <template slot="title"><i class="el-icon-message"></i>文档</template>
                         <el-menu-item-group v-if="markdowns.length>0">
@@ -98,6 +99,7 @@
         data(){
             return {
                 menuIndex: 1,
+                defaultActiveMenu: 1,
 
                 activeIndex: '1',
                 activeName2: 'first',
@@ -207,14 +209,23 @@
                     r,
                     arr = [];
                 while (r = reg.exec(html)) {
-                    if(r !== '../' && r !== './')
+                    if(r[1] !== '../' && r[1] !== './')
                     arr.push(r[1])
                 }
                 return arr;
             }
         }, created() {
             this.loadMarkdownOptions();
+
+            /*default*/
             this.switchMarkdown(this.markdowns[0], 0);
+            this.defaultActiveMenu = "1-0";
+            /*default...end*/
+
+            /*debugger*/
+//            this.menuIndex = "2";
+//            this.defaultActiveMenu = "2";
+            /*debugger...end*/
         }
     }
 </script>
