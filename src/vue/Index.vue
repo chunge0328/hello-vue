@@ -16,10 +16,9 @@
                 <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                     <el-menu-item index="1">首页</el-menu-item>
                     <el-submenu index="2">
-                        <template slot="title">前台</template>
-                        <el-menu-item index="2-1">选项1</el-menu-item>
-                        <el-menu-item index="2-2">选项2</el-menu-item>
-                        <el-menu-item index="2-3">选项3</el-menu-item>
+                        <template slot="title">资料库</template>
+                        <el-menu-item index="2-1"><a href="/resources/mj2html/hello-world.html">后台架构</a></el-menu-item>
+                        <el-menu-item index="2-2"><a href="/resources/mj2html/基金从业资格.html">基金从业资格资料</a></el-menu-item>
                     </el-submenu>
                     <el-menu-item index="3">
                         <a href="http://www.baismusic.com:8080/panchaohui/swagger-ui.html" target="_blank">后台管理</a>
@@ -43,8 +42,8 @@
                         </el-menu-item-group>
                     </el-submenu>
                     <el-menu-item index="2" @click="menuIndex=2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
-                    <el-menu-item index="3" @click="window.location.href='https://www.baidu.com'"><i
-                            class="el-icon-setting"></i>百度
+                    <el-menu-item index="3">
+                        <i class="el-icon-setting"></i><a href="https://www.baidu.com" target="_blank">百度</a>
                     </el-menu-item>
                 </el-menu>
             </el-col><!--页面左侧菜单...end-->
