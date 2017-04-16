@@ -207,7 +207,7 @@
                     r,
                     arr = [];
                 while (r = reg.exec(html)) {
-                    if(r !== '../' && r !== './')
+                    if(r[1] !== '../' && r[1] !== './')
                     arr.push(r[1])
                 }
                 return arr;
