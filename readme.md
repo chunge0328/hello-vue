@@ -95,7 +95,8 @@
 	观察package.json
 	
 	**注**：此处引入等默认是最新版本，新版本中可能会有```warning```，甚至报错，按照提示进行修正即可
-	1. [cross-env](https://npm.taobao.org/package/cross-env) 
+	
+	- [cross-env](https://npm.taobao.org/package/cross-env) 
 
 		主要用于提供跨平台环境变量功能，例如通过设置命令行参数```NODE_ENV=development```或者```NODE_ENV=production```来判断当前环境是测试还是生产
 		>例：
@@ -106,10 +107,10 @@
 			} else if (NODE_ENV === 'production') {
 				// do other smt
 			}
-	2. [webpack](https://webpack.js.org)
+	- [webpack](https://webpack.js.org)
 	
 		将css、js、html、img当成一个个模块来管理，默认配置文件为```webpack.config.js```
-	3. [html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
+	- [html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
 
 		自动生成html、引入js、引入css，在```webpack.config.js```中配置插件
 		> 例：
@@ -120,7 +121,7 @@
 			        hash: true
 			    })
 			);
-	4. [babel](http://babeljs.cn)
+	- [babel](http://babeljs.cn)
 
 		将es6语法转换成部分落后浏览器可识别的语法
 		> 需要增加```.babelrc```文件,```.babelrc```配置示例：
