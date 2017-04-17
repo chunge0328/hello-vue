@@ -325,8 +325,8 @@
             /*default...end*/
 
             /*debugger*/
-            this.menuIndex = "3";
-            this.defaultActiveMenu = "3";
+//            this.menuIndex = "3";
+//            this.defaultActiveMenu = "3";
             /*debugger...end*/
         }
     }
