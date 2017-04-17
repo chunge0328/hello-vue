@@ -1,4 +1,20 @@
 <style>
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .el-col label {
+        width: 100%;
+        height: 100%;
+        display: block;
+        text-align: right;
+        vertical-align: middle;
+        line-height: 35px;
+    }
 
 </style>
 <template>
@@ -30,7 +46,8 @@
         <el-row :gutter="80"><!--页面正文部分-->
             <el-col :span="5" class="page-left"><!--页面左侧菜单-->
                 <!--default-active="1-0"-->
-                <el-menu :default-active="defaultActiveMenu" class="el-menu-vertical" @open="handleOpen" @close="handleClose">
+                <el-menu :default-active="defaultActiveMenu" class="el-menu-vertical" @open="handleOpen"
+                         @close="handleClose">
                     <el-submenu index="1">
                         <template slot="title"><i class="el-icon-message"></i>文档</template>
                         <el-menu-item-group v-if="markdowns.length>0">
@@ -42,7 +59,8 @@
                         </el-menu-item-group>
                     </el-submenu>
                     <el-menu-item index="2" @click="menuIndex=2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
-                    <el-menu-item index="3">
+                    <el-menu-item index="3" @click="menuIndex=3"><i class="el-icon-message"></i>发送邮件</el-menu-item>
+                    <el-menu-item index="4">
                         <i class="el-icon-setting"></i><a href="https://www.baidu.com" target="_blank">百度</a>
                     </el-menu-item>
                 </el-menu>
@@ -64,6 +82,38 @@
                 </el-tabs>
 
                 <code-utils v-show="2==menuIndex"></code-utils>
+                <div v-show="3==menuIndex">
+                    <el-row :gutter="20">
+                        <markdown :markdown="mailMarkdown" :setMarkdown="setMailHtml"></markdown>
+                        <el-col :span="4">
+                            <label>邮件地址</label>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-autocomplete
+                                    class="inline-input"
+                                    v-model="javaMailParam.to"
+                                    :fetch-suggestions="findMailToName"
+                                    placeholder="请输入邮件地址"
+                            ></el-autocomplete>
+                        </el-col>
+
+                        <el-col :span="4">
+                            <label>邮件标题</label>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-autocomplete
+                                    class="inline-input"
+                                    v-model="javaMailParam.subject"
+                                    :fetch-suggestions="findMailSubjectName"
+                                    placeholder="请输入邮件标题"
+                            ></el-autocomplete>
+                        </el-col>
+                    </el-row>
+
+                    <el-row style="text-align: center">
+                        <el-button @click="sendMail" type="success">发送邮件</el-button>
+                    </el-row>
+                </div>
             </el-col><!--页面中间内容...end-->
 
         </el-row><!--页面正文部分...end-->
@@ -76,7 +126,7 @@
 
     import Vue from "vue";
     import {
-        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane
+        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button
     }
         from "element-ui";
     Vue.use(Row);
@@ -87,6 +137,7 @@
     Vue.use(MenuItem);
     Vue.use(Tabs);
     Vue.use(TabPane);
+    Vue.use(Button);
 
     import Markdown from "../js/components/Markdown";
     import CodeUtils from "../js/components/CodeUtils";
@@ -112,7 +163,19 @@
                 activeMarkdown: {},
                 tabIndex: "",
 
-                markdownRootPath: process.env.PAGE_PATH + "/resources/md/"
+                markdownRootPath: process.env.PAGE_PATH + "/resources/md/",
+
+                mailMarkdown: {
+                    css: "",
+                    content: "## 测试邮件 ##\n![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1492446415573&di=af4599d3484ea5845088d6628389ae40&imgtype=0&src=http%3A%2F%2Fatt.x2.hiapk.com%2Fforum%2F201411%2F02%2F190602guilwcc65uglw6uw.jpg)\n\n\t这是由markdown转译的邮件",
+                    html: ""
+                },
+                markdownCssPath: process.env.PAGE_PATH + "/resources/css/markdown.css",
+                javaMailParam: {
+                    subject: "",
+                    html: "",
+                    to: ""
+                }
             }
         },
         methods: {
@@ -163,6 +226,45 @@
             setMarkdown(curVal, oldVal){/*markdown组件的回调函数*/
                 this.activeMarkdown.content = curVal;
             },
+            setMailHtml(curVal, oldVal, html) {/*markdown组件的回调函数*/
+                this.mailMarkdown.html = html;
+            },
+            sendMail(){/*发送邮件*/
+                this.javaMailParam.html = this.mailMarkdown.css + this.mailMarkdown.html;
+                this.$http.post("/oauth/message/sendMail", this.javaMailParam).then(function (res) {
+
+                }.bind(this));
+            },
+            loadMailCss(){
+                this.$http.get(this.markdownCssPath, {}).then(function (res) {
+                    this.mailMarkdown.css = "<style type=\"text/css\">\n" + res.data + "\n</style>\n";
+                }.bind(this));
+
+            },
+            findMailToName(queryString, cb){
+                var params = [{value: "651158394@qq.com"},{value:"m17717066234@aliyun.com"}], key = "value", results = [];
+                params.map(function (param, index, arr) {
+                    let val = param[key];
+                    if (!queryString || !val || val.toLowerCase().indexOf(queryString.toLowerCase()) === 0) {
+                        results.push({
+                            value: val
+                        });
+                    }
+                }.bind(this));
+                cb(results);
+            },
+            findMailSubjectName(queryString, cb) {
+                var params = [{value: "标题"}, {value: "上午好"}], key = "value", results = [];
+                params.map(function (param, index, arr) {
+                    let val = param[key];
+                    if (!queryString || !val || val.toLowerCase().indexOf(queryString.toLowerCase()) === 0) {
+                        results.push({
+                            value: val
+                        });
+                    }
+                }.bind(this));
+                cb(results);
+            },
             showMarkdownTab(markdown) {/*是否展示markdown的tab页面*/
                 if (markdown.content || !markdown.requestPath) {
                     return true;
@@ -208,13 +310,14 @@
                     r,
                     arr = [];
                 while (r = reg.exec(html)) {
-                    if(r[1] !== '../' && r[1] !== './')
-                    arr.push(r[1])
+                    if (r[1] !== '../' && r[1] !== './')
+                        arr.push(r[1])
                 }
                 return arr;
             }
         }, created() {
             this.loadMarkdownOptions();
+            this.loadMailCss();
 
             /*default*/
             this.switchMarkdown(this.markdowns[0], 0);
@@ -222,8 +325,8 @@
             /*default...end*/
 
             /*debugger*/
-//            this.menuIndex = "2";
-//            this.defaultActiveMenu = "2";
+            this.menuIndex = "3";
+            this.defaultActiveMenu = "3";
             /*debugger...end*/
         }
     }

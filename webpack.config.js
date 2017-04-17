@@ -86,7 +86,7 @@ module.exports = {
         }
     },
     externals: {
-        // vue: 'vue'
+        /*vue: 'vue'*/
     }
 }
 ;
