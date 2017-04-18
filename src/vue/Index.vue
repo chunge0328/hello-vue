@@ -16,6 +16,30 @@
         line-height: 35px;
     }
 
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #20a0ff;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
 </style>
 <template>
     <div class="bg-white">
@@ -60,7 +84,8 @@
                     </el-submenu>
                     <el-menu-item index="2" @click="menuIndex=2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
                     <el-menu-item index="3" @click="menuIndex=3"><i class="el-icon-message"></i>发送邮件</el-menu-item>
-                    <el-menu-item index="4">
+                    <el-menu-item index="4" @click="menuIndex=4"><i class="el-icon-message"></i>文件管理</el-menu-item>
+                    <el-menu-item index="5">
                         <i class="el-icon-setting"></i><a href="https://www.baidu.com" target="_blank">百度</a>
                     </el-menu-item>
                 </el-menu>
@@ -82,6 +107,7 @@
                 </el-tabs>
 
                 <code-utils v-show="2==menuIndex"></code-utils>
+
                 <div v-show="3==menuIndex">
                     <el-row :gutter="20">
                         <markdown :markdown="mailMarkdown" :setMarkdown="setMailHtml"></markdown>
@@ -114,6 +140,17 @@
                         <el-button @click="sendMail" type="success">发送邮件</el-button>
                     </el-row>
                 </div>
+                <div v-show="4==menuIndex">
+                    <el-upload
+                            class="avatar-uploader"
+                            :action=fileUploadUrl
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :before-upload="beforeAvatarUpload">
+                        <a v-if="fileUrl" :href="fileUrl" class="avatar"></a>
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </div>
             </el-col><!--页面中间内容...end-->
 
         </el-row><!--页面正文部分...end-->
@@ -126,7 +163,7 @@
 
     import Vue from "vue";
     import {
-        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button
+        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button, Upload
     }
         from "element-ui";
     Vue.use(Row);
@@ -138,6 +175,7 @@
     Vue.use(Tabs);
     Vue.use(TabPane);
     Vue.use(Button);
+    Vue.use(Upload);
 
     import Markdown from "../js/components/Markdown";
     import CodeUtils from "../js/components/CodeUtils";
@@ -175,7 +213,12 @@
                     subject: "",
                     html: "",
                     to: ""
-                }
+                },
+
+                /*menu-4*/
+                fileUrl: "",
+                fileUploadUrl: process.env.BASE_PATH + "/ma/study/file/upload"
+                /*menu-4...end*/
             }
         },
         methods: {
@@ -242,7 +285,7 @@
 
             },
             findMailToName(queryString, cb){
-                var params = [{value: "651158394@qq.com"},{value:"m17717066234@aliyun.com"}], key = "value", results = [];
+                var params = [{value: "651158394@qq.com"}, {value: "m17717066234@aliyun.com"}], key = "value", results = [];
                 params.map(function (param, index, arr) {
                     let val = param[key];
                     if (!queryString || !val || val.toLowerCase().indexOf(queryString.toLowerCase()) === 0) {
@@ -314,7 +357,27 @@
                         arr.push(r[1])
                 }
                 return arr;
+            },
+
+            /*menu-4*/
+            handleAvatarSuccess(res, file) {
+                console.info(file.raw);
+                this.fileUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                /*const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;*/
+                return true;
             }
+            /*menu-4...end*/
         }, created() {
             this.loadMarkdownOptions();
             this.loadMailCss();
@@ -325,8 +388,8 @@
             /*default...end*/
 
             /*debugger*/
-//            this.menuIndex = "3";
-//            this.defaultActiveMenu = "3";
+            this.menuIndex = "4";
+            this.defaultActiveMenu = "4";
             /*debugger...end*/
         }
     }
