@@ -388,8 +388,8 @@
             /*default...end*/
 
             /*debugger*/
-            this.menuIndex = "4";
-            this.defaultActiveMenu = "4";
+            this.menuIndex = "2";
+            this.defaultActiveMenu = "2";
             /*debugger...end*/
         }
     }
