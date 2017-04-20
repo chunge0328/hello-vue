@@ -16,7 +16,6 @@
         line-height: 35px;
     }
 
-
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
@@ -24,9 +23,11 @@
         position: relative;
         overflow: hidden;
     }
+
     .avatar-uploader .el-upload:hover {
         border-color: #20a0ff;
     }
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -35,6 +36,7 @@
         line-height: 178px;
         text-align: center;
     }
+
     .avatar {
         width: 178px;
         height: 178px;
@@ -137,7 +139,8 @@
                     </el-row>
 
                     <el-row style="text-align: center">
-                        <el-button @click="sendMail" type="success">发送邮件</el-button>
+                        <el-button @click="sendMail" type="success" :disabled="!mailSendState">{{mailBtnText}}
+                        </el-button>
                     </el-row>
                 </div>
                 <div v-show="4==menuIndex">
@@ -163,7 +166,7 @@
 
     import Vue from "vue";
     import {
-        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button, Upload
+        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button, Upload, Message
     }
         from "element-ui";
     Vue.use(Row);
@@ -214,6 +217,8 @@
                     html: "",
                     to: ""
                 },
+                mailSendState: true,
+                mailBtnText: "发送邮件",
 
                 /*menu-4*/
                 fileUrl: "",
@@ -274,9 +279,33 @@
             },
             sendMail(){/*发送邮件*/
                 this.javaMailParam.html = this.mailMarkdown.css + this.mailMarkdown.html;
-                this.$http.post("/oauth/message/sendMail", this.javaMailParam).then(function (res) {
+                if (this.mailSendState) {
+                    this.disableMailSend(3);
+                    this.$http.post("/oauth/message/sendMail", this.javaMailParam).then(function (res) {
+                        let data = res.data;
+                        Message({
+                            message: data.msg,
+                            type: data.success ? "success" : "warning"
+                        })
+                        /*Message({
+                         message: data.msg
+                         });*/
+                    }.bind(this));
 
-                }.bind(this));
+                }
+            },
+            disableMailSend(count){
+                if (count > 0) {
+                    this.mailSendState = false;
+                    this.mailBtnText = "剩余 " + count-- + " 秒";
+                    setTimeout(function () {
+                        this.disableMailSend.call(this, count);
+                    }.bind(this), 1 * 1000);
+                } else {
+                    this.mailSendState = true;
+                    this.mailBtnText = "发送邮件";
+                }
+
             },
             loadMailCss(){
                 this.$http.get(this.markdownCssPath, {}).then(function (res) {
@@ -366,15 +395,15 @@
             },
             beforeAvatarUpload(file) {
                 /*const isJPG = file.type === 'image/jpeg';
-                const isLt2M = file.size / 1024 / 1024 < 2;
+                 const isLt2M = file.size / 1024 / 1024 < 2;
 
-                if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
-                }
-                return isJPG && isLt2M;*/
+                 if (!isJPG) {
+                 this.$message.error('上传头像图片只能是 JPG 格式!');
+                 }
+                 if (!isLt2M) {
+                 this.$message.error('上传头像图片大小不能超过 2MB!');
+                 }
+                 return isJPG && isLt2M;*/
                 return true;
             }
             /*menu-4...end*/
@@ -388,8 +417,8 @@
             /*default...end*/
 
             /*debugger*/
-            this.menuIndex = "2";
-            this.defaultActiveMenu = "2";
+//            this.menuIndex = "3";
+//            this.defaultActiveMenu = "3";
             /*debugger...end*/
         }
     }

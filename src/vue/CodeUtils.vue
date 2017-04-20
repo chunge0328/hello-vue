@@ -118,14 +118,13 @@
                     </el-row>
 
                     <el-row class="param-section">
-                        <el-button @click="javaCodeParam.entityFields.push({type:'',name:''})"><i
-                                class="el-icon-plus"></i></el-button><h3 style="display: inline;">域</h3>
+                        <el-button style="padding: 2px;" @click="javaCodeParam.entityFields.push({type:'',name:''})"><i class="el-icon-plus"></i></el-button>域
                         <el-row :gutter="20" v-for="(entityField, index) in javaCodeParam.entityFields"
                                 :key="'entity-' + index">
                             <el-col :span="3">
                                 <label>类型</label>
                             </el-col>
-                            <el-col :span="8">
+                            <el-col :span="7">
                                 <el-autocomplete
                                         param-key="entityType"
                                         class="inline-input"
@@ -139,7 +138,7 @@
                             <el-col :span="3">
                                 <label>名称</label>
                             </el-col>
-                            <el-col :span="8">
+                            <el-col :span="7">
                                 <el-autocomplete
                                         param-key="entityFields.name"
                                         class="inline-input"
@@ -149,7 +148,7 @@
                                         @select="handleSelect"
                                 ></el-autocomplete>
                             </el-col>
-                            <el-col :span="2">
+                            <el-col :span="4">
                                 <el-button @click="javaCodeParam.entityFields.splice(index, 1)">删除</el-button>
                             </el-col>
                         </el-row>
