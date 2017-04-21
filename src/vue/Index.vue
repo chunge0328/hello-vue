@@ -155,8 +155,10 @@
                     </el-upload>
                 </div>
             </el-col><!--页面中间内容...end-->
-
         </el-row><!--页面正文部分...end-->
+        <div class="footer">
+            <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a></div>
+        </div>
     </div>
 </template>
 
@@ -417,8 +419,8 @@
             /*default...end*/
 
             /*debugger*/
-//            this.menuIndex = "3";
-//            this.defaultActiveMenu = "3";
+            this.menuIndex = "3";
+            this.defaultActiveMenu = "3";
             /*debugger...end*/
         }
     }
