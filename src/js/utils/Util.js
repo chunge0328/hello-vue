@@ -43,8 +43,7 @@ export default (function (undefined) {
             this[0].innerHTML = con;
             return this;
         },
-        appendTo() {
-            let tar = arguments[0];
+        appendTo(tar) {
             tar.appendChild(this[0]);
             return this;
         },
@@ -57,7 +56,19 @@ export default (function (undefined) {
             return this;
         },
         attr(attr) {
-            return this[0].getAttribute(attr);
+            switch (Util.type(attr)) {
+                case "string":
+                    return this[0].getAttribute(attr);
+                    break;
+                case "object":
+                    for(let i in attr) {
+                        this[0].setAttribute(i, attr[i]);
+                    }
+                    return this;
+                    break;
+                default:
+                    return this;
+            }
         }
     });
 

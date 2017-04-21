@@ -8,15 +8,14 @@ let path = require('path'),
 
 const NODE_ENV = process.env.NODE_ENV,
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = NODE_ENV === 'production' ? 'dist' : '',
+    CONTEXT_ROOT = NODE_ENV === 'production' ? 'inv' : '',
     CONFIG = {
         'NODE_ENV': NODE_ENV,
         'ROOT_PATH': ROOT_PATH,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html',
-        'INVERSTIGATES_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'investigates.html') : 'investigates.html'
+        'INVERSTIGATES_HTML': 'investigates.html'
     };
 
 /*debugger*/
@@ -30,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './index.js'
+        investigates: './investigates.js'
     },
     output: {
         filename: './js/[name].js',
@@ -93,13 +92,6 @@ module.exports = {
 
 module.exports.plugins = (module.exports.plugins || []).concat(
     new HtmlWebpackPlugin({
-        title: 'hello-vue',
-        hash: true,
-        js: ["index", "common"],
-        excludeChunks: ["investigates"],
-        filename: CONFIG.INDEX_HTML
-    }),
-    new HtmlWebpackPlugin({
         title: '调查问卷',
         hash: true,
         js: ["investigates", "common"],
@@ -122,18 +114,18 @@ if (CONFIG.NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.PAGE_PATH': JSON.stringify('http://localhost:7777'),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8080/panchaohui')
+            'process.env.activityId': JSON.stringify('bb798f87-211e-479a-bd4f-0b007ca7edce'),
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8066/one')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-            'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.PAGE_PATH': JSON.stringify('http://baismusic.com'),
-            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8080/panchaohui')
+            'process.env.NODE_ENV': JSON.stringify('development'),
+            'process.env.PRODUCTION': JSON.stringify(false),
+            'process.env.activityId': JSON.stringify('bb798f87-211e-479a-bd4f-0b007ca7edce'),
+            'process.env.BASE_PATH': JSON.stringify('https://app.cifm.com/one')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),

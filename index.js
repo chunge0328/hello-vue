@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import Util from './src/js/utils/Util';
-import router from './src/js/config/RouterConfig';
-require('./src/js/config/RequestConfig');
+import $ from './src/js/utils/Util';
+import router from './src/js/config/IndexRouterConfig';
+require('./src/js/config/IndexRequestConfig');
 
 
 /*debugger*/
@@ -10,4 +10,4 @@ console.info("process.env.PRODUCTION => " + process.env.PRODUCTION);
 
 const app = new Vue({
     router
-}).$mount(Util("div", {class: "container"}).html("<router-view></router-view>").appendTo(document.body)[0]);
+}).$mount($("div", {class: "container"}).html("<router-view></router-view>").appendTo(document.body)[0]);
