@@ -2,6 +2,10 @@
 
 这个项目是为了记录学习实践
 
+### 参考 ###
+
+- [http://element.eleme.io/#/zh-CN](http://element.eleme.io/#/zh-CN)
+
 ### 准备 ###
 
 - 必要环境

@@ -122,8 +122,8 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
-            'process.env.PRODUCTION': JSON.stringify(false),
+            'process.env.NODE_ENV': JSON.stringify('production'),
+            'process.env.PRODUCTION': JSON.stringify(true),
             'process.env.activityId': JSON.stringify('bb798f87-211e-479a-bd4f-0b007ca7edce'),
             'process.env.BASE_PATH': JSON.stringify('https://app.cifm.com/one')
         }),

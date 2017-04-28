@@ -1,5 +1,8 @@
 ## [node.js][node] ##
 
+### 参考 ###
+- [node.js api](https://nodejs.org/api/)
+
 ### 使用nvm ###
 
 nvm是node的版本管理工具，并非必要，关于nvm的安装使用，可以参考[https://github.com/creationix/nvm](https://github.com/creationix/nvm)
@@ -15,7 +18,7 @@ or
 配置.bash_profile，增加
 	 
 	export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 > 测试
 
