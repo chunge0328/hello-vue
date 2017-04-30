@@ -93,7 +93,7 @@ module.exports = {
 
 module.exports.plugins = (module.exports.plugins || []).concat(
     new HtmlWebpackPlugin({
-        title: '调查问卷',
+        title: '红包活动',
         hash: true,
         js: ["red", "common"],
         excludeChunks: ["index"],
