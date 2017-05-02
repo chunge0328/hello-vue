@@ -4,7 +4,8 @@
 
 ### 参考 ###
 
-- [http://element.eleme.io/#/zh-CN](http://element.eleme.io/#/zh-CN)
+- [element-ui中文网](http://element.eleme.io/#/zh-CN)
+- [webpack官网](https://webpack.js.org)
 
 ### 准备 ###
 

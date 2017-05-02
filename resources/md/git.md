@@ -1,5 +1,8 @@
 ## git ##
 
+### 参考 ###
+- [廖雪峰的个人网站](http://www.liaoxuefeng.com/)
+
 ### 安装git ###
 
 - mac安装git
@@ -36,7 +39,7 @@
 		whereis git
 		# 添加内容 export PATH=/usr/local/git/bin:$PATH
 		source .bash_profile
-		
+	
 ### 配置git ###
 
 	git config --global user.name "17717066234"
@@ -65,3 +68,17 @@
 -长期存储
 
 		git config --global credential.helper store
+
+### git常用命令 ###
+> 拉取代码
+
+	git pull
+> 增加修改至本地
+
+	git add -A
+> 提交本地修改
+
+	git commit -m "commit desc"
+> 提交至远程仓库
+
+	git push
