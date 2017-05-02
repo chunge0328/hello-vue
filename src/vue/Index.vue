@@ -199,7 +199,7 @@
 
                 markdowns: [{
                     name: "readme.md",
-                    requestPath: process.env.PAGE_PATH + "/readme.md",
+                    requestPath: process.env.PAGE_PATH + "/readme.md?r=" + Math.random(),
                     content: "",
                     show: false
                 }],
@@ -213,7 +213,7 @@
                     content: "## 测试邮件 ##\n![](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1492446415573&di=af4599d3484ea5845088d6628389ae40&imgtype=0&src=http%3A%2F%2Fatt.x2.hiapk.com%2Fforum%2F201411%2F02%2F190602guilwcc65uglw6uw.jpg)\n\n\t这是由markdown转译的邮件",
                     html: ""
                 },
-                markdownCssPath: process.env.PAGE_PATH + "/resources/css/markdown.css",
+                markdownCssPath: process.env.PAGE_PATH + "/resources/css/markdown.css?r=" + Math.random(),
                 javaMailParam: {
                     subject: "",
                     html: "",
@@ -350,7 +350,7 @@
                 this.activeMarkdown = markdown;
                 this.tabIndex = markdown.name;
                 if (!this.activeMarkdown.content && this.activeMarkdown.requestPath) {
-                    this.$http.get(markdown.requestPath, {}).then(function (res) {
+                    this.$http.get(markdown.requestPath  + "?r=" + Math.random(), {}).then(function (res) {
                         markdown.content = res.data;
                         markdown.show = true;
                         this.markdowns.splice(this.markdowns.length);
@@ -419,8 +419,8 @@
             /*default...end*/
 
             /*debugger*/
-            this.menuIndex = "3";
-            this.defaultActiveMenu = "3";
+//            this.menuIndex = "3";
+//            this.defaultActiveMenu = "3";
             /*debugger...end*/
         }
     }
