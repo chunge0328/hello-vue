@@ -216,7 +216,7 @@
                 markdownCssPath: process.env.PAGE_PATH + "/resources/css/markdown.css?r=" + Math.random(),
                 javaMailParam: {
                     subject: "",
-                    html: "",
+                    text: "",
                     to: ""
                 },
                 mailSendState: true,
@@ -280,7 +280,7 @@
                 this.mailMarkdown.html = html;
             },
             sendMail(){/*发送邮件*/
-                this.javaMailParam.html = this.mailMarkdown.css + this.mailMarkdown.html;
+                this.javaMailParam.text = this.mailMarkdown.css + this.mailMarkdown.html;
                 if (this.mailSendState) {
                     this.disableMailSend(3);
                     this.$http.post("/oauth/message/sendMail", this.javaMailParam).then(function (res) {
