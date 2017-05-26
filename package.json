@@ -10,7 +10,9 @@
     "invdev": "cross-env NODE_ENV=development webpack-dev-server --config investigates.webpack.config.js --inline --hot",
     "invbuild": "cross-env NODE_ENV=production webpack --config investigates.webpack.config.js --progress --hide-modules",
     "reddev": "cross-env NODE_ENV=development webpack-dev-server --config red.webpack.config.js --inline --hot",
-    "redbuild": "cross-env NODE_ENV=production webpack --config red.webpack.config.js --progress --hide-modules"
+    "redbuild": "cross-env NODE_ENV=production webpack --config red.webpack.config.js --progress --hide-modules",
+    "feeddev": "cross-env NODE_ENV=development webpack-dev-server --config feedback.webpack.config.js --inline --hot",
+    "feedbuild": "cross-env NODE_ENV=production webpack --config feedback.webpack.config.js --progress --hide-modules"
   },
   "repository": {
     "type": "git",
