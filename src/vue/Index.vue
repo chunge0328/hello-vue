@@ -150,6 +150,7 @@
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUpload">
+                        <img v-if="fileUrl" src="fileUrl" alt="">
                         <a v-if="fileUrl" :href="fileUrl" class="avatar"></a>
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
@@ -224,7 +225,7 @@
 
                 /*menu-4*/
                 fileUrl: "",
-                fileUploadUrl: process.env.BASE_PATH + "/ma/study/file/upload"
+                fileUploadUrl: process.env.BASE_PATH + "/open/home/upload"
                 /*menu-4...end*/
             }
         },
@@ -392,8 +393,8 @@
 
             /*menu-4*/
             handleAvatarSuccess(res, file) {
-                console.info(file.raw);
-                this.fileUrl = URL.createObjectURL(file.raw);
+                console.info(res);
+//                this.fileUrl = URL.createObjectURL(file.raw);
             },
             beforeAvatarUpload(file) {
                 /*const isJPG = file.type === 'image/jpeg';

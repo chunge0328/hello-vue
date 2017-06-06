@@ -241,7 +241,7 @@
                 }
             },
             loadAll() {/*加载javaCodeParam示例*/
-                this.$http.post("/ma/study/javaCode/findSampleParam", {}).then(function (res) {
+                this.$http.post("/admin/study/javaCode/findSampleParam", {}).then(function (res) {
                     let data = res.data;
                     this.sapmlesCache = data.content;
                     this.javaCodeParamSamples = JSON.parse(JSON.stringify(this.sapmlesCache));
@@ -260,7 +260,7 @@
                     });
                     return;
                 }
-                this.$http.post("/ma/study/javaCode/genJavaCode", this.javaCodeParam).then(function (res) {
+                this.$http.post("/admin/study/javaCode/genJavaCode", this.javaCodeParam).then(function (res) {
                     let data = res.data;
                     this.javaCode = data.content;
                 }.bind(this));
