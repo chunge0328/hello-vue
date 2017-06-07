@@ -150,8 +150,8 @@
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUpload">
-                        <img v-if="fileUrl" src="fileUrl" alt="">
-                        <a v-if="fileUrl" :href="fileUrl" class="avatar"></a>
+                        <!--<img v-if="isImg()" src="fileUrl" alt="">-->
+                        <a v-if="this.fileUrl" :href="fileUrl" class="avatar"></a>
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                 </div>
@@ -393,8 +393,9 @@
 
             /*menu-4*/
             handleAvatarSuccess(res, file) {
-                console.info(res);
+                console.info(JSON.stringify(res));
 //                this.fileUrl = URL.createObjectURL(file.raw);
+                this.fileUrl = res.content[0].downloadUrl;
             },
             beforeAvatarUpload(file) {
                 /*const isJPG = file.type === 'image/jpeg';
@@ -408,6 +409,12 @@
                  }
                  return isJPG && isLt2M;*/
                 return true;
+            },
+            isImg() {
+                return this.fileUrl && /.+(\.jpg|\.png|\.jpeg|\.bmp|\.gif|\.tiff\\.pcx|\.eps)$/ig.test(this.fileUrl);
+            },
+            isFile() {
+                return this.fileUrl && !/.+(\.jpg|\.png|\.jpeg|\.bmp|\.gif|\.tiff\\.pcx|\.eps)$/ig.test(this.fileUrl);
             }
             /*menu-4...end*/
         }, created() {
