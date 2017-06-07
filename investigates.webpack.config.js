@@ -15,7 +15,7 @@ const NODE_ENV = process.env.NODE_ENV,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'INVERSTIGATES_HTML': 'investigates.html'
+        'INVERSTIGATES_HTML': 'index.html'
     };
 
 /*debugger*/
