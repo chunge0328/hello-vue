@@ -15,8 +15,7 @@ const NODE_ENV = process.env.NODE_ENV,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html',
-        'INVERSTIGATES_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'investigates.html') : 'investigates.html'
+        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html'
     };
 
 /*debugger*/
@@ -99,13 +98,6 @@ module.exports.plugins = (module.exports.plugins || []).concat(
         excludeChunks: ["investigates"],
         filename: CONFIG.INDEX_HTML
     }),
-    new HtmlWebpackPlugin({
-        title: '调查问卷',
-        hash: true,
-        js: ["investigates", "common"],
-        excludeChunks: ["index"],
-        filename: CONFIG.INVERSTIGATES_HTML
-    }),
     extractCSS,
     extractLESS,
     extractSASS
@@ -115,6 +107,7 @@ module.exports.plugins = (module.exports.plugins || []).concat(
 if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
+        host: '0.0.0.0',
         port: 7777
     };
     module.exports.devtool = false;

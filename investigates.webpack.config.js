@@ -107,6 +107,7 @@ module.exports.plugins = (module.exports.plugins || []).concat(
 if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
+        host: '0.0.0.0',
         port: 7777
     };
     module.exports.devtool = false;

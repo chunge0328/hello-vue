@@ -1,6 +1,3 @@
-/**
- * Created by uo712 on 2017/3/14.
- */
 export default (function () {
     var supportedCSS,
         IE = eval('"v"=="\v"'),
