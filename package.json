@@ -14,7 +14,9 @@
     "feeddev": "cross-env NODE_ENV=development webpack-dev-server --config feedback.webpack.config.js --inline --hot",
     "feedbuild": "cross-env NODE_ENV=production webpack --config feedback.webpack.config.js --progress --hide-modules",
     "onedev": "cross-env NODE_ENV=development webpack-dev-server --config one.webpack.config.js --inline --hot",
-    "onebuild": "cross-env NODE_ENV=production webpack --config one.webpack.config.js --progress --hide-modules"
+    "onebuild": "cross-env NODE_ENV=production webpack --config one.webpack.config.js --progress --hide-modules",
+    "cifmdev": "cross-env NODE_ENV=development webpack-dev-server --config cifm.webpack.config.js --inline --hot",
+    "cifmbuild": "cross-env NODE_ENV=production webpack --config cifm.webpack.config.js --progress --hide-modules"
   },
   "repository": {
     "type": "git",

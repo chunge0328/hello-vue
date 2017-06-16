@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './index.js'
+        index: './cifm.js'
     },
     output: {
         filename: './js/[name].js',
@@ -108,15 +108,14 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
         host: '0.0.0.0',
-        port: 7777
+        port: 7778
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.PAGE_PATH': JSON.stringify('http://localhost:7777'),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8080/panchaohui')
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8081/cifm')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
@@ -125,8 +124,7 @@ if (CONFIG.NODE_ENV === 'development') {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.PAGE_PATH': JSON.stringify('http://panchaohui.com'),
-            'process.env.BASE_PATH': JSON.stringify('http://panchaohui.com:8080/panchaohui')
+            'process.env.BASE_PATH': JSON.stringify('http://panchaohui.com:8081/cifm')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),
