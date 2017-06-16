@@ -101,7 +101,7 @@
                             type="textarea"
                             :rows="4"
                             placeholder="请输入建议"
-                            v-model="feedbackParam.suggest" class="mg-top-20">
+                            v-model="feedbackParam.content" class="mg-top-20">
                     </el-input>
                 </div>
             </el-col>
@@ -169,7 +169,7 @@
                 feedbackParam: {
                     name: "",
                     contact: "",
-                    suggest: ""
+                    content: ""
                 }
             }
         },
@@ -187,7 +187,7 @@
                     Message({
                         message: "给个正确的联系方式吧？"
                     });
-                } else if (this.feedbackParam.suggest === "") {
+                } else if (this.feedbackParam.content === "") {
                     Message({
                         message: "Unbelievable!~难道我们的程序是完美的？"
                     });
