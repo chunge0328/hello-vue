@@ -114,6 +114,7 @@
                     }.bind(this), this.timeGap)
                 }
             },
+
             /*发送验证码 => end*/
             appLogin(){/*手机登录*/
                 this.$http.jsonp("/web/act/login/login", {
