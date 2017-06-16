@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Turntable from '../../vue/Turntable.vue'
-import Coupons from '../../vue/Coupons.vue'
-import Login from '../../vue/Login.vue'
-import OneLogin from '../../vue/OneLogin.vue'
+import Turntable from '../../vue/Turntable.vue';
+import Coupons from '../../vue/Coupons.vue';
+import Login from '../../vue/Login.vue';
+import OneLogin from '../../vue/OneLogin.vue';
+import Fof from '../../vue/Fof.vue';
 
 Vue.use(VueRouter);
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
     /*{ path: '/login', component: Login },
      { path: '/login/:mobile', component: Login },*/
     {path: '/oneLogin', component: OneLogin},
-    {path: '/oneLogin/:mobile', component: OneLogin}
+    {path: '/oneLogin/:mobile', component: OneLogin},
+    {path: '/fof/:mobile', component: Fof}
 ], router = new VueRouter({
     routes
 });
