@@ -21,15 +21,15 @@
             <el-col :span="12">
                 <el-form :label-position="labelPosition" label-width="80px" ref="loginForm" :model="loginForm">
                     <el-row>
-                        <el-form-item label="手机" prop="mobile" required>
+                        <el-form-item label="手机：" prop="mobile" required>
                             <el-input type="text" v-model="loginForm.mobile"></el-input>
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="验证码" prop="mobileCode" required>
-                            <el-col :span="16">
+                        <el-form-item label="验证码：" prop="mobileCode" required>
+                            <el-col :span="15">
                                 <el-input type="text" v-model="loginForm.mobileCode" auto-complete="off"></el-input>
-                            </el-col>
+                            </el-col>&nbsp;
                             <el-button :class="{'sms_disabled': !sendState}"
                                        :disabled="!sendState" @click="sendCode">{{sendText}}
                             </el-button>

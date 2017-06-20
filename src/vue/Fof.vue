@@ -19,14 +19,70 @@
             </el-col>
         </el-row>
 
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>组合列表查询</h4>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>体验金：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b></el-col>
+            <el-col :span="12" v-show="balance==''">
+                <el-button type="primary" @click="getBalance()">领取体验金</el-button>
+            </el-col>
         </el-row>
-        <div style="margin: 20px;"></div>
+
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6" class="fontTitleStyle"><b>新建组合</b></el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>组合名称：</b></el-col>
+            <el-col :span="12">
+                <el-input type="text" v-model="name"></el-input>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>风险等级：</b></el-col>
+            <el-col :span="12">
+                <el-select v-model="risk" placeholder="请选择">
+                    <el-option
+                            v-for="item in items"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>日期：</b></el-col>
+            <el-col :span="6">
+                <el-date-picker
+                        v-model="bdate"
+                        type="date"
+                        placeholder="起始日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-col>
+            <el-col :span="6">
+                <el-date-picker
+                        v-model="edate"
+                        type="date"
+                        placeholder="截止日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4">&nbsp;</el-col>
+            <el-col :span="12">
+                <el-button type="primary" @click="newFof()">新建</el-button>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>组合列表查询</b></el-col>
+        </el-row>
         <el-row>
-            <el-table :data="list" style="width: 100%" :row-class-name="tableRowClassName" :default-sort = "{prop: 'bdate', order: 'descending'}">
+            <el-table :data="list" style="width: 100%" :row-class-name="tableRowClassName"
+                      :default-sort="{prop: 'bdate', order: 'descending'}">
                 <el-table-column prop="name" label="组合名称"></el-table-column>
+                <el-table-column prop="customerName" label="客户名称" sortable></el-table-column>
                 <el-table-column prop="typeName" label="组合类型" sortable></el-table-column>
                 <el-table-column prop="riskName" label="风险等级"></el-table-column>
                 <el-table-column prop="bdate" label="开始日期" sortable>
@@ -44,70 +100,6 @@
             </el-table>
         </el-row>
 
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>领取体验金</h4>
-        </el-row>
-        <el-row>
-            <el-col :span="6">&nbsp;</el-col>
-            <el-col :span="12">
-                <el-button type="primary" @click="getExperMoney()">领取体验金</el-button>
-            </el-col>
-        </el-row>
-
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>新建组合</h4>
-        </el-row>
-        <el-row>
-            <el-col :span="6">&nbsp</el-col>
-            <el-col :span="12">
-                <el-form :label-position="labelPosition" label-width="80px" ref="fofForm" :model="fofForm">
-                    <el-row>
-                        <el-form-item label="组合名称" prop="name" required>
-                            <el-input type="text" v-model="fofForm.name"></el-input>
-                        </el-form-item>
-                    </el-row>
-                    <el-row>
-                        <el-form-item label="风险等级" prop="risk" required>
-                            <el-select v-model="fofForm.risk" placeholder="请选择">
-                                <el-option
-                                        v-for="item in items"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-row>
-                    <el-row>
-                        <el-form-item label="开始日期" prop="bdate" required>
-                            <el-date-picker
-                                    v-model="fofForm.bdate"
-                                    type="date"
-                                    placeholder="选择日期"
-                                    :picker-options="pickerOptions">
-                            </el-date-picker>
-                        </el-form-item>
-                    </el-row>
-                    <el-row>
-                        <el-form-item label="截止日期" prop="edate" required>
-                            <el-date-picker
-                                    v-model="fofForm.edate"
-                                    type="date"
-                                    placeholder="选择日期"
-                                    :picker-options="pickerOptions">
-                            </el-date-picker>
-                        </el-form-item>
-                    </el-row>
-                    <el-form-item>
-                        <el-button type="primary" @click="newFof()">新建</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-col>
-        </el-row>
-
-
     </div>
 
 
@@ -118,9 +110,18 @@
     import Vue from "vue";
     import router from '../js/config/RedRouterConfig';
     import {Util} from '../js/utils/ValidateUtils';
-    import {Form, FormItem, Input, Button, Message, Row, Col, Select, Option, DatePicker,Table,TableColumn} from "element-ui";
-    Vue.use(Form);
-    Vue.use(FormItem);
+    import {
+            Input,
+            Button,
+            Message,
+            Row,
+            Col,
+            Select,
+            Option,
+            DatePicker,
+            Table,
+            TableColumn
+    } from "element-ui";
     Vue.use(Input);
     Vue.use(Button);
     Vue.use(Row);
@@ -136,13 +137,12 @@
             return {
                 Util: Util,
                 labelPosition: 'left',
-                fofForm: {
-                    name: '',
-                    risk: '',
-                    bdate: '',
-                    edate: ''
-                },
-                list:null,
+                name: '',
+                risk: '',
+                bdate: null,
+                edate: null,
+                balance: '',
+                list: null,
                 items: null,
                 pickerOptions: {
                     disabledDate(time) {
@@ -157,10 +157,10 @@
         methods: {
             init(){
                 this.$http.jsonp("/web/act/login/checkLogin", {params: {mobile: this.$route.params.mobile}}).then(function (res) {
-                    if(!res.data.success){
-                        Message({showClose: true,message: "请先登录",type: "warning"});
-                        router.push('/one/'+this.$route.params.mobile);
-                    }else{
+                    if (!res.data.success) {
+                        Message({showClose: true, message: "请先登录", type: "warning"});
+                        router.push('/one/' + this.$route.params.mobile);
+                    } else {
                         /*初始化风险等级*/
                         this.$http.jsonp("/app/topicPartition/list", {
                             params: {
@@ -169,7 +169,6 @@
                             }
                         }).then(function (res) {
                             this.items = res.data.items;
-                            console.log(this.items);
                         }.bind(this));
                         /*获取推荐与自建投资组合*/
                         this.$http.jsonp("/app/fofApp/getAllList", {
@@ -177,11 +176,17 @@
                         }).then(function (res) {
                             this.list = res.data.items;
                         }.bind(this));
+                        /*获取用户体验金*/
+                        this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
+                            params: {}
+                        }).then(function (res) {
+                            this.balance = res.data.data.balance;
+                        }.bind(this));
                     }
                 }.bind(this))
 
             },
-            getExperMoney(){/*领取体验金*/
+            getBalance(){/*领取体验金*/
                 this.$http.jsonp("/app/fofApp/save", {
                     params: {}
                 }).then(function (res) {
@@ -189,24 +194,25 @@
                     Message({
                         showClose: true,
                         message: data.success ? "领取成功" : data.message,
-                        type: data.success ? "success" : "error"
+                        type: data.success ? "success" : 'error'
                     });
+                    this.balance = data.data.balance;
                 }.bind(this));
             },
             inputCheck(){/*输入校验*/
-                let name = this.fofForm.name;
-                let risk = this.fofForm.risk;
-                let bdate = this.fofForm.bdate;
-                let edate = this.fofForm.edate;
-                if (Util.isEmpty(name)) {
+                let name = this.name;
+                let risk = this.risk;
+                let bdate = this.bdate;
+                let edate = this.edate;
+                if (!Util.isEmpty(name)) {
                     Message({showClose: true, message: "请输入新建组合名称", type: 'warning'});
                     return false;
-                } else if (Util.isEmpty(risk)) {
+                } else if (!Util.isEmpty(risk)) {
                     Message({showClose: true, message: "请选择风险等级", type: 'warning'})
-                } else if (Util.isEmpty(bdate)) {
+                } else if (!Util.isEmpty(bdate)) {
                     Message({showClose: true, message: "请选择组合开始日期", type: 'warning'});
                     return false;
-                } else if (Util.isEmpty(edate)) {
+                } else if (!Util.isEmpty(edate)) {
                     Message({showClose: true, message: "请选择组合结束日期", type: 'warning'});
                     return false;
                 } else {
@@ -217,24 +223,26 @@
                 if (this.inputCheck()) {
                     this.$http.jsonp("/app/fofApp/saveFof", {
                         params: {
-                            name: this.fofForm.name,
-                            risk: this.fofForm.risk,
-                            bdate: this.fofForm.bdate,
-                            edate: this.fofForm.edate
+                            name: this.name,
+                            risk: this.risk,
+                            bdate: this.bdate.format('yyyyMMdd'),
+                            edate: this.edate.format('yyyyMMdd')
                         }
                     }).then(function (res) {
                         let data = res.data;
-                        if (data.success) {
-                            Message({showClose: true, message: "新建组合成功", type: 'success'});
-                            //router.push('/fof/' + +this.loginForm.mobile);
-                        }
+                        Message({
+                            showClose: true,
+                            message: data.success ? "新建组合成功" : data.message,
+                            type: data.success ? 'success' : 'error'
+                        });
+                        this.init();
                     }.bind(this));
                 }
             },
             tableRowClassName(row, index) {
-                if (index === 1) {
+                if (index % 2 == 0) {
                     return 'info-row';
-                } else if (index === 3) {
+                } else if (index % 2 == 1) {
                     return 'positive-row';
                 }
                 return '';

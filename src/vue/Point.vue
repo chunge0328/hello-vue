@@ -3,11 +3,6 @@
         background: #c9e5f5;
     }
 
-    .pointColor {
-        color: #cc0000;
-        font-size: 2em;
-    }
-
     .el-table .positive-row {
         background: #e2f0e4;
     }
@@ -24,40 +19,26 @@
             </el-col>
         </el-row>
 
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>我的总积分</h4>
-        </el-row>
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <el-col :span="6">&nbsp;</el-col>
-            <el-col :span="6" class="pointColor">
-                {{myPoint}}&nbsp;{{myPoint?"分":""}}
-            </el-col>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>我的总积分：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{myPoint}}&nbsp;分</b></el-col>
         </el-row>
 
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>签到</h4>
-        </el-row>
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <el-col :span="6">&nbsp;</el-col>
-            <el-col :span="6">
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>签到：</b></el-col>
+            <el-col :span="16">
                 <el-button type="primary" @click="sign()">签到</el-button>
             </el-col>
         </el-row>
 
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>我的积分明细</h4>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>我的积分明细：</b></el-col>
+            <el-col :span="16">
+                <el-button type="primary" @click="getMyPointDetail()">查询</el-button>
+            </el-col>
         </el-row>
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <el-button type="primary" @click="getMyPointDetail()">查询</el-button>
-        </el-row>
-        <div style="margin: 20px;"></div>
-        <el-row>
+
+        <el-row :gutter="20" class="top10">
             <el-table :data="pointDetail" style="width: 100%" :row-class-name="tableRowClassName"
                       :default-sort="{prop: 'cdate', order: 'descending'}">
                 <el-table-column prop="fromName" label="来源" sortable></el-table-column>
@@ -73,19 +54,16 @@
             </el-table>
         </el-row>
 
-
-        <div style="margin: 20px;"></div>
-        <el-row>
-            <h4>积分礼品</h4>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>积分礼品</b></el-col>
         </el-row>
-        <div style="margin: 20px;"></div>
-        <el-row>
+        <el-row :gutter="20" class="top10">
             <el-table :data="giftList" style="width: 100%" :row-class-name="tableRowClassName">
                 <el-table-column prop="name" label="礼品名称"></el-table-column>
                 <el-table-column prop="con" label="条件"></el-table-column>
                 <el-table-column prop="remark" label="说明"></el-table-column>
                 <el-table-column prop="point" label="需要积分"></el-table-column>
-                <el-table-column fixed="right" label="操作">
+                <el-table-column label="操作">
                     <template scope="scope">
                         <el-button @click.native.prevent="convert(scope.$index, giftList)" type="text" size="small">
                             兑换
@@ -106,7 +84,7 @@
     import Vue from "vue";
     import router from '../js/config/RedRouterConfig';
     import {Util} from '../js/utils/ValidateUtils';
-    import {Input, Button, Message, Row, Col, Select, Option, Table, TableColumn, Icon} from "element-ui";
+    import {Input, Button, Message, Row, Col, Select, Option, Table, TableColumn, Icon, Pagination} from "element-ui";
     Vue.use(Input);
     Vue.use(Button);
     Vue.use(Row);
@@ -116,6 +94,7 @@
     Vue.use(Table);
     Vue.use(TableColumn);
     Vue.use(Icon);
+    Vue.use(Pagination);
 
     export default {
         data(){
@@ -124,7 +103,7 @@
                 labelPosition: 'left',
                 giftList: null,
                 pointDetail: null,
-                myPoint: ''
+                myPoint: '0'
             };
         },
         created: function () {
@@ -164,9 +143,7 @@
                         message: data.success ? "签到成功" : data.message,
                         type: data.success ? "success" : "error"
                     });
-                    if (data.success) {
-                        this.init();
-                    }
+                    this.init();
                 }.bind(this));
             },
             getMyPointDetail(){/*获取我的积分明细*/
@@ -187,15 +164,13 @@
                         message: data.success ? "兑换成功" : data.message,
                         type: data.success ? "success" : "error"
                     });
-                    if (data.success) {
-                        this.init();
-                    }
+                    this.init();
                 }.bind(this));
             },
             tableRowClassName(row, index) {
-                if (index === 1) {
+                if (index % 2 == 0) {
                     return 'info-row';
-                } else if (index === 3) {
+                } else if (index % 2 == 1) {
                     return 'positive-row';
                 }
                 return '';
