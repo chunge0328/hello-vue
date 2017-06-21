@@ -66,7 +66,7 @@
 
         data(){
             return {
-                topicId: "425f39cc-414a-402f-984e-2088744f8e8c",/*process.env.TOPIC_ID,*/
+                topicId: process.env.TOPIC_ID,
                 seqs: ["A", "B", "C", "D", "E", "F"],
                 questions: [],
                 answers: [],

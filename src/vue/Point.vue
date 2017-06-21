@@ -39,8 +39,7 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-table :data="pointDetail" style="width: 100%" :row-class-name="tableRowClassName"
-                      :default-sort="{prop: 'cdate', order: 'descending'}">
+            <el-table :data="pointDetail" style="width: 100%" :row-class-name="tableRowClassName" height="300">
                 <el-table-column prop="fromName" label="来源" sortable></el-table-column>
                 <el-table-column prop="giftName" label="消费" sortable></el-table-column>
                 <el-table-column prop="point" label="积分"></el-table-column>
@@ -51,6 +50,7 @@
                         <span style="margin-left: 10px">{{ scope.row.cdate }}</span>
                     </template>
                 </el-table-column>
+                <el-table-column prop="ctime" label="交易时间" sortable></el-table-column>
             </el-table>
         </el-row>
 
@@ -65,7 +65,7 @@
                 <el-table-column prop="point" label="需要积分"></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="convert(scope.$index, giftList)" type="text" size="small">
+                        <el-button @click.native.prevent="convert(scope.$index, scope.row)" type="text" size="small">
                             兑换
                         </el-button>
                     </template>
@@ -153,8 +153,8 @@
                     this.pointDetail = res.data.items;
                 }.bind(this));
             },
-            convert(index, rows){
-                let id = rows[index].id;
+            convert(index, row){
+                let id = row.id;
                 this.$http.jsonp("/app/point/use", {
                     params: {gift: id}
                 }).then(function (res) {

@@ -73,8 +73,7 @@
         </el-row>
         <div style="margin: 20px;"></div>
         <el-row>
-            <el-table :data="topiclist" style="width: 100%" :row-class-name="tableRowClassName"
-                      :default-sort="{prop: 'cdate', order: 'descending'}">
+            <el-table :data="topiclist" style="width: 100%" :row-class-name="tableRowClassName" height="300">
                 <el-table-column prop="author" label="作者" sortable></el-table-column>
                 <el-table-column prop="content" label="内容"></el-table-column>
                 <el-table-column prop="cdate" label="发表日期" sortable>
