@@ -113,6 +113,7 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
+            'process.env.TOPIC_ID': JSON.stringify('d5a8108b-f0c8-4e7b-bec4-2fa747422243'),
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
             'process.env.BASE_PATH': JSON.stringify('http://localhost:8066/one')
@@ -122,6 +123,7 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
+            'process.env.TOPIC_ID': JSON.stringify(''),
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
             'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8080/panchaohui')

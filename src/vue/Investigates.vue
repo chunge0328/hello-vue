@@ -12,8 +12,9 @@
             </el-dialog>
         </div>
 
-        <div class="block" v-show="!answerComplete">
-            <el-carousel :autoplay="false" @change="handleCheckAnswer" ref="carousel" arrow="always"
+        <el-row class="block" v-show="!readySubmit">
+            <el-carousel :autoplay="false" @change="handleCheckAnswer" ref="carousel"
+                         :arrow="answerComplete ? 'always': 'never'"
                          indicator-position="none" trigger="click" height="600px">
                 <el-carousel-item v-for="(content, index) in contentList" :key="'content-' + index"
                                   :name="'content-' + index">
@@ -22,26 +23,44 @@
                         <el-radio-group @change="handleAnswer" v-model="ivstLog.resultText[index][content.name]">
                             <li v-for="(child, chIndex) in content.childs" :key="'child-' + chIndex">
                                 <el-radio class="radio"
-                                          :label="child.name">{{child.name}}
+                                          :label="child.name">{{serias[chIndex]}}、{{child.name}}
                                 </el-radio>
                             </li>
                         </el-radio-group>
                     </ul>
                 </el-carousel-item>
             </el-carousel>
-        </div>
-        <div v-show="answerComplete">
+
+            <el-row v-show="answerComplete" style="margin-top: 30px;">
+                <el-col :span="6">
+                    &nbsp;
+                </el-col>
+                <el-col :span="12" style="text-align: center;">
+                    <el-button type="success" @click="readySubmit = true">修改完成</el-button>
+                </el-col>
+                <!--<el-button type="success" @click="continueAnswer">继续修改</el-button>-->
+            </el-row>
+        </el-row>
+
+        <el-row v-show="answerComplete && readySubmit">
             <el-row>
                 <el-button v-for="(result, index) in ivstLog.resultText" :type="getResultType(result, index)"
                            :key="'result-'+index" @click="switchToContent(result, index)">
-                    <i :class="getResultClass(result, index)"></i>{{index+1}}
+                    <i :class="getResultClass(result, index)"></i>
+                    {{index + 1}}
+                    <span v-for="(val, key) in result">{{val}}</span>
                 </el-button>
             </el-row>
             <el-row style="margin-top: 30px;">
-                <el-button type="success" @click="submitAnswer">提交</el-button>
-                <el-button @click="answerComplete=false">继续答题</el-button>
+                <el-col :span="6">
+                    &nbsp;
+                </el-col>
+                <el-col :span="12" style="text-align: center;">
+                    <el-button type="success" @click="submitAnswer">提交</el-button>
+                    <el-button @click="readySubmit=false">修改</el-button>
+                </el-col>
             </el-row>
-        </div>
+        </el-row>
     </div>
 </template>
 
@@ -51,7 +70,7 @@
 
     import Vue from "vue";
     import {
-        Message, Carousel, CarouselItem, Radio, RadioGroup, Button, Row, Dialog, Input
+        Message, Carousel, CarouselItem, Radio, RadioGroup, Button, Row, Col, Dialog, Input
     }
         from "element-ui";
 
@@ -61,6 +80,7 @@
     Vue.use(RadioGroup);
     Vue.use(Button);
     Vue.use(Row);
+    Vue.use(Col);
     Vue.use(Dialog);
     Vue.use(Input);
 
@@ -71,6 +91,8 @@
                 activityId: process.env.activityId,
                 contentList: [],
 
+                serias: ["A", "B", "C", "D"],
+
                 ivstLog: {
                     fundCode: "空",
                     resultType: "json",
@@ -80,6 +102,7 @@
                 },
 
                 answerComplete: false,
+                readySubmit: false,
 
                 unLogin: false,
                 loginShow: false,
@@ -102,7 +125,7 @@
                 }
             },
             switchToContent(result, index){
-                this.answerComplete = false;
+                this.readySubmit = false;
                 this.$refs.carousel.setActiveItem(index);
             },
             handleCheckAnswer(curr, prev){
@@ -110,11 +133,19 @@
                 if (prev === 0 && curr === resultLen - 1) {
                     this.$refs.carousel.setActiveItem(0)
                 } else if (prev === resultLen - 1 && curr === 0) {
-                    this.answerComplete = true;
+                    this.answerComplete = this.readySubmit = true;
                 }
             },
             handleAnswer(){
-                this.$refs.carousel.next();
+                if (!this.answerComplete) {
+                    this.$refs.carousel.next();
+                }
+            },
+            ensureAnswer() {
+
+            },
+            continueAnswer() {
+
             },
             listContent() {
                 this.$http.jsonp("/web/ivst/content/list", {
@@ -153,6 +184,7 @@
                     Message({
                         message: data.success ? "登录成功" : data.message
                     });
+
                 }.bind(this));
             },
             checkLogin(){
@@ -163,18 +195,22 @@
             },
             submitAnswer(){
                 this.$http.jsonp("/trade/info/dsInfo", {}).then(function (res) {
-                    let data = res.data.data;
-                    this.ivstLog.activityId = this.activityId;
-                    this.ivstLog.idNo = data.idNo;
-                    let param = JSON.parse(JSON.stringify(this.ivstLog));
-                    param.resultText = JSON.stringify(param.resultText);
-                    this.$http.jsonp("/trade/ivst/submit", {params: param}).then(function (res) {
-                        data = res.data;
-                        Message({
-                            message: data.success ? "提交成功" : data.message
+                        debugger;
+                        let data = res.data.data;
+                        this.ivstLog.activityId = this.activityId;
+                        this.ivstLog.idNo = data.idNo;
+                        let param = JSON.parse(JSON.stringify(this.ivstLog));
+                        param.resultText = JSON.stringify(param.resultText);
+                        this.$http.jsonp("/trade/ivst/submit", {params: param}).then(function (res) {
+                            data = res.data;
+                            Message({
+                                message: data.success ? "提交成功" : data.message
+                            });
                         });
-                    });
-                }.bind(this));
+                    }.bind(this),
+                    function () {
+                        this.loginShow = true;
+                    }.bind(this));
             }
         }, created() {
             this.checkLogin();

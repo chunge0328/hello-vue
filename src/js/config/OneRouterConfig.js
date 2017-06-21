@@ -6,6 +6,7 @@ import Fof from '../../vue/Fof.vue';
 import Point from '../../vue/Point.vue';
 import Topic from '../../vue/Topic.vue';
 import TopicDetail from '../../vue/TopicDetail.vue';
+import Question from '../../vue/Question.vue';
 
 Vue.use(VueRouter);
 const routes = [
@@ -18,7 +19,8 @@ const routes = [
     {path: '/topic', component: Topic},
     {path: '/topic/:mobile', component: Topic},
     {path: '/topicDetail', component: TopicDetail},
-    {path: '/topicDetail/:mobile/:id/:author/:content', component: TopicDetail}
+    {path: '/topicDetail/:mobile/:id/:author/:content', component: TopicDetail},
+    {path: '/question', component: Question}
 ], router = new VueRouter({
     routes
 });

@@ -1,46 +1,7 @@
 <style>
-    .el-row {
-        margin-bottom: 20px;
-    }
-
-    .el-col {
-        border-radius: 4px;
-    }
-
-    .el-col label {
-        width: 100%;
-        height: 100%;
+    .submit-btn{
         display: block;
-        text-align: right;
-        vertical-align: middle;
-        line-height: 35px;
-    }
-
-    .avatar-uploader .el-upload {
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .avatar-uploader .el-upload:hover {
-        border-color: #20a0ff;
-    }
-
-    .avatar-uploader-icon {
-        font-size: 28px;
-        color: #8c939d;
-        width: 178px;
-        height: 178px;
-        line-height: 178px;
-        text-align: center;
-    }
-
-    .avatar {
-        width: 178px;
-        height: 178px;
-        display: block;
+        margin: 10px auto;
     }
 </style>
 <template>
@@ -48,29 +9,29 @@
         <el-row>
             <el-row :gutter="20"><!--第1行参数-->
                 <el-col :span="3">
-                    <label>包名</label>
+                    <label>ip</label>
                 </el-col>
                 <el-col :span="9">
                     <el-autocomplete
+                            v-model="database.ip"
                             param-key="packageName"
                             class="inline-input"
-                            v-model="javaCodeParam.packageName"
                             :fetch-suggestions="querySearch"
-                            placeholder="请输入包名"
+                            placeholder="请输入ip"
                             @select="handleSelect"
                     ></el-autocomplete>
                 </el-col>
 
                 <el-col :span="3">
-                    <label>项目名</label>
+                    <label>端口</label>
                 </el-col>
                 <el-col :span="9">
                     <el-autocomplete
+                            v-model="database.port"
                             param-key="projectName"
                             class="inline-input"
-                            v-model="javaCodeParam.projectName"
                             :fetch-suggestions="querySearch"
-                            placeholder="请输入项目名"
+                            placeholder="请输入端口"
                             @select="handleSelect"
                     ></el-autocomplete>
                 </el-col>
@@ -78,96 +39,105 @@
 
             <el-row :gutter="20"><!--第2行参数-->
                 <el-col :span="3">
-                    <label>模块名</label>
+                    <label>sid</label>
                 </el-col>
                 <el-col :span="9">
                     <el-autocomplete
+                            v-model="database.sid"
                             param-key="moduleName"
                             class="inline-input"
-                            v-model="javaCodeParam.moduleName"
                             :fetch-suggestions="querySearch"
-                            placeholder="请输入模块名"
+                            placeholder="请输入sid"
                             @select="handleSelect"
                     ></el-autocomplete>
                 </el-col>
 
                 <el-col :span="3">
-                    <label>实体类名</label>
+                    <label>说明</label>
                 </el-col>
                 <el-col :span="9">
                     <el-autocomplete
+                            v-model="database.remark"
                             param-key="entityName"
                             class="inline-input"
-                            v-model="javaCodeParam.entityName"
                             :fetch-suggestions="querySearch"
-                            placeholder="请输入实体类名"
+                            placeholder="请输入说明"
                             @select="handleSelect"
                     ></el-autocomplete>
                 </el-col>
             </el-row><!--第2行参数...end-->
 
-            <hr>
-            <el-row><!--entity参数-->
-                <el-row :gutter="20">
-                    <el-col :span="3">
-                        <label>实体类名</label>
-                    </el-col>
-                    <el-col :span="9">
-                        <el-autocomplete
-                                param-key="entityName"
-                                class="inline-input"
-                                v-model="javaCodeParam.entityName"
-                                :fetch-suggestions="querySearch"
-                                placeholder="请输入实体类名"
-                                @select="handleSelect"
-                        ></el-autocomplete>
-                    </el-col>
-                </el-row>
-
-                <el-row class="param-section">
-                    <el-button style="padding: 2px;" @click="javaCodeParam.entityFields.push({type:'',name:''})"><i
-                            class="el-icon-plus"></i></el-button>
-                    域
-                    <el-row :gutter="20" v-for="(entityField, index) in javaCodeParam.entityFields"
-                            :key="'entity-' + index">
-                        <el-col :span="3">
-                            <label>类型</label>
-                        </el-col>
-                        <el-col :span="7">
-                            <el-autocomplete
-                                    param-key="entityType"
-                                    class="inline-input"
-                                    v-model="entityField.type"
-                                    :fetch-suggestions="querySearch"
-                                    placeholder="请输入域类型"
-                                    @select="handleSelect"
-                            ></el-autocomplete>
-                        </el-col>
-
-                        <el-col :span="3">
-                            <label>名称</label>
-                        </el-col>
-                        <el-col :span="7">
-                            <el-autocomplete
-                                    param-key="entityFields.name"
-                                    class="inline-input"
-                                    v-model="entityField.name"
-                                    :fetch-suggestions="querySearch"
-                                    placeholder="请输入域名称"
-                                    @select="handleSelect"
-                            ></el-autocomplete>
-                        </el-col>
-                        <el-col :span="4">
-                            <el-button @click="javaCodeParam.entityFields.splice(index, 1)">删除</el-button>
-                        </el-col>
-                    </el-row>
-
-                </el-row>
-            </el-row><!--entity参数...end-->
-
-            <el-row style="text-align: center">
-                <el-button @click="genJavaCode" type="success">生成代码</el-button>
+            <el-row :gutter="20">
+                <el-col :span="3">
+                    <label>环境</label>
+                </el-col>
+                <el-col :span="9">
+                    <el-select v-model="env.code" placeholder="请选择">
+                        <el-option
+                                v-for="item in envs"
+                                :key="item.seq"
+                                :label="item.value"
+                                :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-col>
             </el-row>
+            <el-row>
+                <el-button class="submit-btn" @click="handleSaveDb" type="success">保存</el-button>
+            </el-row>
+        </el-row>
+        <el-row>
+            <el-table
+                    :data="databases"
+                    border
+                    style="width: 100%">
+                <el-table-column
+                        prop="ip"
+                        label="ip"
+                        sortable
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="port"
+                        label="端口"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="sid"
+                        label="实例">
+                </el-table-column>
+                <el-table-column
+                        prop="env"
+                        label="环境"
+                        width="100">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="说明"
+                        width="130">
+                </el-table-column>
+                <el-table-column
+                        fixed="right"
+                        label="操作"
+                        width="140">
+                    <template scope="scope">
+                        <el-button
+                                @click.native.prevent="modifyRow(scope.$index, databases)"
+                                type="text"
+                                size="small">
+                            修改
+                        </el-button>
+                        <el-button
+                                @click.native.prevent="deleteRow(scope.$index, databases)"
+                                type="text"
+                                size="small">
+                            移除
+                        </el-button>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+
         </el-row>
     </div>
 </template>
@@ -177,19 +147,16 @@
 
     import Vue from "vue";
     import {
-        Row, Col, Menu, Submenu, MenuItemGroup, MenuItem, Tabs, TabPane, Button, Upload, Message
+        Row, Col, Button, Message, Select, Option, Table, TableColumn
     }
         from "element-ui";
     Vue.use(Row);
     Vue.use(Col);
-    Vue.use(Menu);
-    Vue.use(Submenu);
-    Vue.use(MenuItemGroup);
-    Vue.use(MenuItem);
-    Vue.use(Tabs);
-    Vue.use(TabPane);
     Vue.use(Button);
-    Vue.use(Upload);
+    Vue.use(Select);
+    Vue.use(Option);
+    Vue.use(Table);
+    Vue.use(TableColumn);
 
     import Markdown from "../js/components/Markdown";
     import CodeUtils from "../js/components/CodeUtils";
@@ -199,9 +166,82 @@
     export default {
 
         data(){
-            return {}
+            return {
+                databases: [],
+                database:{
+                    ip: "10.169.4.33",
+                    port: "5001",
+                    sid: "dspdb",
+                    remark: "机构版网上交易",
+                },
+                envs: [],
+                env: {},
+                pageRequest:{
+                    page: 0,
+                    size: 20,
+                    sort: "cDate,cTime"
+                }
+            }
         },
-        methods: {}, created() {
+        methods: {
+            querySearch(queryString, cb){
+                var params = [{value: "651158394@qq.com"}, {value: "m17717066234@aliyun.com"}], key = "value", results = [];
+                params.map(function (param, index, arr) {
+                    let val = param[key];
+                    if (!queryString || !val || val.toLowerCase().indexOf(queryString.toLowerCase()) === 0) {
+                        results.push({
+                            value: val
+                        });
+                    }
+                }.bind(this));
+                cb(results);
+            },
+            handleSelect(){
+
+            },
+            handleSaveDb(){
+                this.database.env = this.env.code;
+                this.$http.post("/admin/cifm/database/save", this.database).then(function (res) {
+                    let data = res.data;
+                    Message({
+                        message: data.msg,
+                        type: data.success ? "success" : "warning"
+                    });
+                    if(data.success) {
+                    }
+                    /*Message({
+                     message: data.msg
+                     });*/
+                }.bind(this));
+            },
+            handleQueryParam() {
+                this.$http.post("/admin/sys/dictionay/get", {/*"type": "CIFM_DATABASE.ENV"*/}, {
+                    /*body: {"type": "CIFM_DATABASE.ENV"},*/
+                    params: {"type": "CIFM_DATABASE.ENV"},
+                    headers: {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
+                }).then(function (res) {
+                    let data = res.data;
+                    this.envs = data.content;
+                    if(this.envs && this.envs.length >0) this.env = this.envs[0];
+                }.bind(this));
+            },
+            handleQueryDb() {
+                this.$http.post("/admin/cifm/database/findAllPage", this.pageRequest, {
+                    /*body: {"type": "CIFM_DATABASE.ENV"},*/
+                    params: this.pageRequest,
+                    headers: {"Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"}
+                }).then(function (res) {
+                    let data = res.data;
+                    this.databases = data.content;
+                }.bind(this));
+            },
+            modifyRow(ind, dbs){
+            },
+            deleteRow(ind, dbs) {
+            }
+        }, created() {
+            this.handleQueryParam();
+            this.handleQueryDb();
         }
     }
 </script>
