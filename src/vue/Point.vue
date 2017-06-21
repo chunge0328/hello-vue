@@ -148,7 +148,12 @@
             },
             getMyPointDetail(){/*获取我的积分明细*/
                 this.$http.jsonp("/app/point/getMyPointDetail", {
-                    params: {}
+                    params: {
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
                 }).then(function (res) {
                     this.pointDetail = res.data.items;
                 }.bind(this));

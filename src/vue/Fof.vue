@@ -174,6 +174,7 @@
             return {
                 cid: '',
                 Util: Util,
+                riskLevel:'',
                 labelPosition: 'left',
                 name: '',
                 risk: '',
@@ -204,12 +205,26 @@
                         router.push('/one/' + this.$route.params.mobile);
                     } else {
                         this.cid = res.data.data.cid;
-                        /*获取推荐与自建投资组合*/
-                        this.$http.jsonp("/app/fofApp/getAllList", {
+                        /*获取客户风险等级*/
+                        this.$http.jsonp("/app/question/queUser/getRiskInfo", {
                             params: {}
                         }).then(function (res) {
-                            this.list = res.data.items;
+                            let data = res.data.data;
+                            this.riskLevel = data.riskLevel;
+                            /*获取推荐与自建投资组合*/
+                            this.$http.jsonp("/app/fofApp/getAllList", {
+                                params: {
+                                    risk:this.riskLevel,
+                                    sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                                        "property": "ctime",
+                                        "direction": "DESC"
+                                    }])
+                                }
+                            }).then(function (res) {
+                                this.list = res.data.items;
+                            }.bind(this));
                         }.bind(this));
+
                         /*获取用户体验金*/
                         this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
                             params: {}
@@ -225,7 +240,11 @@
                         /*获取我的资金流水*/
                         this.$http.jsonp("/app/fofApp/getCapitalFlow", {
                             params: {
-                                customerId: this.cid
+                                customerId: this.cid,
+                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                                    "property": "ctime",
+                                    "direction": "DESC"
+                                }])
                             }
                         }).then(function (res) {
                             this.capitallist = res.data.items;
@@ -233,7 +252,11 @@
                         /*获取交易记录列表*/
                         this.$http.jsonp("/app/fofApp/getTradelist", {
                             params: {
-                                customerId: this.cid
+                                customerId: this.cid,
+                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                                    "property": "ctime",
+                                    "direction": "DESC"
+                                }])
                             }
                         }).then(function (res) {
                             this.tradelist = res.data.items;

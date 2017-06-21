@@ -139,7 +139,12 @@
                     } else {
                         /*查询话题列表*/
                         this.$http.jsonp("/app/theme/list", {
-                            params: {}
+                            params: {
+                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                                    "property": "ctime",
+                                    "direction": "DESC"
+                                }])
+                            }
                         }).then(function (res) {
                             this.topiclist = res.data.items;
                         }.bind(this));

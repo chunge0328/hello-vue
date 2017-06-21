@@ -20,7 +20,8 @@ const routes = [
     {path: '/topic/:mobile', component: Topic},
     {path: '/topicDetail', component: TopicDetail},
     {path: '/topicDetail/:mobile/:id/:author/:content', component: TopicDetail},
-    {path: '/question', component: Question}
+    {path: '/question', component: Question},
+    {path: '/question/:mobile', component: Question}
 ], router = new VueRouter({
     routes
 });
