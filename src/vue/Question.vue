@@ -17,6 +17,17 @@
 </style>
 <template>
     <div>
+
+        <el-row>
+            <el-col :span="12">&nbsp;</el-col>
+            <el-col :span="6">
+                <header id="header" class="mui-bar mui-bar-nav">
+                    <a class="mui-action-back mui-pull-left"></a>
+                    <h1 class="mui-title">问卷调查</h1>
+                </header>
+            </el-col>
+        </el-row>
+
         <el-row v-for="(que, ind) in questions" :key="ind" v-show="activeIndex == ind && (!completeAnswer || modifyAnswer)">
             <h3>{{ind+1}}、{{que.name}}</h3>
             <el-radio-group v-if="answers[ind]" v-model="answers[ind].answerId" class="question-list"
@@ -51,6 +62,7 @@
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";
+    import router from '../js/config/RedRouterConfig';
     import {
         Message, Radio, RadioGroup, Button, Row, Col
     }
@@ -66,7 +78,7 @@
 
         data(){
             return {
-                topicId: "425f39cc-414a-402f-984e-2088744f8e8c",/*process.env.TOPIC_ID,*/
+                topicId: process.env.TOPIC_ID,
                 seqs: ["A", "B", "C", "D", "E", "F"],
                 questions: [],
                 answers: [],
@@ -75,7 +87,28 @@
                 modifyAnswer: true
             }
         },
+        created() {
+            this.init();
+        },
         methods: {
+            init(){/*判断是否登录*/
+                this.$http.jsonp("/web/act/login/checkLogin", {
+                    params: {
+                        mobile: this.$route.params.mobile
+                    }
+                }).then(function (res) {
+                    if (!res.data.success) {
+                        Message({
+                            showClose: true,
+                            message: "请先登录",
+                            type: "warning"
+                        });
+                        router.push('/one/' + this.$route.params.mobile);
+                    } else {
+                        this.handleListQuestion();
+                    }
+                }.bind(this));
+            },
             handleListQuestion() {
                 this.$http.jsonp("/web/question/question/list", {
                     params: {
@@ -92,14 +125,16 @@
                 }.bind(this));
             },
             handleInitAnswer(questions){
-                let ans = this.answers;
-                ans = [];
-                for (let i = 0; i < questions.length; i++) {
-                    let que = questions[i];
-                    this.answers.push({
-                        questionId: que.id,
-                        answerId: ""
-                    });
+                if(questions!=null){
+                    let ans = this.answers;
+                    ans = [];
+                    for (let i = 0; i < questions.length; i++) {
+                        let que = questions[i];
+                        this.answers.push({
+                            questionId: que.id,
+                            answerId: ""
+                        });
+                    }
                 }
             },
             handleNext(label){
@@ -127,6 +162,18 @@
                     let items = data.items;
                     this.handleInitAnswer(items);
                     this.questions = items;
+                    if(data.success){
+                        this.$http.jsonp("/app/question/queUser/getRiskInfo", {
+                            params: {}
+                        }).then(function (res) {
+                            let data = res.data.data;
+                            Message({
+                                showClose: true,
+                                message: "您的风险等级为"+data.riskName,
+                                type: "success"
+                            });
+                        }.bind(this));
+                    }
                 }.bind(this));
             },
             getResultType(result, index){
@@ -143,8 +190,6 @@
                 this.activeIndex = index;
                 this.modifyAnswer = true;
             }
-        }, created() {
-            this.handleListQuestion();
         }
     }
 </script>

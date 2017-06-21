@@ -30,6 +30,7 @@
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>功能：</b></el-col>
             <el-col :span="16">
+                <el-button type="primary" @click="question()">问卷调查</el-button>
                 <el-button type="primary" @click="point()">积分</el-button>
                 <el-button type="primary" @click="fof()">智能体验馆</el-button>
                 <el-button type="primary" @click="topic()">朋友圈话题</el-button>
@@ -109,6 +110,9 @@
                         this.nickname = res.data.data.nickname;
                     }
                 }.bind(this))
+            },
+            question(){/*跳转问卷*/
+                router.push('/question/'+ this.$route.params.mobile);
             },
             fof(){/*跳转智能体验馆*/
                 router.push('/fof/' + this.$route.params.mobile + '/' + this.$route.params.mobileCode);

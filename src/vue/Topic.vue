@@ -73,8 +73,7 @@
         </el-row>
         <div style="margin: 20px;"></div>
         <el-row>
-            <el-table :data="topiclist" style="width: 100%" :row-class-name="tableRowClassName"
-                      :default-sort="{prop: 'cdate', order: 'descending'}">
+            <el-table :data="topiclist" style="width: 100%" :row-class-name="tableRowClassName" height="300">
                 <el-table-column prop="author" label="作者" sortable></el-table-column>
                 <el-table-column prop="content" label="内容"></el-table-column>
                 <el-table-column prop="cdate" label="发表日期" sortable>
@@ -140,7 +139,12 @@
                     } else {
                         /*查询话题列表*/
                         this.$http.jsonp("/app/theme/list", {
-                            params: {}
+                            params: {
+                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                                    "property": "ctime",
+                                    "direction": "DESC"
+                                }])
+                            }
                         }).then(function (res) {
                             this.topiclist = res.data.items;
                         }.bind(this));
