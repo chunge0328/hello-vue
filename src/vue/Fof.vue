@@ -172,21 +172,21 @@
     export default {
         data(){
             return {
-                cid: '',
+                cid: null,
                 Util: Util,
-                riskLevel:'',
+                riskLevel:"",
                 labelPosition: 'left',
-                name: '',
-                risk: '',
+                name: "",
+                risk: "",
                 bdate: null,
                 edate: null,
-                balance: '',
+                balance: "",
                 list: null,
                 items: null,
                 fundlist: null,//基金列表
-                capitallist: '',//资金流水列表
-                tradelist: '',//交易记录列表
-                amount: '',
+                capitallist: null,//资金流水列表
+                tradelist: null,//交易记录列表
+                amount: null,
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() < Date.now() - 8.64e7;
@@ -210,7 +210,9 @@
                             params: {}
                         }).then(function (res) {
                             let data = res.data.data;
-                            this.riskLevel = data.riskLevel;
+                            if(data){
+                                this.riskLevel = data.riskLevel;
+                            }
                             /*获取推荐与自建投资组合*/
                             this.$http.jsonp("/app/fofApp/getAllList", {
                                 params: {
