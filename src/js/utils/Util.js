@@ -99,7 +99,8 @@ export default (function (undefined) {
                 "[object String]": "string",
                 "[object Array]": "array",
                 "[object Object]": "object",
-                "[object HTMLInputElement]": "element"
+                "[object HTMLInputElement]": "element",
+                "[object Function]": "function"
             }[Object.prototype.toString.call(arg)];
         }
     });

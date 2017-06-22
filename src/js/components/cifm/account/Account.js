@@ -9,8 +9,8 @@ export default {
                 console.info(el)
             }
         })*/
-        Vue.component("database", require("../../../../vue/cifm/database/Index.vue"));
-        Vue.component("dbModify", require("../../../../vue/cifm/database/Modify.vue"));
+        Vue.component("account", require("../../../../vue/cifm/account/Index.vue"));
+        Vue.component("acModify", require("../../../../vue/cifm/account/Modify.vue"));
         // 3. 注入组件
         Vue.mixin({
             data(){

@@ -61,6 +61,7 @@
                 <el-col :span="9">
                     <el-autocomplete
                             v-model="database.ip"
+                            ref="ip"
                             param-key="ip"
                             class="inline-input"
                             :fetch-suggestions="handleSuggest"
@@ -75,6 +76,7 @@
                 <el-col :span="9">
                     <el-autocomplete
                             v-model="database.port"
+                            ref="port"
                             param-key="port"
                             class="inline-input"
                             :fetch-suggestions="handleSuggest"
@@ -91,6 +93,7 @@
                 <el-col :span="9">
                     <el-autocomplete
                             v-model="database.sid"
+                            ref="sid"
                             param-key="sid"
                             class="inline-input"
                             :fetch-suggestions="handleSuggest"
@@ -105,6 +108,7 @@
                 <el-col :span="9">
                     <el-autocomplete
                             v-model="database.remark"
+                            ref="remark"
                             param-key="remark"
                             class="inline-input"
                             :fetch-suggestions="handleSuggest"
@@ -154,15 +158,17 @@
                 }
             }
         },
-        props: ["database", "dicts"],
+        props: ["database", "dicts", "callback"],
         methods: {
             handleSuggest(queryString, cb) {/*input提示框查询数据公共方法*/
-                let key = "CIFM_DATABASE." + $(event.target).closest("[param-key]").attr("param-key").toUpperCase(), params = this.dicts[key], results = [];
+                let ref = $(event.target).closest("[param-key]").attr("param-key"), key = "CIFM_DATABASE." + ref.toUpperCase(), params = this.dicts[key], results = [];
                 this.getValueList(results, "value", params);
                 results = results.filter(function (res, ind, arr) {
                     let val = res.value;
                     return !queryString || (val && val.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
                 }.bind(this));
+//                console.info(this.$refs[ref])
+                this.$refs[ref].highlightedIndex = 0;
                 cb(results);
             },
             /*distObj作用是根据value去重*/
@@ -197,15 +203,22 @@
                         message: data.msg,
                         type: data.success ? "success" : "warning"
                     });
-                    if (data.success) {
+                    if(data.success){
+                        if(($.type(this.callback) == "function")) {
+                            this.callback(data, res);
+                        }
                     }
                 }.bind(this));
             }
         }, created() {
 //            console.info(JSON.stringify(this.database))
 //            console.info(JSON.stringify(this.dicts))
-            this.env = this.dicts['CIFM_DATABASE.ENV'][0];
-            this.dbType = this.dicts['CIFM_DATABASE.TYPE'][0];
+            try{
+                this.env = this.dicts['CIFM_DATABASE.ENV'][0];
+                this.dbType = this.dicts['CIFM_DATABASE.TYPE'][0];
+            }catch(e) {
+                console.error("should contains this.dicts['CIFM_DATABASE.ENV'][0] and this.dicts['CIFM_DATABASE.TYPE'][0]");
+            }
         }
     }
 </script>

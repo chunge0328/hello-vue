@@ -9,8 +9,8 @@ export default {
                 console.info(el)
             }
         })*/
-        Vue.component("database", require("../../../../vue/cifm/database/Index.vue"));
-        Vue.component("dbModify", require("../../../../vue/cifm/database/Modify.vue"));
+        Vue.component("pchVmware", require("../../../../vue/cifm/vmware/Index.vue"));
+        Vue.component("vmModify", require("../../../../vue/cifm/vmware/Modify.vue"));
         // 3. 注入组件
         Vue.mixin({
             data(){
