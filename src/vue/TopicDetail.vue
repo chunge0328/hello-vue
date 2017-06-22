@@ -164,7 +164,9 @@
                         message: data.success ? "点赞成功" : data.message,
                         type: data.success ? 'success' : 'warning'
                     });
-                    this.init();
+                    if(data.success){
+                        this.init();
+                    }
                 }.bind(this));
             },
             qxlaud(result){
@@ -179,7 +181,9 @@
                         message: data.success ? "取消点赞成功" : data.message,
                         type: data.success ? 'success' : 'warning'
                     });
-                    this.init();
+                    if(data.success){
+                        this.init();
+                    }
                 }.bind(this));
             },
             submit(){
