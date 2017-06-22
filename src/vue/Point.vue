@@ -33,9 +33,6 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="6"><b>我的积分明细：</b></el-col>
-            <el-col :span="16">
-                <el-button type="primary" @click="getMyPointDetail()">查询</el-button>
-            </el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -129,6 +126,7 @@
                         }).then(function (res) {
                             this.giftList = res.data.items;
                         }.bind(this));
+                        this.getMyPointDetail();
                     }
                 }.bind(this))
 
