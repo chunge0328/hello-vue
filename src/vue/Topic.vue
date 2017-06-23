@@ -1,12 +1,4 @@
 <style>
-    .el-table .info-row {
-        background: #c9e5f5;
-    }
-
-    .el-table .positive-row {
-        background: #e2f0e4;
-    }
-
     .fontTitleStyle {
         font-size: 30px;
     }
@@ -73,7 +65,7 @@
         </el-row>
         <div style="margin: 20px;"></div>
         <el-row>
-            <el-table :data="topiclist" style="width: 100%" :row-class-name="tableRowClassName" height="300">
+            <el-table :data="topiclist" style="width: 100%">
                 <el-table-column prop="author" label="作者" sortable></el-table-column>
                 <el-table-column prop="content" label="内容"></el-table-column>
                 <el-table-column prop="cdate" label="发表日期" sortable>
@@ -202,14 +194,6 @@
             },
             upload(file, fileList) {
                 console.log(fileList.slice(-3));
-            },
-            tableRowClassName(row, index) {
-                if (index % 2 == 0) {
-                    return 'info-row';
-                } else if (index % 2 == 1) {
-                    return 'positive-row';
-                }
-                return '';
             },
             topicDis(index, row){
                 let item = row;
