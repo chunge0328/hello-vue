@@ -1,12 +1,4 @@
 <style>
-    .el-table .info-row {
-        background: #c9e5f5;
-    }
-
-    .el-table .positive-row {
-        background: #e2f0e4;
-    }
-
     .demo-table-expand {
         font-size: 0;
     }
@@ -51,6 +43,31 @@
                 <el-input type="text" v-model="name"></el-input>
             </el-col>
         </el-row>
+
+        <el-row :gutter="20" class="top10" v-for="(fund, ind) in funds" :key="ind">
+            <el-col :span="4" v-if="ind == '0'"><b>组合基金：</b></el-col>
+            <el-col :span="4" v-if="ind != '0'">&nbsp;</el-col>
+            <el-col :span="6">
+                <el-select v-model="fund.fundCode" placeholder="请选择">
+                    <el-option
+                            v-for="item in fundlist"
+                            :key="item.fundCode"
+                            :label="item.fundName"
+                            :value="item.fundCode">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="6">
+                    <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
+            </el-col>
+            <el-col :span="4" v-if="ind == '0'">
+                <el-button type="primary" @click="addFundForm()"><i class="el-icon-plus"></i></el-button>
+            </el-col>
+            <el-col :span="6" v-if="ind != '0'">
+                <el-button type="primary" @click="delFundForm(fund, ind)"><i class="el-icon-minus"></i></el-button>
+            </el-col>
+        </el-row>
+
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>日期：</b></el-col>
             <el-col :span="6">
@@ -81,13 +98,13 @@
             <el-col :span="6"><b>组合列表查询</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="list" style="width: 100%" :row-class-name="tableRowClassName" height="350">
+            <el-table :data="list" style="width: 100%">
                 <el-table-column type="expand">
                     <template scope="props">
                         <el-form label-position="left" inline class="demo-table-expand">
                             <el-form-item label="组合名称">{{ props.row.name }}</el-form-item>
                             <el-form-item label="组合类型"><span>{{ props.row.typeName }}</span></el-form-item>
-                            <el-form-item label="风险等级"><span>{{ props.row.riskName }}</span></el-form-item>
+                            <el-form-item label="风险等级" v-if="props.row.riskName"><span>{{ props.row.riskName }}</span></el-form-item>
                             <el-form-item label="开始日期"><span>{{ props.row.bdate }}</span></el-form-item>
                             <el-form-item label="截止日期"><span>{{ props.row.edate }}</span></el-form-item>
                             <el-form-item label="购买金额">
@@ -102,37 +119,94 @@
 
                 <el-table-column prop="name" label="组合名称"></el-table-column>
                 <el-table-column prop="typeName" label="组合类型" sortable></el-table-column>
-                <el-table-column prop="riskName" label="风险等级"></el-table-column>
+                <el-table-column label="风险等级">
+                    <template scope="scope">
+                        {{scope.row.riskName == null?'-':scope.row.riskName}}
+                    </template>
+                </el-table-column>
                 <el-table-column prop="bdate" label="开始日期" sortable></el-table-column>
                 <el-table-column prop="edate" label="截止日期" sortable></el-table-column>
+                <el-table-column label="操作">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="queryFund(scope.row)" type="text" size="small">
+                            查看基金
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-row>
+
+        <el-dialog title="基金明细" :visible.sync="dialogTableVisible">
+            <el-table :data="myfundlist">
+                <el-table-column property="fundCode" label="基金代码"></el-table-column>
+                <el-table-column property="fundName" label="基金名称"></el-table-column>
+                <el-table-column property="weight" label="仓位"></el-table-column>
+            </el-table>
+        </el-dialog>
 
         <el-row :gutter="20" class="top10">
             <el-col :span="6"><b>资金流水</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="capitallist" style="width: 100%" :row-class-name="tableRowClassName" height="300">
+            <el-table :data="capitallist" style="width: 100%">
                 <el-table-column prop="typeName" label="类型"></el-table-column>
                 <el-table-column prop="stypeName" label="业务类型"></el-table-column>
                 <el-table-column prop="amount" label="金额"></el-table-column>
                 <el-table-column prop="balance" label="余额"></el-table-column>
                 <el-table-column prop="cdate" label="交易日期"></el-table-column>
                 <el-table-column prop="ctime" label="交易时间"></el-table-column>
+                <el-table-column label="操作">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="queryMoneyDetail(scope.row)" type="text" size="small">
+                            明细
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-row>
+
+        <el-dialog title="资金流水明细" :visible.sync="dialogMoneyDetailVisible">
+            <el-table :data="moneyDetaillist">
+                <el-table-column property="name" label="组合"></el-table-column>
+                <el-table-column property="fundName" label="基金名称"></el-table-column>
+                <el-table-column property="amount" label="金额"></el-table-column>
+                <el-table-column label="份额">
+                    <template scope="scope">
+                        {{scope.row.balance == null?'-':scope.row.balance}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="净值">
+                    <template scope="scope">
+                        {{scope.row.nav == null?'-':scope.row.nav}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="状态">
+                    <template scope="scope">
+                        {{scope.row.state == '1'?'申请':'确认'}}
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
 
         <el-row :gutter="20" class="top10">
             <el-col :span="6"><b>交易记录</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="tradelist" style="width: 100%" :row-class-name="tableRowClassName" height="300">
+            <el-table :data="tradelist" style="width: 100%" height="300">
                 <el-table-column prop="name" label="组合"></el-table-column>
-                <el-table-column prop="fundCode" label="基金代码"></el-table-column>
+                <el-table-column prop="fundName" label="基金名称"></el-table-column>
                 <el-table-column prop="typeName" label="业务类型"></el-table-column>
                 <el-table-column prop="amount" label="金额"></el-table-column>
-                <el-table-column prop="balance" label="份额"></el-table-column>
-                <el-table-column prop="nav" label="净值"></el-table-column>
+                <el-table-column label="份额">
+                    <template scope="scope">
+                        {{scope.row.balance == null?'-':scope.row.balance}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="净值">
+                    <template scope="scope">
+                        {{scope.row.nav == null?'-':scope.row.nav}}
+                    </template>
+                </el-table-column>
                 <el-table-column prop="cdate" label="交易日期"></el-table-column>
             </el-table>
         </el-row>
@@ -157,7 +231,8 @@
             Option,
             DatePicker,
             Table,
-            TableColumn
+            TableColumn,
+            Dialog
     } from "element-ui";
     Vue.use(Input);
     Vue.use(Button);
@@ -168,13 +243,19 @@
     Vue.use(DatePicker);
     Vue.use(Table);
     Vue.use(TableColumn);
+    Vue.use(Dialog);
 
+    function getBaseData() {
+        return {fundCode:"", weight: ""};
+    }
     export default {
         data(){
             return {
+                dialogTableVisible: false,
+                dialogMoneyDetailVisible:false,
                 cid: null,
                 Util: Util,
-                riskLevel:"",
+                riskLevel: "",
                 labelPosition: 'left',
                 name: "",
                 risk: "",
@@ -183,10 +264,13 @@
                 balance: "",
                 list: null,
                 items: null,
+                moneyDetaillist:null,//根据资金流水ID查回交易明细
+                myfundlist:null,//根据组合ID查回的基金列表
                 fundlist: null,//基金列表
                 capitallist: null,//资金流水列表
                 tradelist: null,//交易记录列表
                 amount: null,
+                funds: [getBaseData()],
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() < Date.now() - 8.64e7;
@@ -210,13 +294,13 @@
                             params: {}
                         }).then(function (res) {
                             let data = res.data.data;
-                            if(data){
+                            if (data) {
                                 this.riskLevel = data.riskLevel;
                             }
                             /*获取推荐与自建投资组合*/
                             this.$http.jsonp("/app/fofApp/getAllList", {
                                 params: {
-                                    risk:this.riskLevel,
+                                    risk: this.riskLevel,
                                     sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
                                         "property": "ctime",
                                         "direction": "DESC"
@@ -265,20 +349,16 @@
                         }.bind(this));
                     }
                 }.bind(this))
-
             },
-            getBalance(){/*领取体验金*/
-                this.$http.jsonp("/app/fofApp/save", {
-                    params: {}
-                }).then(function (res) {
-                    let data = res.data;
-                    Message({
-                        showClose: true,
-                        message: data.success ? "领取成功" : data.message,
-                        type: data.success ? "success" : 'error'
-                    });
-                    this.balance = data.data.balance;
-                }.bind(this));
+            addFundForm() {/*增加组合基金*/
+                if (this.funds.length >= 5) {
+                    Message({showClose: true, message: "组合最多添加5个基金", type: "warning"});
+                    return;
+                }
+                this.funds.push(getBaseData());
+            },/*删除组合基金*/
+            delFundForm(obj, ind) {
+                this.funds.pop(ind);
             },
             inputCheck(){/*输入校验*/
                 let name = this.name;
@@ -303,6 +383,7 @@
                         params: {
                             name: this.name,
                             risk: this.risk,
+                            funds: JSON.stringify(this.funds),
                             bdate: this.bdate.format('yyyyMMdd'),
                             edate: this.edate.format('yyyyMMdd')
                         }
@@ -317,13 +398,32 @@
                     }.bind(this));
                 }
             },
-            tableRowClassName(row, index) {
-                if (index % 2 == 0) {
-                    return 'info-row';
-                } else if (index % 2 == 1) {
-                    return 'positive-row';
-                }
-                return '';
+            getBalance(){/*领取体验金*/
+                this.$http.jsonp("/app/fofApp/save", {
+                    params: {}
+                }).then(function (res) {
+                    let data = res.data;
+                    Message({
+                        showClose: true,
+                        message: data.success ? "领取成功" : data.message,
+                        type: data.success ? "success" : 'error'
+                    });
+                    this.balance = data.data.balance;
+                }.bind(this));
+            },
+            queryFund(row){/*根据组合ID查询组合的基金列表*/
+                this.dialogTableVisible = true;
+                this.$http.jsonp("/app/fofApp/getFofFundList", {
+                    params: {
+                        fofId: row.id,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.myfundlist = res.data.items;
+                }.bind(this));
             },
             buy(row){/*购买基金组合*/
                 if (!Util.isEmpty(this.amount)) {
@@ -334,7 +434,6 @@
                     });
                     return;
                 } else {
-                    console.log(row.id);
                     this.$http.jsonp("/app/fofApp/fofTrs", {
                         params: {
                             fofId: row.id,
@@ -349,11 +448,25 @@
                             type: data.success ? 'success' : 'error'
                         });
                         this.amount = '';
-                        if(data.success){
+                        if (data.success) {
                             this.init();
                         }
                     }.bind(this));
                 }
+            },
+            queryMoneyDetail(row){/*资金流水明细*/
+                this.dialogMoneyDetailVisible = true;
+                this.$http.jsonp("/app/fofApp/getTradelist", {
+                    params: {
+                        moneyId: row.id,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.moneyDetaillist = res.data.items;
+                }.bind(this));
             }
         }
     }

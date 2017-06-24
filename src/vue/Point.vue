@@ -1,11 +1,4 @@
 <style>
-    .el-table .info-row {
-        background: #c9e5f5;
-    }
-
-    .el-table .positive-row {
-        background: #e2f0e4;
-    }
 </style>
 <template>
     <div class="bg-white">
@@ -36,7 +29,7 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-table :data="pointDetail" style="width: 100%" :row-class-name="tableRowClassName" height="300">
+            <el-table :data="pointDetail" style="width: 100%">
                 <el-table-column prop="fromName" label="来源" sortable></el-table-column>
                 <el-table-column prop="giftName" label="消费" sortable></el-table-column>
                 <el-table-column prop="point" label="积分"></el-table-column>
@@ -55,7 +48,7 @@
             <el-col :span="6"><b>积分礼品</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="giftList" style="width: 100%" :row-class-name="tableRowClassName">
+            <el-table :data="giftList" style="width: 100%">
                 <el-table-column prop="name" label="礼品名称"></el-table-column>
                 <el-table-column prop="con" label="条件"></el-table-column>
                 <el-table-column prop="remark" label="说明"></el-table-column>
@@ -169,14 +162,6 @@
                     });
                     this.init();
                 }.bind(this));
-            },
-            tableRowClassName(row, index) {
-                if (index % 2 == 0) {
-                    return 'info-row';
-                } else if (index % 2 == 1) {
-                    return 'positive-row';
-                }
-                return '';
             }
         }
     }
