@@ -147,7 +147,7 @@
                 }.bind(this));
             },
             handleQueryParam() {
-                this.$http.post("/admin/sys/dictionay/getBatch", ["CIFM_ACCOUNT.USERNAME", "CIFM_ACCOUNT.PASSWORD", "CIFM_ACCOUNT.TYPE"]).then(function (res) {
+                this.$http.post("/admin/sys/dictionay/getBatch", ["CIFM_ACCOUNT.USERNAME", "CIFM_ACCOUNT.PASSWORD"]).then(function (res) {
                     let data = res.data;
                     this.dicts = data.content[0];
                 }.bind(this));

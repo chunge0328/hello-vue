@@ -8,14 +8,14 @@ let path = require('path'),
 
 const NODE_ENV = process.env.NODE_ENV,
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = NODE_ENV === 'production' ? 'dist' : '',
+    CONTEXT_ROOT = NODE_ENV === 'production' ? 'cifm' : '',
     CONFIG = {
         'NODE_ENV': NODE_ENV,
         'ROOT_PATH': ROOT_PATH,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html'
+        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(CONTEXT_ROOT, 'index.html') : 'index.html'
     };
 
 /*debugger*/

@@ -3,7 +3,7 @@
 <template>
     <div class="bg-white">
 
-        <el-dialog title="" :visible.sync="dialogTableVisible">
+        <el-dialog title="" :visible.sync="createWinVisible">
             <db-modify :database="database" :dicts="dicts" :callback="handleCallback"></db-modify>
         </el-dialog>
 
@@ -45,6 +45,24 @@
                             prop="remark"
                             label="说明"
                             width="200">
+                    </el-table-column>
+                    <el-table-column
+                            label="账户详情"
+                            width="200">
+                        <template scope="scope">
+                            <el-popover
+                                    width="600"
+                                    trigger="click">
+                                <manager v-if="associateList[scope.$index]" :target="target"></manager>
+                                <el-button
+                                        @click="handleShowAccount(databases[scope.$index], scope.$index, databases)"
+                                        type="text"
+                                        size="small"
+                                        slot="reference">
+                                    查看
+                                </el-button>
+                            </el-popover>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             fixed="right"
@@ -98,7 +116,8 @@
         Popover,
         Dialog,
         Loading,
-        MessageBox
+        MessageBox,
+        Badge
     }
         from "element-ui";
     Vue.use(Row);
@@ -111,6 +130,7 @@
     Vue.use(Autocomplete);
     Vue.use(Popover);
     Vue.use(Dialog);
+    Vue.use(Badge);
 
     let loadingInstance = Loading.service({
         fullscreen: true,
@@ -118,26 +138,41 @@
     });
 
     import DbModify from "../../../js/components/cifm/database/Database";
+    import Manager from "../../../js/components/cifm/cifm/Manager";
     Vue.use(DbModify);
+    Vue.use(Manager);
 
+    let getBaseData = function () {
+        return {
+            ip: "",
+            port: "",
+            sid: "",
+            remark: "",
+        };
+    }
     export default {
 
         data(){
             return {
+                createWinVisible: false,
+
                 modifyList: [],
-                dialogTableVisible: false,
+                associateList: [],
+
                 databases: [],
-                database: {
-                    ip: "10.169.4.33",
-                    port: "5001",
-                    sid: "dspdb",
-                    remark: "机构版网上交易",
-                },
+                database: getBaseData(),
                 dicts: {},
+
                 pageRequest: {
                     page: 0,
                     size: 20,
                     sort: "cDate,cTime"
+                },
+
+                target: {
+                    data: getBaseData(),
+                    findUrl: "/admin/cifm/cifm/findByDb",
+                    assoUrl: "/admin/cifm/cifm/associateAcDb",
                 }
             }
         },
@@ -162,7 +197,7 @@
                     });
                     if (data.success) {
                         this.handleQueryDb();
-                        this.dialogTableVisible = false;
+                        this.createWinVisible = false;
                     }
                 }.bind(this));
             },
@@ -181,10 +216,14 @@
                 }).then(function (res) {
                     let data = res.data;
                     this.databases = data.content;
-                    this.databases.forEach(function (dat, ind) {
-                        dat.modifyFlag = false;
-                    })
                 }.bind(this));
+            },
+            handleShowAccount(db, ind, dbs){
+                this.database = db;
+                this.associateList = this.databases.map(function (obj, i) {
+                    return this.associateList[i] || ind == i;
+                }.bind(this));
+                this.target.data = db;
             },
             modifyRow(db, ind, dbs){
                 this.database = db;
@@ -204,7 +243,7 @@
                             message: data.msg,
                             type: data.success ? "success" : "warning"
                         });
-                        if(data.success) {
+                        if (data.success) {
                             this.handleQueryDb();
                         }
                     })
@@ -213,17 +252,13 @@
                 });
             },
             handleCreateDatabase(){
-                this.dialogTableVisible = true;
-                this.database = {
-                    ip: "",
-                    port: "",
-                    sid: "",
-                    remark: "",
-                }
+                this.createWinVisible = true;
+                this.database = getBaseData();
+                this.databases.push(this.database);
             },
             handleCallback(){
                 this.handleQueryDb();
-                this.dialogTableVisible = false;
+                this.createWinVisible = false;
             }
         }, created() {
             this.handleQueryParam();

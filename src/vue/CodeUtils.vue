@@ -101,22 +101,6 @@
 
                 <hr>
                 <el-row><!--entity参数-->
-                    <el-row :gutter="20">
-                        <el-col :span="3">
-                            <label>实体类名</label>
-                        </el-col>
-                        <el-col :span="9">
-                            <el-autocomplete
-                                    param-key="entityName"
-                                    class="inline-input"
-                                    v-model="javaCodeParam.entityName"
-                                    :fetch-suggestions="querySearch"
-                                    placeholder="请输入实体类名"
-                                    @select="handleSelect"
-                            ></el-autocomplete>
-                        </el-col>
-                    </el-row>
-
                     <el-row class="param-section">
                         <el-button style="padding: 2px;" @click="javaCodeParam.entityFields.push({type:'',name:''})"><i class="el-icon-plus"></i></el-button>域
                         <el-row :gutter="20" v-for="(entityField, index) in javaCodeParam.entityFields"

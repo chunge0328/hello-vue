@@ -15,19 +15,19 @@
         <div class="line"></div>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
             <el-tab-pane label="数据库" name="first">
-                <database></database>
+                <database v-if="activeTabs[0]"></database>
             </el-tab-pane>
             <el-tab-pane label="账户" name="second">
-                <account></account>
+                <account v-if="activeTabs[1]"></account>
             </el-tab-pane>
             <el-tab-pane label="链接" name="third">
-                <pch-link></pch-link>
+                <pch-link v-if="activeTabs[2]"></pch-link>
             </el-tab-pane>
-            <el-tab-pane label="svm" name="fourth">
-                <pch-svn></pch-svn>
+            <el-tab-pane label="svn" name="fourth">
+                <pch-svn v-if="activeTabs[3]"></pch-svn>
             </el-tab-pane>
             <el-tab-pane label="虚拟机" name="five">
-                <pch-vmware></pch-vmware>
+                <pch-vmware v-if="activeTabs[4]"></pch-vmware>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -68,7 +68,8 @@
         data(){
             return {
                 activeIndex: '1',
-                activeName: 'first'
+                activeName: 'first',
+                activeTabs:[true]
             };
         },
         methods: {
@@ -76,6 +77,8 @@
                 location.href = "";
             },
             handleClick(tab, event) {
+                let index = tab.index;
+                if(!this.activeTabs[index]) this.activeTabs[index] = true;
             }
         }, created() {
         }
