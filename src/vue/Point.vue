@@ -30,8 +30,16 @@
 
         <el-row :gutter="20" class="top10">
             <el-table :data="pointDetail" style="width: 100%">
-                <el-table-column prop="fromName" label="来源" sortable></el-table-column>
-                <el-table-column prop="giftName" label="消费" sortable></el-table-column>
+                <el-table-column prop="fromName" label="来源" sortable>
+                    <template scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.fromName == null?'-' : scope.row.fromName}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="giftName" label="消费" sortable>
+                    <template scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.giftName == null?'-' : scope.row.giftName}}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="point" label="积分"></el-table-column>
                 <el-table-column prop="balance" label="余额"></el-table-column>
                 <el-table-column prop="cdate" label="交易日期" sortable>
