@@ -169,6 +169,19 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div style="margin-top: 20px;margin-right:100px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="limit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="capitallistlength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
         <el-dialog title="资金流水明细" :visible.sync="dialogMoneyDetailVisible">
@@ -198,7 +211,7 @@
             <el-col :span="6"><b>交易记录</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="tradelist" style="width: 100%" height="300">
+            <el-table :data="tradelist" style="width: 100%">
                 <el-table-column prop="name" label="组合"></el-table-column>
                 <el-table-column prop="fundName" label="基金名称"></el-table-column>
                 <el-table-column prop="typeName" label="业务类型"></el-table-column>
@@ -215,6 +228,19 @@
                 </el-table-column>
                 <el-table-column prop="cdate" label="交易日期"></el-table-column>
             </el-table>
+            <div style="margin-top: 20px;margin-right:100px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleTradeSizeChange"
+                            @current-change="handleTradeCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="tradeLimit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="tradelistlength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
     </div>
@@ -275,14 +301,20 @@
                 myfundlist: null,//根据组合ID查回的基金列表
                 fundlist: null,//基金列表
                 capitallist: null,//资金流水列表
+                capitallistlength: 0,
                 tradelist: null,//交易记录列表
+                tradelistlength:0,
                 amount: null,
                 funds: [getBaseData()],
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() < Date.now() - 8.64e7;
                     }
-                }
+                },
+                page: 1,
+                limit: 5,
+                tradePage:1,
+                tradeLimit:5
             };
         },
         created: function () {
@@ -331,32 +363,42 @@
                         }).then(function (res) {
                             this.fundlist = res.data.items;
                         }.bind(this));
-                        /*获取我的资金流水*/
-                        this.$http.jsonp("/app/fofApp/getCapitalFlow", {
-                            params: {
-                                customerId: this.cid,
-                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                    "property": "ctime",
-                                    "direction": "DESC"
-                                }])
-                            }
-                        }).then(function (res) {
-                            this.capitallist = res.data.items;
-                        }.bind(this));
-                        /*获取交易记录列表*/
-                        this.$http.jsonp("/app/fofApp/getTradelist", {
-                            params: {
-                                customerId: this.cid,
-                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                    "property": "ctime",
-                                    "direction": "DESC"
-                                }])
-                            }
-                        }).then(function (res) {
-                            this.tradelist = res.data.items;
-                        }.bind(this));
+                        this.getMoneyTrade();
+                        this.getTrades();
                     }
                 }.bind(this))
+            },
+            getMoneyTrade(){/*获取我的资金流水*/
+                this.$http.jsonp("/app/fofApp/getCapitalFlow", {
+                    params: {
+                        customerId: this.cid,
+                        page: this.page,
+                        limit: this.limit,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.capitallist = res.data.items;
+                    this.capitallistlength = res.data.total;
+                }.bind(this));
+            },
+            getTrades(){/*获取交易记录列表*/
+                this.$http.jsonp("/app/fofApp/getTradelist", {
+                    params: {
+                        customerId: this.cid,
+                        page: this.tradePage,
+                        limit: this.tradeLimit,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.tradelist = res.data.items;
+                    this.tradelistlength = res.data.total;
+                }.bind(this));
             },
             addFundForm() {/*增加组合基金*/
                 if (this.funds.length >= 5) {
@@ -478,6 +520,22 @@
             },
             skipQuestion(){/*跳转问卷*/
                 router.push('/question/' + this.$route.params.mobile);
+            },
+            handleSizeChange(val) {
+                this.limit = val;
+                this.getMoneyTrade();
+            },
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getMoneyTrade();
+            },
+            handleTradeSizeChange(val) {
+                this.tradeLimit = val;
+                this.getTrades();
+            },
+            handleTradeCurrentChange(val) {
+                this.tradePage = val;
+                this.getTrades();
             }
         }
     }

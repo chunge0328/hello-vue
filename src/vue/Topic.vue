@@ -83,6 +83,19 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div style="margin-top: 20px;margin-right:100px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="limit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="topiclistlength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
     </div>
 </template>
@@ -105,6 +118,9 @@
         data(){
             return {
                 topiclist: null,
+                topiclistlength: 0,
+                page: 1,
+                limit: 5,
                 content: '',
                 bid: '',
                 sid: '',
@@ -130,19 +146,25 @@
                         router.push('/one/' + this.$route.params.mobile);
                     } else {
                         /*查询话题列表*/
-                        this.$http.jsonp("/app/theme/list", {
-                            params: {
-                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                    "property": "ctime",
-                                    "direction": "DESC"
-                                }])
-                            }
-                        }).then(function (res) {
-                            this.topiclist = res.data.items;
-                        }.bind(this));
+                        this.getTopiclist();
                     }
                 }.bind(this));
 
+            },
+            getTopiclist(){/*查询话题列表*/
+                this.$http.jsonp("/app/theme/list", {
+                    params: {
+                        page: this.page,
+                        limit: this.limit,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.topiclist = res.data.items;
+                    this.topiclistlength = res.data.total;
+                }.bind(this));
             },
             inputCheck(){
                 let content = this.content;
@@ -198,6 +220,14 @@
             topicDis(index, row){
                 let item = row;
                 router.push('/topicDetail/' + this.$route.params.mobile + '/' + item.id + '/' + item.author + '/' + item.content);
+            },
+            handleSizeChange(val) {
+                this.limit = val;
+                this.getTopiclist();
+            },
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getTopiclist();
             }
         }
     }

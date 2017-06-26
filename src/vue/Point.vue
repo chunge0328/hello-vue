@@ -50,6 +50,19 @@
                 </el-table-column>
                 <el-table-column prop="ctime" label="交易时间" sortable></el-table-column>
             </el-table>
+            <div style="margin-top: 20px;margin-right:100px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="limit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="pointDetaillength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -101,6 +114,9 @@
                 labelPosition: 'left',
                 giftList: null,
                 pointDetail: null,
+                pointDetaillength: null,
+                page:1,
+                limit:5,
                 myPoint: '0'
             };
         },
@@ -148,6 +164,8 @@
             getMyPointDetail(){/*获取我的积分明细*/
                 this.$http.jsonp("/app/point/getMyPointDetail", {
                     params: {
+                        page:this.page,
+                        limit:this.limit,
                         sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
                             "property": "ctime",
                             "direction": "DESC"
@@ -155,6 +173,8 @@
                     }
                 }).then(function (res) {
                     this.pointDetail = res.data.items;
+                    this.pointDetaillength = res.data.total;
+
                 }.bind(this));
             },
             convert(index, row){
@@ -170,6 +190,14 @@
                     });
                     this.init();
                 }.bind(this));
+            },
+            handleSizeChange(val) {
+                this.limit = val;
+                this.getMyPointDetail();
+            },
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getMyPointDetail();
             }
         }
     }
