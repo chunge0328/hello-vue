@@ -39,7 +39,7 @@
             </el-col>
         </el-row>
 
-        
+
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>组合名称：</b></el-col>
             <el-col :span="12">
@@ -301,7 +301,7 @@
                 capitallist: null,//资金流水列表
                 capitallistlength: 0,
                 tradelist: null,//交易记录列表
-                tradelistlength:0,
+                tradelistlength: 0,
                 amount: null,
                 funds: [getBaseData()],
                 pickerOptions: {
@@ -311,8 +311,8 @@
                 },
                 page: 1,
                 limit: 5,
-                tradePage:1,
-                tradeLimit:5
+                tradePage: 1,
+                tradeLimit: 5
             };
         },
         created: function () {
@@ -421,6 +421,9 @@
                 } else if (!Util.isEmpty(edate)) {
                     Message({showClose: true, message: "请选择组合结束日期", type: 'warning'});
                     return false;
+                } else if (this.funds.length < 2) {
+                    Message({showClose: true, message: "组合至少添加2个基金", type: "warning"});
+                    return;
                 } else {
                     return true;
                 }
