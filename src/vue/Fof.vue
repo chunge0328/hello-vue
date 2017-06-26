@@ -28,9 +28,14 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b></el-col>
-            <el-col :span="12" v-show="balance==''">
-                <el-button type="primary" @click="getBalance()">领取体验金</el-button>
+            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
+                <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>风险等级：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{riskName}}&nbsp;</b>
+                <el-button type="primary" @click="skipQuestion()" v-show="riskName==''">问卷调查</el-button>
             </el-col>
         </el-row>
 
@@ -58,7 +63,7 @@
                 </el-select>
             </el-col>
             <el-col :span="6">
-                    <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
+                <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
             </el-col>
             <el-col :span="4" v-if="ind == '0'">
                 <el-button type="primary" @click="addFundForm()"><i class="el-icon-plus"></i></el-button>
@@ -104,7 +109,8 @@
                         <el-form label-position="left" inline class="demo-table-expand">
                             <el-form-item label="组合名称">{{ props.row.name }}</el-form-item>
                             <el-form-item label="组合类型"><span>{{ props.row.typeName }}</span></el-form-item>
-                            <el-form-item label="风险等级" v-if="props.row.riskName"><span>{{ props.row.riskName }}</span></el-form-item>
+                            <el-form-item label="风险等级" v-if="props.row.riskName"><span>{{ props.row.riskName }}</span>
+                            </el-form-item>
                             <el-form-item label="开始日期"><span>{{ props.row.bdate }}</span></el-form-item>
                             <el-form-item label="截止日期"><span>{{ props.row.edate }}</span></el-form-item>
                             <el-form-item label="购买金额">
@@ -246,16 +252,17 @@
     Vue.use(Dialog);
 
     function getBaseData() {
-        return {fundCode:"", weight: ""};
+        return {fundCode: "", weight: ""};
     }
     export default {
         data(){
             return {
                 dialogTableVisible: false,
-                dialogMoneyDetailVisible:false,
+                dialogMoneyDetailVisible: false,
                 cid: null,
                 Util: Util,
                 riskLevel: "",
+                riskName: "",
                 labelPosition: 'left',
                 name: "",
                 risk: "",
@@ -264,8 +271,8 @@
                 balance: "",
                 list: null,
                 items: null,
-                moneyDetaillist:null,//根据资金流水ID查回交易明细
-                myfundlist:null,//根据组合ID查回的基金列表
+                moneyDetaillist: null,//根据资金流水ID查回交易明细
+                myfundlist: null,//根据组合ID查回的基金列表
                 fundlist: null,//基金列表
                 capitallist: null,//资金流水列表
                 tradelist: null,//交易记录列表
@@ -296,6 +303,7 @@
                             let data = res.data.data;
                             if (data) {
                                 this.riskLevel = data.riskLevel;
+                                this.riskName = data.riskName;
                             }
                             /*获取推荐与自建投资组合*/
                             this.$http.jsonp("/app/fofApp/getAllList", {
@@ -356,7 +364,7 @@
                     return;
                 }
                 this.funds.push(getBaseData());
-            },/*删除组合基金*/
+            }, /*删除组合基金*/
             delFundForm(obj, ind) {
                 this.funds.pop(ind);
             },
@@ -467,6 +475,9 @@
                 }).then(function (res) {
                     this.moneyDetaillist = res.data.items;
                 }.bind(this));
+            },
+            skipQuestion(){/*跳转问卷*/
+                router.push('/question/' + this.$route.params.mobile);
             }
         }
     }
