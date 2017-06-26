@@ -71,7 +71,7 @@
         <el-row :gutter="20" class="top10">
             <el-table :data="giftList" style="width: 100%">
                 <el-table-column prop="name" label="礼品名称"></el-table-column>
-                <el-table-column prop="con" label="条件"></el-table-column>
+                <el-table-column prop="conname" label="条件"></el-table-column>
                 <el-table-column prop="remark" label="说明"></el-table-column>
                 <el-table-column prop="point" label="需要积分"></el-table-column>
                 <el-table-column label="操作">
