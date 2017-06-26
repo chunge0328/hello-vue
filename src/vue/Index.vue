@@ -157,8 +157,27 @@
                 </div>
             </el-col><!--页面中间内容...end-->
         </el-row><!--页面正文部分...end-->
+
+        <el-row style="text-align: center">
+            <el-row style="display: none;">
+                appid:wxdf454f5f6fb32d41
+                <br>
+                secret: 0fe6d04c6bc30d50109ea59f5421801d
+                <br>
+                openid:gh_433a2900f34d
+                <br>
+                secret:Mm890210
+                <br>
+                appid: wx32e7840d63f4dbe9
+                <br>
+                secret: a4befe4644e97e5981c6da3bc0af723d
+                <br>
+            </el-row>
+            <img src="../img/gongzhong.jpeg" alt="">
+        </el-row>
         <div class="footer">
-            <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a></div>
+            <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a>
+            </div>
         </div>
     </div>
 </template>
@@ -351,7 +370,7 @@
                 this.activeMarkdown = markdown;
                 this.tabIndex = markdown.name;
                 if (!this.activeMarkdown.content && this.activeMarkdown.requestPath) {
-                    this.$http.get(markdown.requestPath  + "?r=" + Math.random(), {}).then(function (res) {
+                    this.$http.get(markdown.requestPath + "?r=" + Math.random(), {}).then(function (res) {
                         markdown.content = res.data;
                         markdown.show = true;
                         this.markdowns.splice(this.markdowns.length);
@@ -430,6 +449,7 @@
 //            this.menuIndex = "3";
 //            this.defaultActiveMenu = "3";
             /*debugger...end*/
+            
         }
     }
 </script>
