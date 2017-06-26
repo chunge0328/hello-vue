@@ -15,7 +15,7 @@
                 <el-alert
                         title="虚拟机信息："
                         type="info"
-                        description="登录账号：uo712/uo712@CIFM\nip：10.163.130.50"
+                        description="登录账号：uo712/uo712@CIFM ip：10.163.130.50"
                         show-icon>
                 </el-alert>
             </el-col>
