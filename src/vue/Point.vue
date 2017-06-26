@@ -30,8 +30,16 @@
 
         <el-row :gutter="20" class="top10">
             <el-table :data="pointDetail" style="width: 100%">
-                <el-table-column prop="fromName" label="来源" sortable></el-table-column>
-                <el-table-column prop="giftName" label="消费" sortable></el-table-column>
+                <el-table-column prop="fromName" label="来源" sortable>
+                    <template scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.fromName == null?'-' : scope.row.fromName}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="giftName" label="消费" sortable>
+                    <template scope="scope">
+                        <span style="margin-left: 10px">{{ scope.row.giftName == null?'-' : scope.row.giftName}}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="point" label="积分"></el-table-column>
                 <el-table-column prop="balance" label="余额"></el-table-column>
                 <el-table-column prop="cdate" label="交易日期" sortable>
@@ -42,6 +50,19 @@
                 </el-table-column>
                 <el-table-column prop="ctime" label="交易时间" sortable></el-table-column>
             </el-table>
+            <div style="margin-top: 20px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="limit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="pointDetaillength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -50,7 +71,7 @@
         <el-row :gutter="20" class="top10">
             <el-table :data="giftList" style="width: 100%">
                 <el-table-column prop="name" label="礼品名称"></el-table-column>
-                <el-table-column prop="con" label="条件"></el-table-column>
+                <el-table-column prop="conname" label="条件"></el-table-column>
                 <el-table-column prop="remark" label="说明"></el-table-column>
                 <el-table-column prop="point" label="需要积分"></el-table-column>
                 <el-table-column label="操作">
@@ -93,6 +114,9 @@
                 labelPosition: 'left',
                 giftList: null,
                 pointDetail: null,
+                pointDetaillength: null,
+                page:1,
+                limit:5,
                 myPoint: '0'
             };
         },
@@ -140,6 +164,8 @@
             getMyPointDetail(){/*获取我的积分明细*/
                 this.$http.jsonp("/app/point/getMyPointDetail", {
                     params: {
+                        page:this.page,
+                        limit:this.limit,
                         sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
                             "property": "ctime",
                             "direction": "DESC"
@@ -147,6 +173,8 @@
                     }
                 }).then(function (res) {
                     this.pointDetail = res.data.items;
+                    this.pointDetaillength = res.data.total;
+
                 }.bind(this));
             },
             convert(index, row){
@@ -162,6 +190,14 @@
                     });
                     this.init();
                 }.bind(this));
+            },
+            handleSizeChange(val) {
+                this.limit = val;
+                this.getMyPointDetail();
+            },
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getMyPointDetail();
             }
         }
     }

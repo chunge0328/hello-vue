@@ -38,14 +38,12 @@
         </el-row>
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
             <el-row>
-                <el-col :span="6">
+                <el-col>
                     <b>{{result.disUserName}}</b>&nbsp;{{result.coverUserId!=result.disUserId?"回复":''}}<b>&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
                 </el-col>
-                <el-col :span="12"></el-col>
             </el-row>
             <el-row>
-                <el-col :span="2">&nbsp;</el-col>
-                <el-col :span="12" class="content">{{result.discontent}}&nbsp;&nbsp;
+                <el-col class="content">{{result.discontent}}&nbsp;&nbsp;
                     <a @click="reply(result)" class="aa">回复</a></el-col>
             </el-row>
         </el-row>

@@ -27,16 +27,19 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b></el-col>
-            <el-col :span="12" v-show="balance==''">
-                <el-button type="primary" @click="getBalance()">领取体验金</el-button>
+            <el-col :span="6"><b>客户体验金：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
+                <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-col :span="6"><b>客户风险等级：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{riskName}}&nbsp;</b>
+                <el-button type="primary" @click="skipQuestion()" v-show="riskName==''">问卷调查</el-button>
             </el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10">
-            <el-col :span="6" class="fontTitleStyle"><b>新建组合</b></el-col>
-        </el-row>
+
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>组合名称：</b></el-col>
             <el-col :span="12">
@@ -58,7 +61,7 @@
                 </el-select>
             </el-col>
             <el-col :span="6">
-                    <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
+                <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
             </el-col>
             <el-col :span="4" v-if="ind == '0'">
                 <el-button type="primary" @click="addFundForm()"><i class="el-icon-plus"></i></el-button>
@@ -104,7 +107,8 @@
                         <el-form label-position="left" inline class="demo-table-expand">
                             <el-form-item label="组合名称">{{ props.row.name }}</el-form-item>
                             <el-form-item label="组合类型"><span>{{ props.row.typeName }}</span></el-form-item>
-                            <el-form-item label="风险等级" v-if="props.row.riskName"><span>{{ props.row.riskName }}</span></el-form-item>
+                            <el-form-item label="风险等级" v-if="props.row.riskName"><span>{{ props.row.riskName }}</span>
+                            </el-form-item>
                             <el-form-item label="开始日期"><span>{{ props.row.bdate }}</span></el-form-item>
                             <el-form-item label="截止日期"><span>{{ props.row.edate }}</span></el-form-item>
                             <el-form-item label="购买金额">
@@ -128,7 +132,7 @@
                 <el-table-column prop="edate" label="截止日期" sortable></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="queryFund(scope.row)" type="text" size="small">
+                        <el-button @click.native.prevent="queryFund(scope.row)" type="danger" size="small">
                             查看基金
                         </el-button>
                     </template>
@@ -140,7 +144,7 @@
             <el-table :data="myfundlist">
                 <el-table-column property="fundCode" label="基金代码"></el-table-column>
                 <el-table-column property="fundName" label="基金名称"></el-table-column>
-                <el-table-column property="weight" label="仓位"></el-table-column>
+                <el-table-column property="weight" label="仓位(%)"></el-table-column>
             </el-table>
         </el-dialog>
 
@@ -157,12 +161,25 @@
                 <el-table-column prop="ctime" label="交易时间"></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="queryMoneyDetail(scope.row)" type="text" size="small">
+                        <el-button @click.native.prevent="queryMoneyDetail(scope.row)" type="danger" size="small">
                             明细
                         </el-button>
                     </template>
                 </el-table-column>
             </el-table>
+            <div style="margin-top: 20px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="limit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="capitallistlength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
         <el-dialog title="资金流水明细" :visible.sync="dialogMoneyDetailVisible">
@@ -192,7 +209,7 @@
             <el-col :span="6"><b>交易记录</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="tradelist" style="width: 100%" height="300">
+            <el-table :data="tradelist" style="width: 100%">
                 <el-table-column prop="name" label="组合"></el-table-column>
                 <el-table-column prop="fundName" label="基金名称"></el-table-column>
                 <el-table-column prop="typeName" label="业务类型"></el-table-column>
@@ -209,6 +226,19 @@
                 </el-table-column>
                 <el-table-column prop="cdate" label="交易日期"></el-table-column>
             </el-table>
+            <div style="margin-top: 20px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleTradeSizeChange"
+                            @current-change="handleTradeCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="tradeLimit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="tradelistlength">
+                    </el-pagination>
+                </div>
+            </div>
         </el-row>
 
     </div>
@@ -246,16 +276,17 @@
     Vue.use(Dialog);
 
     function getBaseData() {
-        return {fundCode:"", weight: ""};
+        return {fundCode: "", weight: ""};
     }
     export default {
         data(){
             return {
                 dialogTableVisible: false,
-                dialogMoneyDetailVisible:false,
+                dialogMoneyDetailVisible: false,
                 cid: null,
                 Util: Util,
                 riskLevel: "",
+                riskName: "",
                 labelPosition: 'left',
                 name: "",
                 risk: "",
@@ -264,18 +295,24 @@
                 balance: "",
                 list: null,
                 items: null,
-                moneyDetaillist:null,//根据资金流水ID查回交易明细
-                myfundlist:null,//根据组合ID查回的基金列表
+                moneyDetaillist: null,//根据资金流水ID查回交易明细
+                myfundlist: null,//根据组合ID查回的基金列表
                 fundlist: null,//基金列表
                 capitallist: null,//资金流水列表
+                capitallistlength: 0,
                 tradelist: null,//交易记录列表
+                tradelistlength: 0,
                 amount: null,
                 funds: [getBaseData()],
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() < Date.now() - 8.64e7;
                     }
-                }
+                },
+                page: 1,
+                limit: 5,
+                tradePage: 1,
+                tradeLimit: 5
             };
         },
         created: function () {
@@ -296,6 +333,7 @@
                             let data = res.data.data;
                             if (data) {
                                 this.riskLevel = data.riskLevel;
+                                this.riskName = data.riskName;
                             }
                             /*获取推荐与自建投资组合*/
                             this.$http.jsonp("/app/fofApp/getAllList", {
@@ -323,32 +361,42 @@
                         }).then(function (res) {
                             this.fundlist = res.data.items;
                         }.bind(this));
-                        /*获取我的资金流水*/
-                        this.$http.jsonp("/app/fofApp/getCapitalFlow", {
-                            params: {
-                                customerId: this.cid,
-                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                    "property": "ctime",
-                                    "direction": "DESC"
-                                }])
-                            }
-                        }).then(function (res) {
-                            this.capitallist = res.data.items;
-                        }.bind(this));
-                        /*获取交易记录列表*/
-                        this.$http.jsonp("/app/fofApp/getTradelist", {
-                            params: {
-                                customerId: this.cid,
-                                sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                    "property": "ctime",
-                                    "direction": "DESC"
-                                }])
-                            }
-                        }).then(function (res) {
-                            this.tradelist = res.data.items;
-                        }.bind(this));
+                        this.getMoneyTrade();
+                        this.getTrades();
                     }
                 }.bind(this))
+            },
+            getMoneyTrade(){/*获取我的资金流水*/
+                this.$http.jsonp("/app/fofApp/getCapitalFlow", {
+                    params: {
+                        customerId: this.cid,
+                        page: this.page,
+                        limit: this.limit,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.capitallist = res.data.items;
+                    this.capitallistlength = res.data.total;
+                }.bind(this));
+            },
+            getTrades(){/*获取交易记录列表*/
+                this.$http.jsonp("/app/fofApp/getTradelist", {
+                    params: {
+                        customerId: this.cid,
+                        page: this.tradePage,
+                        limit: this.tradeLimit,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.tradelist = res.data.items;
+                    this.tradelistlength = res.data.total;
+                }.bind(this));
             },
             addFundForm() {/*增加组合基金*/
                 if (this.funds.length >= 5) {
@@ -356,7 +404,7 @@
                     return;
                 }
                 this.funds.push(getBaseData());
-            },/*删除组合基金*/
+            }, /*删除组合基金*/
             delFundForm(obj, ind) {
                 this.funds.pop(ind);
             },
@@ -373,6 +421,9 @@
                 } else if (!Util.isEmpty(edate)) {
                     Message({showClose: true, message: "请选择组合结束日期", type: 'warning'});
                     return false;
+                } else if (this.funds.length < 2) {
+                    Message({showClose: true, message: "组合至少添加2个基金", type: "warning"});
+                    return;
                 } else {
                     return true;
                 }
@@ -467,6 +518,25 @@
                 }).then(function (res) {
                     this.moneyDetaillist = res.data.items;
                 }.bind(this));
+            },
+            skipQuestion(){/*跳转问卷*/
+                router.push('/question/' + this.$route.params.mobile);
+            },
+            handleSizeChange(val) {
+                this.limit = val;
+                this.getMoneyTrade();
+            },
+            handleCurrentChange(val) {
+                this.page = val;
+                this.getMoneyTrade();
+            },
+            handleTradeSizeChange(val) {
+                this.tradeLimit = val;
+                this.getTrades();
+            },
+            handleTradeCurrentChange(val) {
+                this.tradePage = val;
+                this.getTrades();
             }
         }
     }
