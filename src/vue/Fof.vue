@@ -144,7 +144,7 @@
             <el-table :data="myfundlist">
                 <el-table-column property="fundCode" label="基金代码"></el-table-column>
                 <el-table-column property="fundName" label="基金名称"></el-table-column>
-                <el-table-column property="weight" label="仓位"></el-table-column>
+                <el-table-column property="weight" label="仓位(%)"></el-table-column>
             </el-table>
         </el-dialog>
 
