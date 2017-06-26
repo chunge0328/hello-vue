@@ -27,21 +27,19 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>体验金：</b></el-col>
+            <el-col :span="6"><b>客户体验金：</b></el-col>
             <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
             </el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>风险等级：</b></el-col>
+            <el-col :span="6"><b>客户风险等级：</b></el-col>
             <el-col :span="12" class="fontTitleStyle"><b>{{riskName}}&nbsp;</b>
                 <el-button type="primary" @click="skipQuestion()" v-show="riskName==''">问卷调查</el-button>
             </el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10">
-            <el-col :span="6" class="fontTitleStyle"><b>新建组合</b></el-col>
-        </el-row>
+        
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>组合名称：</b></el-col>
             <el-col :span="12">
@@ -134,7 +132,7 @@
                 <el-table-column prop="edate" label="截止日期" sortable></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="queryFund(scope.row)" type="text" size="small">
+                        <el-button @click.native.prevent="queryFund(scope.row)" type="danger" size="small">
                             查看基金
                         </el-button>
                     </template>
@@ -163,7 +161,7 @@
                 <el-table-column prop="ctime" label="交易时间"></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="queryMoneyDetail(scope.row)" type="text" size="small">
+                        <el-button @click.native.prevent="queryMoneyDetail(scope.row)" type="danger" size="small">
                             明细
                         </el-button>
                     </template>

@@ -77,7 +77,7 @@
                 <el-table-column prop="ctime" label="发表时间" sortable></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="topicDis(scope.$index, scope.row)" type="text" size="small">
+                        <el-button @click.native.prevent="topicDis(scope.$index, scope.row)" type="danger" size="small">
                             查看评论
                         </el-button>
                     </template>
