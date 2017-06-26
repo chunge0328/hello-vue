@@ -31,35 +31,44 @@
     <div style="padding: 0px !important;">
 
         <el-row>
-            <el-col :span="12" v-for="(acco ,index) in assoAccount" :key="'acco' + index">
+            <el-col :span="12" v-for="(acco ,index) in assoAccounts" :key="'acco' + index">
                 <label style="margin-right: 10px;">用户{{index+1}}：</label>
                 <el-tag type="gray">{{acco.username}}</el-tag>
                 /
                 <el-tag type="primary">{{acco.password}}</el-tag>
+                <el-button @click="handleUnAssoTarget(acco)" type="text">取消关联</el-button>
             </el-col>
         </el-row>
 
-        <el-row v-show="!addAccountVisible" style="margin: 30px 0px 0px;">
-            <el-col :span="3">
-                <label class="input-label">请选择用户</label>
-            </el-col>
-            <el-col :span="9">
-                <el-select v-model="account" placeholder="请选择">
-                    <el-option
-                            v-for="item in accounts"
-                            :key="item.id"
-                            :label="item.username"
-                            :value="item">
-                    </el-option>
-                </el-select>
-            </el-col>
+        <el-row v-show="!addAccountVisible" class="form-line">
+            <el-row>
+                <el-col :span="3">
+                    <label class="input-label">请选择用户</label>
+                </el-col>
+                <el-col :span="9">
+                    <el-select v-model="account" placeholder="请选择">
+                        <el-option
+                                v-for="item in accounts"
+                                :key="item.id"
+                                :label="item.username"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+                </el-col>
 
-            <el-col :span="9">
-                <el-button @click="addAccountVisible = true" type="warning">新增</el-button>
-                <el-button @click="handleAssoTarget" type="success">关联</el-button>
-            </el-col>
+                <el-col :span="9">
+                    <el-button @click="addAccountVisible = true" type="warning">新增</el-button>
+                    <el-button @click="handleAssoTarget" type="success" v-show="account.id">关联</el-button>
+                </el-col>
+            </el-row>
+
+            <el-row class="form-line" v-show="account.id">
+                <label>用户名</label>
+                <el-tag type="gray">{{account.username}}</el-tag>
+                <label>密码</label>
+                <el-tag type="primary">{{account.password}}</el-tag>
+            </el-row>
         </el-row>
-
 
         <el-row class="form-add" v-show="addAccountVisible">
 
@@ -134,9 +143,10 @@
 
         data(){
             return {
-                assoAccount: [],
+                assoAccounts: [],
                 account: getBaseData(),
                 dicts: [],
+                cacheAccounts: [],
                 accounts: [],
 
                 pageRequest: {
@@ -177,14 +187,24 @@
                 this.$http.post("/admin/cifm/account/findAllPage", this.pageRequest
                 ).then(function (res) {
                     let data = res.data;
-                    this.accounts = data.content;
-                    if (this.accounts && this.accounts.length > 0) this.account = this.accounts[0];
+                    this.cacheAccounts = data.content;
+                    this.accounts = JSON.parse(JSON.stringify(this.cacheAccounts));
+                    this.account = (this.accounts && this.accounts.length > 0) ? this.accounts[0] : getBaseData();
+                    this.handleFileterAccos();
 //                    console.info(JSON.stringify(this.accounts))
                 }.bind(this));
             },
             handleAssoTarget() {
                 let param = {target :JSON.parse(JSON.stringify(this.target.data))};
                 param.account = this.account;
+                this.assoTarget(param);
+            },
+            handleUnAssoTarget(account) {
+                let param = {target :JSON.parse(JSON.stringify(this.target.data))};
+                param.account = account;
+                this.assoTarget(param);
+            },
+            assoTarget(param) {
                 this.$http.post(this.target.assoUrl, param, {
                 }).then(function (res) {
                     let data = res.data;
@@ -192,6 +212,9 @@
                         message: data.msg,
                         type: data.success ? "success" : "warning"
                     });
+                    if(data.success) {
+                        this.handleQueryAsso();
+                    }
                 }.bind(this));
             },
             handleQueryAsso() {
@@ -199,9 +222,27 @@
                 this.$http.post(this.target.findUrl, param, {
                 }).then(function (res) {
                     let data = res.data;
-                    this.assoAccount = data.content;
+                    this.assoAccounts = data.content;
+                    this.handleFileterAccos();
                 }.bind(this));
 
+            },
+            handleFileterAccos() {
+                if(this.cacheAccounts && this.assoAccounts) {
+                    this.accounts = this.cacheAccounts.filter(function (acco, index) {
+                        for(let i=0; i<this.assoAccounts.length; i++) {
+                            let asAc = this.assoAccounts[i];
+                            if(asAc.id === acco.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }.bind(this));
+                    this.account = (this.accounts && this.accounts.length > 0) ? this.accounts[0] : getBaseData();
+//                    console.info("==================")
+//                    console.info(this.accounts.length);
+//                    console.info(JSON.stringify(this.accounts))
+                }
             }
         }, created() {
             this.handleQueryDicts();

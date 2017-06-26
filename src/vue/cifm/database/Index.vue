@@ -173,6 +173,7 @@
                     data: getBaseData(),
                     findUrl: "/admin/cifm/cifm/findByDb",
                     assoUrl: "/admin/cifm/cifm/associateAcDb",
+                    cancUrl: "",
                 }
             }
         },
