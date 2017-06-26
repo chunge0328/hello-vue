@@ -27,6 +27,12 @@
                             width="180">
                     </el-table-column>
                     <el-table-column
+                            prop="remark"
+                            label="备注"
+                            sortable
+                            width="600">
+                    </el-table-column>
+                    <el-table-column
                             fixed="right"
                             label="操作"
                             width="140">

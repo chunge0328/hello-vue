@@ -47,7 +47,7 @@
                             width="200">
                     </el-table-column>
                     <el-table-column
-                            label="账户详情"
+                            label="账户"
                             width="200">
                         <template scope="scope">
                             <el-popover
@@ -59,7 +59,7 @@
                                         type="text"
                                         size="small"
                                         slot="reference">
-                                    查看
+                                    查看明细
                                 </el-button>
                             </el-popover>
                         </template>

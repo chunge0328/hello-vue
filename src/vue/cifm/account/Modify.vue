@@ -13,7 +13,7 @@
     }
 
     .form-line {
-        margin-top: 10px;
+        margin-top: 15px;
     }
 
     .oper-line {
@@ -53,6 +53,20 @@
                             placeholder="请输入密码"
                             @select="handleSelect"
                     ></el-autocomplete>
+                </el-col>
+            </el-row><!--参数行...end-->
+
+            <el-row class="form-line"><!--参数行-->
+                <el-col :span="3">
+                    <label class="input-label">备注</label>
+                </el-col>
+                <el-col :span="21">
+                    <el-input
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入备注"
+                            v-model="account.remark">
+                    </el-input>
                 </el-col>
             </el-row><!--参数行...end-->
 

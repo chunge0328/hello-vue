@@ -1,8 +1,4 @@
 <style>
-    .submit-btn {
-        display: block;
-        margin: 10px auto;
-    }
 
     .inline-input {
         width: 100%;
@@ -28,16 +24,25 @@
     }
 </style>
 <template>
-    <div style="padding: 0px !important;">
-
+    <div>
         <el-row>
-            <el-col :span="12" v-for="(acco ,index) in assoAccounts" :key="'acco' + index">
+            <el-row>
+                <h3>关联用户：</h3>
+            </el-row>
+            <el-row v-for="(acco ,index) in assoAccounts" :key="'acco' + index">
                 <label style="margin-right: 10px;">用户{{index+1}}：</label>
                 <el-tag type="gray">{{acco.username}}</el-tag>
                 /
                 <el-tag type="primary">{{acco.password}}</el-tag>
+                <label style="margin-right: 10px;">备注：</label>
+                <el-tag type="warning">{{acco.remark}}</el-tag>
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <el-button @click="handleUnAssoTarget(acco)" type="text">取消关联</el-button>
-            </el-col>
+            </el-row>
+            <el-row v-if="!assoAccounts || assoAccounts.length == 0">
+                &nbsp;&nbsp;暂无关联用户...
+            </el-row>
+            <hr>
         </el-row>
 
         <el-row v-show="!addAccountVisible" class="form-line">
@@ -57,17 +62,20 @@
                 </el-col>
 
                 <el-col :span="9">
-                    <el-button @click="addAccountVisible = true" type="warning">新增</el-button>
+                    <el-button @click="handleAddAccount" type="warning">新增</el-button>
                     <el-button @click="handleAssoTarget" type="success" v-show="account.id">关联</el-button>
                 </el-col>
             </el-row>
 
             <el-row class="form-line" v-show="account.id">
-                <label>用户名</label>
+                <!--<label>用户名</label>-->
                 <el-tag type="gray">{{account.username}}</el-tag>
-                <label>密码</label>
+                <!--<label>密码</label>-->
                 <el-tag type="primary">{{account.password}}</el-tag>
+                <!--<label>备注</label>-->
+                <el-tag type="warning" v-if="account.remark">{{account.remark}}</el-tag>
             </el-row>
+            <hr>
         </el-row>
 
         <el-row class="form-add" v-show="addAccountVisible">
@@ -91,7 +99,7 @@
                 <el-col :span="3">
                     <label class="input-label">密码</label>
                 </el-col>
-                <el-col :span="9" @keyup.enter="handleEnter">
+                <el-col :span="9">
                     <el-autocomplete
                             v-model="account.password"
                             ref="password"
@@ -102,11 +110,25 @@
                             @select="handleSelect"
                     ></el-autocomplete>
                 </el-col>
+
             </el-row><!--参数行...end-->
+            <el-row class="form-line">
+                <el-col :span="3">
+                    <label class="input-label">备注</label>
+                </el-col>
+                <el-col :span="21">
+                    <el-input
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入备注"
+                            v-model="account.remark">
+                    </el-input>
+                </el-col>
+            </el-row>
 
             <el-row class="oper-line">
                 <el-button @click="handleAssoTarget" type="success">关联</el-button>
-                <el-button @click="addAccountVisible = false" type="default">关闭</el-button>
+                <el-button @click="handleCloseAccountWin" type="default">关闭</el-button>
             </el-row>
         </el-row>
     </div>
@@ -190,49 +212,48 @@
                     this.cacheAccounts = data.content;
                     this.accounts = JSON.parse(JSON.stringify(this.cacheAccounts));
                     this.account = (this.accounts && this.accounts.length > 0) ? this.accounts[0] : getBaseData();
-                    this.handleFileterAccos();
+                    if (data.success) {
+                        this.handleQueryAsso();
+                    }
 //                    console.info(JSON.stringify(this.accounts))
                 }.bind(this));
             },
             handleAssoTarget() {
-                let param = {target :JSON.parse(JSON.stringify(this.target.data))};
+                let param = {target: JSON.parse(JSON.stringify(this.target.data))};
                 param.account = this.account;
                 this.assoTarget(param);
             },
             handleUnAssoTarget(account) {
-                let param = {target :JSON.parse(JSON.stringify(this.target.data))};
+                let param = {target: JSON.parse(JSON.stringify(this.target.data))};
                 param.account = account;
                 this.assoTarget(param);
             },
             assoTarget(param) {
-                this.$http.post(this.target.assoUrl, param, {
-                }).then(function (res) {
+                this.$http.post(this.target.assoUrl, param, {}).then(function (res) {
                     let data = res.data;
                     Message({
                         message: data.msg,
                         type: data.success ? "success" : "warning"
                     });
-                    if(data.success) {
-                        this.handleQueryAsso();
+                    if (data.success) {
+                        this.handleQueryAccounts();
                     }
                 }.bind(this));
             },
             handleQueryAsso() {
                 let param = JSON.parse(JSON.stringify(this.target.data));
-                this.$http.post(this.target.findUrl, param, {
-                }).then(function (res) {
+                this.$http.post(this.target.findUrl, param, {}).then(function (res) {
                     let data = res.data;
                     this.assoAccounts = data.content;
                     this.handleFileterAccos();
                 }.bind(this));
-
             },
             handleFileterAccos() {
-                if(this.cacheAccounts && this.assoAccounts) {
+                if (this.cacheAccounts && this.assoAccounts) {
                     this.accounts = this.cacheAccounts.filter(function (acco, index) {
-                        for(let i=0; i<this.assoAccounts.length; i++) {
+                        for (let i = 0; i < this.assoAccounts.length; i++) {
                             let asAc = this.assoAccounts[i];
-                            if(asAc.id === acco.id) {
+                            if (asAc.id === acco.id) {
                                 return false;
                             }
                         }
@@ -243,11 +264,18 @@
 //                    console.info(this.accounts.length);
 //                    console.info(JSON.stringify(this.accounts))
                 }
+            },
+            handleAddAccount() {
+                this.account = getBaseData();
+                this.addAccountVisible = true;
+            },
+            handleCloseAccountWin() {
+                this.account = (this.accounts && this.accounts.length > 0) ? this.accounts[0] : getBaseData();
+                this.addAccountVisible = false;
             }
         }, created() {
             this.handleQueryDicts();
             this.handleQueryAccounts();
-            this.handleQueryAsso();
 //            console.info(JSON.stringify(this.target))
         },
         mounted() {
