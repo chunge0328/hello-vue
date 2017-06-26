@@ -169,7 +169,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div style="margin-top: 20px;margin-right:100px;">
+            <div style="margin-top: 20px;">
                 <div class="block">
                     <el-pagination
                             @size-change="handleSizeChange"
@@ -228,7 +228,7 @@
                 </el-table-column>
                 <el-table-column prop="cdate" label="交易日期"></el-table-column>
             </el-table>
-            <div style="margin-top: 20px;margin-right:100px;">
+            <div style="margin-top: 20px;">
                 <div class="block">
                     <el-pagination
                             @size-change="handleTradeSizeChange"

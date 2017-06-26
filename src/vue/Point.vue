@@ -50,7 +50,7 @@
                 </el-table-column>
                 <el-table-column prop="ctime" label="交易时间" sortable></el-table-column>
             </el-table>
-            <div style="margin-top: 20px;margin-right:100px;">
+            <div style="margin-top: 20px;">
                 <div class="block">
                     <el-pagination
                             @size-change="handleSizeChange"
