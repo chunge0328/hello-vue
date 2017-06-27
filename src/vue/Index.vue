@@ -84,9 +84,11 @@
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-                    <el-menu-item index="2" @click="menuIndex=2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
-                    <el-menu-item index="3" @click="menuIndex=3"><i class="el-icon-message"></i>发送邮件</el-menu-item>
-                    <el-menu-item index="4" @click="menuIndex=4"><i class="el-icon-message"></i>文件管理</el-menu-item>
+                    <el-menu-item index="2" @click="handleChangeMenu(2)"><i class="el-icon-menu"></i>开发工具</el-menu-item>
+                    <el-menu-item index="3" @click="handleChangeMenu(3)"><i class="el-icon-message"></i>发送邮件
+                    </el-menu-item>
+                    <el-menu-item index="4" @click="handleChangeMenu(4)"><i class="el-icon-message"></i>文件管理
+                    </el-menu-item>
                     <el-menu-item index="5">
                         <i class="el-icon-setting"></i><a href="https://www.baidu.com" target="_blank">百度</a>
                     </el-menu-item>
@@ -108,9 +110,9 @@
                     </el-tab-pane>
                 </el-tabs>
 
-                <code-utils v-show="2==menuIndex"></code-utils>
+                <code-utils v-show="2==menuIndex" v-if="menuList[1]"></code-utils>
 
-                <div v-show="3==menuIndex">
+                <div v-show="3==menuIndex" v-if="menuList[2]">
                     <el-row :gutter="20">
                         <markdown :markdown="mailMarkdown" :setMarkdown="setMailHtml"></markdown>
                         <el-col :span="4">
@@ -143,7 +145,7 @@
                         </el-button>
                     </el-row>
                 </div>
-                <div v-show="4==menuIndex">
+                <div v-show="4==menuIndex" v-if="menuList[3]">
                     <el-upload
                             class="avatar-uploader"
                             :action=fileUploadUrl
@@ -173,7 +175,11 @@
                 secret: a4befe4644e97e5981c6da3bc0af723d
                 <br>
             </el-row>
-            <img src="../img/gongzhong.jpeg" alt="">
+            <div>
+                <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
+                <img src="../img/gongzhong.jpeg"
+                     style="position: fixed;right: 0px; top:300px; width: 150px;height: 150px;">
+            </div>
         </el-row>
         <div class="footer">
             <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a>
@@ -211,6 +217,7 @@
 
         data(){
             return {
+                menuList: [true],
                 menuIndex: 1,
                 defaultActiveMenu: 1,
 
@@ -249,6 +256,10 @@
             }
         },
         methods: {
+            handleChangeMenu(index){
+                this.menuIndex = index;
+                if (!this.menuList[index - 1]) this.menuList[index - 1] = true;
+            },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
@@ -449,7 +460,8 @@
 //            this.menuIndex = "3";
 //            this.defaultActiveMenu = "3";
             /*debugger...end*/
-            
+        }, mounted() {
+
         }
     }
 </script>
