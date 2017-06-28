@@ -155,7 +155,7 @@
         <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container1"></div>
         </el-row>
-        
+
         <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container"></div>
         </el-row>
