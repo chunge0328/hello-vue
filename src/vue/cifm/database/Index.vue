@@ -170,7 +170,7 @@
 
                 pageRequest: {
                     page: 0,
-                    size: 20,
+                    size: 100,
                     sort: "cDate,cTime"
                 },
 
