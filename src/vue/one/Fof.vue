@@ -31,9 +31,30 @@
             <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
             </el-col>
-            <el-col :span="3" v-show="cusbalance>0"><b>余额：</b></el-col>
+            <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
         </el-row>
+
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <el-col :span="4"><b>持仓金额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+            </el-col>
+            <el-col :span="4"><b>持仓份额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
+            </el-col>
+        </el-row>
+
+
+        <el-row :gutter="20" class="top10" v-show="balance>0">
+            <div id="container2"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <div id="container1"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <div id="container"></div>
+        </el-row>
+
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>风险等级：</b></el-col>
@@ -143,22 +164,6 @@
             </el-table>
         </el-row>
 
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <el-col :span="4"><b>持仓金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
-            </el-col>
-            <el-col :span="4"><b>持仓份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
-            </el-col>
-        </el-row>
-
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <div id="container1"></div>
-        </el-row>
-
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <div id="container"></div>
-        </el-row>
 
         <el-dialog title="基金明细" :visible.sync="dialogTableVisible">
             <el-table :data="myfundlist">
@@ -274,17 +279,17 @@
     import router from '../../js/config/RedRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
     import {
-            Input,
-            Button,
-            Message,
-            Row,
-            Col,
-            Select,
-            Option,
-            DatePicker,
-            Table,
-            TableColumn,
-            Dialog
+        Input,
+        Button,
+        Message,
+        Row,
+        Col,
+        Select,
+        Option,
+        DatePicker,
+        Table,
+        TableColumn,
+        Dialog
     } from "element-ui";
     Vue.use(Input);
     Vue.use(Button);
@@ -587,88 +592,83 @@
                     }
                     this.handleDrawChart();
                     this.getData();
+                    this.drawColumn();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
                 new Highcharts.Chart('container',
-                        {
-                            credits: {
-                                enabled: false//去除版权
-                            },
-                            chart: {
-                                plotBackgroundColor: null,
-                                plotBorderWidth: null,
-                                plotShadow: false
-                            },
-                            title: {
-                                floating: true,
-                                text: '投资组合分析'
-                            },
-                            tooltip: {
-                                headerFormat: '{series.name}<br>',
-                                pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
-                            },
-                            legend: {
-                                align: "center", //程度标的目标地位
-                                verticalAlign: "bottom", //垂直标的目标地位
-                                x: 0, //间隔x轴的间隔
-                                y: 0, //间隔Y轴的间隔
-                                labelFormatter: function () {
-                                    return this.name + '<br>' + this.y + '元';
-                                }
-                            },
-                            plotOptions: {
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    showInLegend: true,
-                                    colors: [
-                                        '#9988aa',
-                                        '#0d23aa',
-                                        '#8bbc21',
-                                        '#910000',
-                                        '#1aadce'
-                                    ],
-                                    dataLabels: {
-                                        enabled: true,
-                                        formatter: function () {
-                                            // 大于1则显示
-                                            return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
-                                        }
-                                    },
-                                    point: {
-                                        plotShadow: false,
-                                        events: {
-                                            click: function () {
+                    {
+                        credits: {
+                            enabled: false//去除版权
+                        },
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false
+                        },
+                        title: {
+                            floating: true,
+                            text: '投资组合分析'
+                        },
+                        tooltip: {
+                            headerFormat: '{series.name}<br>',
+                            pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                        },
+                        legend: {
+                            align: "center", //程度标的目标地位
+                            verticalAlign: "bottom", //垂直标的目标地位
+                            x: 0, //间隔x轴的间隔
+                            y: 0, //间隔Y轴的间隔
+                            labelFormatter: function () {
+                                return this.name + '<br>' + this.y + '元';
+                            }
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                showInLegend: true,
+                                colors: Highcharts.getOptions().colors,
+                                dataLabels: {
+                                    enabled: true,
+                                    formatter: function () {
+                                        // 大于1则显示
+                                        return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
+                                    }
+                                },
+                                point: {
+                                    plotShadow: false,
+                                    events: {
+                                        click: function () {
 
-                                            }
                                         }
                                     }
                                 }
-                            },
-                            series: [{
-                                type: 'pie',
-                                size: 200,
-                                innerSize: '60%',
-                                name: '组合分配',
-                                data: this.holdFofArray,
-                                states: {
-                                    hover: {
-                                        enabled: false //去除鼠标浮上去时饼图的阴影
-                                    }
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            size: 200,
+                            innerSize: '60%',
+                            name: '组合分配',
+                            data: this.holdFofArray,
+                            states: {
+                                hover: {
+                                    enabled: false //去除鼠标浮上去时饼图的阴影
                                 }
-                            }]
-                        });
+                            }
+                        }]
+                    });
             },
             getData(){
                 //对数据进行处理
                 let fofData = this.holdFofList;
                 let colors = Highcharts.getOptions().colors,
-                        categories = [],
-                        data = [],
-                        browserData = [],
-                        fundData = [],
-                        i, j, drillDataLen, brightness;
+                    categories = [],
+                    data = [],
+                    browserData = [],
+                    fundData = [],
+                    i, j, drillDataLen, brightness;
                 for (i = 0; i < fofData.length; i++) {
                     let items = fofData[i].items;
                     let itemData = [], itemcategories = [];
@@ -710,58 +710,113 @@
 
                 //画双饼图
                 new Highcharts.Chart('container1',
-                        {
-                            credits: {
-                                enabled: false//去除版权
-                            },
-                            chart: {
-                                type: 'pie'
-                            },
+                    {
+                        credits: {
+                            enabled: false//去除版权
+                        },
+                        chart: {
+                            type: 'pie'
+                        },
+                        title: {
+                            text: '智能投资组合'
+                        },
+                        subtitle: {
+                            text: '内环为基金组合占比，外环为组合的基金占比'
+                        },
+                        yAxis: {
                             title: {
-                                text: '智能投资组合'
+                                text: '总百分比市场份额'
+                            }
+                        },
+                        plotOptions: {
+                            pie: {
+                                shadow: false,
+                                center: ['50%', '50%']
                             },
-                            subtitle: {
-                                text: '内环为基金组合占比，外环为组合的基金占比'
-                            },
-                            yAxis: {
-                                title: {
-                                    text: '总百分比市场份额'
-                                }
-                            },
-                            plotOptions: {
-                                pie: {
-                                    shadow: false,
-                                    center: ['50%', '50%']
-                                },
 
-                            }/*,
-                         tooltip: {
-                         valueSuffix: '%'
-                         }*/,
-                            series: [{
-                                name: '基金组合',
-                                data: browserData,
-                                size: '60%',
-                                dataLabels: {
-                                    formatter: function () {
-                                        return this.y > 5 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
-                                    },
-                                    color: 'white',
-                                    distance: -30
+                        }/*,
+                     tooltip: {
+                     valueSuffix: '%'
+                     }*/,
+                        series: [{
+                            name: '基金组合',
+                            data: browserData,
+                            size: '60%',
+                            dataLabels: {
+                                formatter: function () {
+                                    return this.y > 5 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
+                                },
+                                color: 'white',
+                                distance: -30
+                            }
+                        }, {
+                            name: '基金',
+                            data: fundData,
+                            size: '80%',
+                            innerSize: '60%',
+                            dataLabels: {
+                                formatter: function () {
+                                    // 大于1则显示
+                                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
                                 }
+                            }
+                        }]
+                    });
+            },
+            drawColumn(){/*资产分布图*/
+                new Highcharts.Chart('container2',
+                    {
+                        credits: {
+                            enabled: false//去除版权
+                        },
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: '<b>我的资产分布</b>'
+                        },
+                        xAxis: {
+                            type: 'category'
+                        },
+                        yAxis: {
+                            title: {
+                                text: '金额'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            series: {
+                                borderWidth: 0,
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.y:.1f}'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                            pointFormat: '<b>{point.name}</b>: <b>{point.y:.2f}</b>'
+                        },
+                        series: [{
+                            name: '资产',
+                            colorByPoint: true,
+                            data: [{
+                                name: '体验金',
+                                y: this.balance
                             }, {
-                                name: '基金',
-                                data: fundData,
-                                size: '80%',
-                                innerSize: '60%',
-                                dataLabels: {
-                                    formatter: function () {
-                                        // 大于1则显示
-                                        return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
-                                    }
-                                }
+                                name: '余额',
+                                y: this.cusbalance
+                            }, {
+                                name: '持仓金额',
+                                y: this.totalAmount
+                            }, {
+                                name: '持仓份额',
+                                y: this.totalBalance
                             }]
-                        });
+                        }]
+                    });
             }
         }
     }
