@@ -1,0 +1,64 @@
+{
+  "name": "one.node",
+  "version": "1.0.0",
+  "description": "des",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "invdev": "cross-env NODE_ENV=development webpack-dev-server --config investigates.webpack.config.js --inline --hot",
+    "invbuild": "cross-env NODE_ENV=production webpack --config investigates.webpack.config.js --progress --hide-modules",
+    "reddev": "cross-env NODE_ENV=development webpack-dev-server --config red.webpack.config.js --inline --hot",
+    "redbuild": "cross-env NODE_ENV=production webpack --config red.webpack.config.js --progress --hide-modules",
+    "feeddev": "cross-env NODE_ENV=development webpack-dev-server --config feedback.webpack.config.js --inline --hot",
+    "feedbuild": "cross-env NODE_ENV=production webpack --config feedback.webpack.config.js --progress --hide-modules",
+    "onedev": "cross-env NODE_ENV=development webpack-dev-server --config one.webpack.config.js --inline --hot",
+    "onebuild": "cross-env NODE_ENV=production webpack --config one.webpack.config.js --progress --hide-modules",
+    "cifmdev": "cross-env NODE_ENV=development webpack-dev-server --config cifm.webpack.config.js --inline --hot",
+    "cifmbuild": "cross-env NODE_ENV=production webpack --config cifm.webpack.config.js --progress --hide-modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/17717066234/hello-vue.git"
+  },
+  "keywords": [
+    "vue",
+    "vue-router",
+    "git",
+    "webpack"
+  ],
+  "author": "pch",
+  "license": "ISC",
+  "dependencies": {
+    "element-ui": "^1.3.7",
+    "highcharts": "^5.0.12",
+    "js-base64": "^2.1.9",
+    "markdown": "^0.5.0",
+    "mint-ui": "^2.2.5",
+    "vue": "^2.3.4",
+    "vue-resource": "^1.3.4",
+    "vue-router": "^2.6.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-component": "^0.9.1",
+    "babel-preset-es2015": "^6.24.1",
+    "cross-env": "^4.0.0",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "html-webpack-plugin": "^2.28.0",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "node-sass": "^4.5.2",
+    "postcss-loader": "^1.3.3",
+    "sass-loader": "^6.0.3",
+    "style-loader": "^0.16.1",
+    "vue-loader": "^11.3.4",
+    "vue-template-compiler": "^2.2.6",
+    "webpack": "^2.3.3",
+    "webpack-dev-server": "^2.4.2"
+  }
+}
