@@ -174,10 +174,6 @@
                 <br>
                 secret: a4befe4644e97e5981c6da3bc0af723d
                 <br>
-                git:17717066234
-                <br>
-                secret:Mm890210
-                <br>
             </el-row>
             <div>
                 <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>

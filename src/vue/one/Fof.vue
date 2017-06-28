@@ -622,13 +622,7 @@
                                     allowPointSelect: true,
                                     cursor: 'pointer',
                                     showInLegend: true,
-                                    colors: [
-                                        '#9988aa',
-                                        '#0d23aa',
-                                        '#8bbc21',
-                                        '#910000',
-                                        '#1aadce'
-                                    ],
+                                    colors: Highcharts.getOptions().colors,
                                     dataLabels: {
                                         enabled: true,
                                         formatter: function () {
