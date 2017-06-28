@@ -27,11 +27,14 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="6"><b>客户体验金：</b></el-col>
-            <el-col :span="12" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
+            <el-col :span="4"><b>体验金：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
             </el-col>
+            <el-col :span="3"><b>余额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
         </el-row>
+
         <el-row :gutter="20" class="top10">
             <el-col :span="6"><b>客户风险等级：</b></el-col>
             <el-col :span="12" class="fontTitleStyle"><b>{{riskName}}&nbsp;</b>
@@ -140,6 +143,24 @@
             </el-table>
         </el-row>
 
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>持仓金额：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>持仓份额：</b></el-col>
+            <el-col :span="12" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <div id="container1"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <div id="container"></div>
+        </el-row>
+
         <el-dialog title="基金明细" :visible.sync="dialogTableVisible">
             <el-table :data="myfundlist">
                 <el-table-column property="fundCode" label="基金代码"></el-table-column>
@@ -241,6 +262,7 @@
             </div>
         </el-row>
 
+
     </div>
 
 
@@ -249,6 +271,7 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
+    import Highcharts from 'highcharts';
     import router from '../js/config/RedRouterConfig';
     import {Util} from '../js/utils/ValidateUtils';
     import {
@@ -293,6 +316,7 @@
                 bdate: null,
                 edate: null,
                 balance: "",
+                cusbalance: "",
                 list: null,
                 items: null,
                 moneyDetaillist: null,//根据资金流水ID查回交易明细
@@ -312,7 +336,11 @@
                 page: 1,
                 limit: 5,
                 tradePage: 1,
-                tradeLimit: 5
+                tradeLimit: 5,
+                holdFofList: null,
+                holdFofArray: [],
+                totalAmount: 0.0,
+                totalBalance: 0.0
             };
         },
         created: function () {
@@ -355,6 +383,12 @@
                         }).then(function (res) {
                             this.balance = res.data.data.balance;
                         }.bind(this));
+                        /*查询客户余额*/
+                        this.$http.jsonp("/app/fofApp/getMyBalance", {
+                            params: {}
+                        }).then(function (res) {
+                            this.cusbalance = res.data.balance;
+                        }.bind(this));
                         /*获取基金列表信息*/
                         this.$http.jsonp("/app/fofApp/getFundList", {
                             params: {}
@@ -363,6 +397,7 @@
                         }.bind(this));
                         this.getMoneyTrade();
                         this.getTrades();
+                        this.getHoldFof();
                     }
                 }.bind(this))
             },
@@ -537,7 +572,198 @@
             handleTradeCurrentChange(val) {
                 this.tradePage = val;
                 this.getTrades();
+            },
+            getHoldFof(){/*我的持仓组合*/
+                this.$http.jsonp("/app/fofApp/getHoldFof", {
+                    params: {}
+                }).then(function (res) {
+                    this.holdFofList = res.data.items;
+                    for (let i = 0; i < res.data.total; i++) {
+                        let arr = [];
+                        this.totalAmount += this.holdFofList[i].totAmount;
+                        this.totalBalance += this.holdFofList[i].totBalance;
+                        arr.push(this.holdFofList[i].fofName);
+                        arr.push(this.holdFofList[i].totAmount);
+                        this.holdFofArray.push(arr);
+                    }
+                    this.handleDrawChart();
+                    this.getData();
+                }.bind(this));
+            },
+            handleDrawChart() {/* 绘制饼图表*/
+                new Highcharts.Chart('container',
+                        {
+                            credits: {
+                                enabled: false//去除版权
+                            },
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            title: {
+                                floating: true,
+                                text: '投资组合分析'
+                            },
+                            tooltip: {
+                                headerFormat: '{series.name}<br>',
+                                pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            legend: {
+                                align: "center", //程度标的目标地位
+                                verticalAlign: "bottom", //垂直标的目标地位
+                                x: 0, //间隔x轴的间隔
+                                y: 0, //间隔Y轴的间隔
+                                labelFormatter: function () {
+                                    return this.name + '<br>' + this.y + '元';
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    showInLegend: true,
+                                    colors: [
+                                        '#9988aa',
+                                        '#0d23aa',
+                                        '#8bbc21',
+                                        '#910000',
+                                        '#1aadce'
+                                    ],
+                                    dataLabels: {
+                                        enabled: true,
+                                        formatter: function () {
+                                            // 大于1则显示
+                                            return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
+                                        }
+                                    },
+                                    point: {
+                                        plotShadow: false,
+                                        events: {
+                                            click: function () {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                size: 200,
+                                /* innerSize: '60%',*/
+                                name: '组合分配',
+                                data: this.holdFofArray,
+                                states: {
+                                    hover: {
+                                        enabled: false //去除鼠标浮上去时饼图的阴影
+                                    }
+                                }
+                            }]
+                        });
+            },
+            getData(){
+                let fofData = this.holdFofList;
+                let colors = Highcharts.getOptions().colors,
+                        categories = [],
+                        data = [],
+                        browserData = [],
+                        fundData = [],
+                        i, j, drillDataLen, brightness;
+                for (i = 0; i < fofData.length; i++) {
+                    let items = fofData[i].items;
+                    let itemData = [], itemcategories = [];
+                    for (j = 0; j < items.length; j++) {
+                        itemData.push(items[j].totAmount);
+                        itemcategories.push(items[j].fundName);
+                    }
+                    categories.push(fofData[i].fofName);
+                    data.push({
+                        y: fofData[i].totAmount,
+                        color: colors[i],
+                        drilldown: {
+                            name: '基金',
+                            categories: itemcategories,
+                            data: itemData,
+                            color: colors[i]
+                        }
+                    })
+                }
+                //把数据塞到browserData，fundData中
+                for (i = 0; i < data.length; i++) {
+                    //添加组合数据
+                    browserData.push({
+                        name: categories[i],
+                        y: data[i].y,
+                        color: data[i].color
+                    });
+                    //根据组合添加基金数据
+                    drillDataLen = data[i].drilldown.data.length;
+                    for (j = 0; j < drillDataLen; j++) {
+                        brightness = 0.2 - (j / drillDataLen) / 5;
+                        fundData.push({
+                            name: data[i].drilldown.categories[j],
+                            y: data[i].drilldown.data[j],
+                            color: Highcharts.Color(data[i].color).brighten(brightness).get()
+                        });
+                    }
+                }
+
+                //画双饼图
+                new Highcharts.Chart('container1',
+                        {
+                            credits: {
+                                enabled: false//去除版权
+                            },
+                            chart: {
+                                type: 'pie'
+                            },
+                            title: {
+                                text: '智能投资组合'
+                            },
+                            subtitle: {
+                                text: '内环为基金组合占比，外环为具体的基金占比'
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '总百分比市场份额'
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    shadow: false,
+                                    center: ['50%', '50%']
+                                },
+
+                            }/*,
+                         tooltip: {
+                         valueSuffix: '%'
+                         }*/,
+                            series: [{
+                                name: '基金组合',
+                                data: browserData,
+                                size: '60%',
+                                dataLabels: {
+                                    formatter: function () {
+                                        return this.y > 5 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
+                                    },
+                                    color: 'white',
+                                    distance: -30
+                                }
+                            }, {
+                                name: '基金',
+                                data: fundData,
+                                size: '80%',
+                                innerSize: '60%',
+                                dataLabels: {
+                                    formatter: function () {
+                                        // 大于1则显示
+                                        return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
+                                    }
+                                }
+                            }]
+                        });
             }
         }
     }
+
 </script>
