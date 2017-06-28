@@ -31,12 +31,12 @@
             <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
             </el-col>
-            <el-col :span="3"><b>余额：</b></el-col>
+            <el-col :span="3" v-show="cusbalance>0"><b>余额：</b></el-col>
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="6"><b>客户风险等级：</b></el-col>
+            <el-col :span="4"><b>风险等级：</b></el-col>
             <el-col :span="12" class="fontTitleStyle"><b>{{riskName}}&nbsp;</b>
                 <el-button type="primary" @click="skipQuestion()" v-show="riskName==''">问卷调查</el-button>
             </el-col>
@@ -143,21 +143,20 @@
             </el-table>
         </el-row>
 
-        <el-row :gutter="20" class="top10">
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <el-col :span="4"><b>持仓金额：</b></el-col>
-            <el-col :span="12" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+            </el-col>
+            <el-col :span="4"><b>持仓份额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
             </el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>持仓份额：</b></el-col>
-            <el-col :span="12" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20" class="top10">
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container1"></div>
         </el-row>
-        <el-row :gutter="20" class="top10">
+        
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container"></div>
         </el-row>
 
@@ -650,7 +649,7 @@
                             series: [{
                                 type: 'pie',
                                 size: 200,
-                                /* innerSize: '60%',*/
+                                innerSize: '60%',
                                 name: '组合分配',
                                 data: this.holdFofArray,
                                 states: {
@@ -662,6 +661,7 @@
                         });
             },
             getData(){
+                //对数据进行处理
                 let fofData = this.holdFofList;
                 let colors = Highcharts.getOptions().colors,
                         categories = [],
@@ -721,7 +721,7 @@
                                 text: '智能投资组合'
                             },
                             subtitle: {
-                                text: '内环为基金组合占比，外环为具体的基金占比'
+                                text: '内环为基金组合占比，外环为组合的基金占比'
                             },
                             yAxis: {
                                 title: {
