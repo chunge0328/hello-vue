@@ -31,13 +31,30 @@
             <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
             </el-col>
-            <el-col :span="3" v-show="cusbalance>0"><b>余额：</b></el-col>
+            <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
         </el-row>
+
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <el-col :span="4"><b>持仓金额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+            </el-col>
+            <el-col :span="4"><b>持仓份额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
+            </el-col>
+        </el-row>
+
 
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container2"></div>
         </el-row>
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <div id="container1"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+            <div id="container"></div>
+        </el-row>
+
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>风险等级：</b></el-col>
@@ -147,22 +164,6 @@
             </el-table>
         </el-row>
 
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <el-col :span="4"><b>持仓金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
-            </el-col>
-            <el-col :span="4"><b>持仓份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
-            </el-col>
-        </el-row>
-
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <div id="container1"></div>
-        </el-row>
-
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <div id="container"></div>
-        </el-row>
 
         <el-dialog title="基金明细" :visible.sync="dialogTableVisible">
             <el-table :data="myfundlist">
