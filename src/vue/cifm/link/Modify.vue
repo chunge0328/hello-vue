@@ -58,6 +58,19 @@
 
             <el-row :gutter="20" class="form-line"><!--参数行-->
                 <el-col :span="3">
+                    <label class="input-label">分类</label>
+                </el-col>
+                <el-col :span="9">
+                    <el-select v-model="link.category" placeholder="请选择分类">
+                        <el-option
+                                v-for="item in dicts['CIFM_LINK.CATEGORY']"
+                                :key="item.seq"
+                                :label="item.value"
+                                :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="3">
                     <label class="input-label">备注</label>
                 </el-col>
                 <el-col :span="9">
@@ -110,7 +123,7 @@
                     page: 0,
                     size: 20,
                     sort: "cDate,cTime"
-                }
+                },
             }
         },
         props: ["link", "dicts", "callback"],

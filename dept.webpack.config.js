@@ -8,7 +8,7 @@ let path = require('path'),
 
 const NODE_ENV = process.env.NODE_ENV,
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = NODE_ENV === 'production' ? 'cifm' : '',
+    CONTEXT_ROOT = NODE_ENV === 'production' ? 'dept' : '',
     CONFIG = {
         'NODE_ENV': NODE_ENV,
         'ROOT_PATH': ROOT_PATH,
@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './cifm.js'
+        index: './dept.js'
     },
     output: {
         filename: './js/[name].js',
@@ -92,10 +92,10 @@ module.exports = {
 
 module.exports.plugins = (module.exports.plugins || []).concat(
     new HtmlWebpackPlugin({
-        title: 'hello-vue',
+        title: 'hello-dept',
         hash: true,
         js: ["index", "common"],
-        /*excludeChunks: ["investigates"],*/
+        excludeChunks: ["investigates"],
         filename: CONFIG.INDEX_HTML
     }),
     extractCSS,
@@ -108,25 +108,25 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
         host: '0.0.0.0',
-        port: 7778,
-        disableHostCheck: true,
-        public: 'QH-DS-712:7778'
+        port: 7780
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
+            'process.env.TOPIC_ID': JSON.stringify('d5a8108b-f0c8-4e7b-bec4-2fa747422243'),
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8081/cifm')
+            'process.env.BASE_PATH': JSON.stringify('http://localhost:8066/one')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
+            'process.env.TOPIC_ID': JSON.stringify(''),
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.BASE_PATH': JSON.stringify('http://panchaohui.com:8081/cifm')
+            'process.env.BASE_PATH': JSON.stringify('http://baismusic.com:8080/panchaohui')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),

@@ -68,8 +68,8 @@
         data(){
             return {
                 activeIndex: '1',
-                activeName: 'first',
-                activeTabs:[true]
+                activeName: 'fourth',
+                activeTabs:[false, false, false, true, false]
             };
         },
         methods: {

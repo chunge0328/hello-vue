@@ -50,6 +50,9 @@
                             label="账户"
                             width="200">
                         <template scope="scope">
+                            <el-tag type="gray">{{scope.row.username}}</el-tag>
+                            /
+                            <el-tag type="primary">{{scope.row.password}}</el-tag>
                             <el-popover
                                     width="600"
                                     trigger="click">
@@ -59,9 +62,6 @@
                                         type="text"
                                         size="small"
                                         slot="reference">
-                                    <el-tag type="gray">{{scope.row.username}}</el-tag>
-                                    /
-                                    <el-tag type="primary">{{scope.row.username}}</el-tag>
                                     查看明细
                                 </el-button>
                             </el-popover>
