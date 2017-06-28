@@ -17,17 +17,17 @@
             <el-tab-pane label="数据库" name="first">
                 <database v-if="activeTabs[0]"></database>
             </el-tab-pane>
-            <el-tab-pane label="账户" name="second">
-                <account v-if="activeTabs[1]"></account>
+            <el-tab-pane label="虚拟机" name="second">
+                <pch-vmware v-if="activeTabs[1]"></pch-vmware>
             </el-tab-pane>
-            <el-tab-pane label="链接" name="third">
-                <pch-link v-if="activeTabs[2]"></pch-link>
+            <el-tab-pane label="svn" name="third">
+                <pch-svn v-if="activeTabs[2]"></pch-svn>
             </el-tab-pane>
-            <el-tab-pane label="svn" name="fourth">
-                <pch-svn v-if="activeTabs[3]"></pch-svn>
+            <el-tab-pane label="链接" name="fourth">
+                <pch-link v-if="activeTabs[3]"></pch-link>
             </el-tab-pane>
-            <el-tab-pane label="虚拟机" name="five">
-                <pch-vmware v-if="activeTabs[4]"></pch-vmware>
+            <el-tab-pane label="账户" name="five">
+                <account v-if="activeTabs[4]"></account>
             </el-tab-pane>
         </el-tabs>
     </div>

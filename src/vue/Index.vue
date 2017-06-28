@@ -84,9 +84,11 @@
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-                    <el-menu-item index="2" @click="menuIndex=2"><i class="el-icon-menu"></i>开发工具</el-menu-item>
-                    <el-menu-item index="3" @click="menuIndex=3"><i class="el-icon-message"></i>发送邮件</el-menu-item>
-                    <el-menu-item index="4" @click="menuIndex=4"><i class="el-icon-message"></i>文件管理</el-menu-item>
+                    <el-menu-item index="2" @click="handleChangeMenu(2)"><i class="el-icon-menu"></i>开发工具</el-menu-item>
+                    <el-menu-item index="3" @click="handleChangeMenu(3)"><i class="el-icon-message"></i>发送邮件
+                    </el-menu-item>
+                    <el-menu-item index="4" @click="handleChangeMenu(4)"><i class="el-icon-message"></i>文件管理
+                    </el-menu-item>
                     <el-menu-item index="5">
                         <i class="el-icon-setting"></i><a href="https://www.baidu.com" target="_blank">百度</a>
                     </el-menu-item>
@@ -108,9 +110,9 @@
                     </el-tab-pane>
                 </el-tabs>
 
-                <code-utils v-show="2==menuIndex"></code-utils>
+                <code-utils v-show="2==menuIndex" v-if="menuList[1]"></code-utils>
 
-                <div v-show="3==menuIndex">
+                <div v-show="3==menuIndex" v-if="menuList[2]">
                     <el-row :gutter="20">
                         <markdown :markdown="mailMarkdown" :setMarkdown="setMailHtml"></markdown>
                         <el-col :span="4">
@@ -143,7 +145,7 @@
                         </el-button>
                     </el-row>
                 </div>
-                <div v-show="4==menuIndex">
+                <div v-show="4==menuIndex" v-if="menuList[3]">
                     <el-upload
                             class="avatar-uploader"
                             :action=fileUploadUrl
@@ -157,8 +159,31 @@
                 </div>
             </el-col><!--页面中间内容...end-->
         </el-row><!--页面正文部分...end-->
+
+        <el-row style="text-align: center">
+            <el-row style="display: none;">
+                appid:wxdf454f5f6fb32d41
+                <br>
+                secret: 0fe6d04c6bc30d50109ea59f5421801d
+                <br>
+                openid:gh_433a2900f34d
+                <br>
+                secret:Mm890210
+                <br>
+                appid: wx32e7840d63f4dbe9
+                <br>
+                secret: a4befe4644e97e5981c6da3bc0af723d
+                <br>
+            </el-row>
+            <div>
+                <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
+                <img src="../img/gongzhong.jpeg"
+                     style="position: fixed;right: 0px; top:300px; width: 150px;height: 150px;">
+            </div>
+        </el-row>
         <div class="footer">
-            <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a></div>
+            <div class="footer-center"><span>备案号</span><a href="http://www.miitbeian.gov.cn/" target="_blank"><span>苏ICP备17002628号</span></a>
+            </div>
         </div>
     </div>
 </template>
@@ -192,6 +217,7 @@
 
         data(){
             return {
+                menuList: [true],
                 menuIndex: 1,
                 defaultActiveMenu: 1,
 
@@ -230,6 +256,10 @@
             }
         },
         methods: {
+            handleChangeMenu(index){
+                this.menuIndex = index;
+                if (!this.menuList[index - 1]) this.menuList[index - 1] = true;
+            },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
@@ -351,7 +381,7 @@
                 this.activeMarkdown = markdown;
                 this.tabIndex = markdown.name;
                 if (!this.activeMarkdown.content && this.activeMarkdown.requestPath) {
-                    this.$http.get(markdown.requestPath  + "?r=" + Math.random(), {}).then(function (res) {
+                    this.$http.get(markdown.requestPath + "?r=" + Math.random(), {}).then(function (res) {
                         markdown.content = res.data;
                         markdown.show = true;
                         this.markdowns.splice(this.markdowns.length);
@@ -430,6 +460,8 @@
 //            this.menuIndex = "3";
 //            this.defaultActiveMenu = "3";
             /*debugger...end*/
+        }, mounted() {
+
         }
     }
 </script>

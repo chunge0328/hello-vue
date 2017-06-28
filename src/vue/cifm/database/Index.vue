@@ -47,7 +47,7 @@
                             width="200">
                     </el-table-column>
                     <el-table-column
-                            label="账户详情"
+                            label="账户"
                             width="200">
                         <template scope="scope">
                             <el-popover
@@ -59,7 +59,10 @@
                                         type="text"
                                         size="small"
                                         slot="reference">
-                                    查看
+                                    <el-tag type="gray">{{scope.row.username}}</el-tag>
+                                    /
+                                    <el-tag type="primary">{{scope.row.username}}</el-tag>
+                                    查看明细
                                 </el-button>
                             </el-popover>
                         </template>
@@ -117,7 +120,8 @@
         Dialog,
         Loading,
         MessageBox,
-        Badge
+        Badge,
+        Tag
     }
         from "element-ui";
     Vue.use(Row);
@@ -131,6 +135,7 @@
     Vue.use(Popover);
     Vue.use(Dialog);
     Vue.use(Badge);
+    Vue.use(Tag);
 
     let loadingInstance = Loading.service({
         fullscreen: true,
@@ -173,6 +178,7 @@
                     data: getBaseData(),
                     findUrl: "/admin/cifm/cifm/findByDb",
                     assoUrl: "/admin/cifm/cifm/associateAcDb",
+                    cancUrl: "",
                 }
             }
         },
@@ -208,7 +214,8 @@
                 }.bind(this));
             },
             handleQueryDb() {
-                this.$http.post("/admin/cifm/database/findAllPage", this.pageRequest, {
+//                this.$http.post("/admin/cifm/database/findAllPage", this.pageRequest, {
+                this.$http.post("/admin/cifm/cifm/findDatabase", this.pageRequest, {
                     /*body: {"type": "CIFM_DATABASE.ENV"},*/
 //                    params: this.pageRequest,
                     headers: {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"},

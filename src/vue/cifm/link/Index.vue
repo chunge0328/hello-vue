@@ -30,7 +30,7 @@
                             prop="remark"
                             label="备注"
                             sortable
-                            width="180">
+                            width="800">
                     </el-table-column>
                     <el-table-column
                             fixed="right"

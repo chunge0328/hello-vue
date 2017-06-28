@@ -1,4 +1,7 @@
 <style>
+    .form-line {
+        margin-top: 20px;
+    }
 </style>
 <template>
     <div class="bg-white">
@@ -6,6 +9,17 @@
         <el-dialog title="" :visible.sync="createDialogShow"><!--新增功能-->
             <vm-modify :vmware="vmware" :dicts="dicts" :callback="handleCallback"></vm-modify>
         </el-dialog><!--新增功能...end-->
+
+        <el-row class="form-line">
+            <el-col :span="16" :offset="4">
+                <el-alert
+                        title="虚拟机信息："
+                        type="info"
+                        description="登录账号：uo712/uo712@CIFM ip：10.163.130.50"
+                        show-icon>
+                </el-alert>
+            </el-col>
+        </el-row>
 
         <el-row style="margin-top: 30px;">
             <el-col :span="20" :offset="2"><!--内容展示-->
@@ -42,13 +56,31 @@
                             prop="port"
                             label="端口"
                             sortable
-                            width="180">
+                            width="160">
                     </el-table-column>
                     <el-table-column
                             prop="remark"
                             label="备注"
                             sortable
-                            width="600">
+                            width="410">
+                    </el-table-column>
+                    <el-table-column
+                            label="账户"
+                            width="200">
+                        <template scope="scope">
+                            <el-popover
+                                    width="600"
+                                    trigger="click">
+                                <manager v-if="associateList[scope.$index]" :target="target"></manager>
+                                <el-button
+                                        @click="handleShowAccount(vmwares[scope.$index], scope.$index, vmwares)"
+                                        type="text"
+                                        size="small"
+                                        slot="reference">
+                                    查看明细
+                                </el-button>
+                            </el-popover>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             fixed="right"
@@ -102,7 +134,8 @@
         Popover,
         Dialog,
         Loading,
-        MessageBox
+        MessageBox,
+        Alert
     }
         from "element-ui";
     Vue.use(Row);
@@ -115,6 +148,7 @@
     Vue.use(Autocomplete);
     Vue.use(Popover);
     Vue.use(Dialog);
+    Vue.use(Alert);
 
 
     let loadingInstance = Loading.service({
@@ -148,6 +182,14 @@
                     page: 0,
                     size: 20,
                     sort: "cDate,cTime"
+                },
+
+                associateList: [],
+                target: {
+                    data: getBaseData(),
+                    findUrl: "/admin/cifm/cifm/findByVm",
+                    assoUrl: "/admin/cifm/cifm/associateAcVm",
+                    cancUrl: "",
                 }
             }
         },
@@ -215,7 +257,14 @@
             handleCallback(){
                 this.handleQueryvmware();
                 this.createDialogShow = false;
-            }
+            },
+            handleShowAccount(db, ind, dbs){
+                this.database = db;
+                this.associateList = this.vmwares.map(function (obj, i) {
+                    return this.associateList[i] || ind == i;
+                }.bind(this));
+                this.target.data = db;
+            },
         }, created() {
             this.handleQueryParam();
             this.handleQueryvmware();

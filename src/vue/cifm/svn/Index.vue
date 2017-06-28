@@ -32,6 +32,24 @@
                             width="180">
                     </el-table-column>
                     <el-table-column
+                            label="账户"
+                            width="200">
+                        <template scope="scope">
+                            <el-popover
+                                    width="600"
+                                    trigger="click">
+                                <manager v-if="associateList[scope.$index]" :target="target"></manager>
+                                <el-button
+                                        @click="handleShowAccount(svns[scope.$index], scope.$index, svns)"
+                                        type="text"
+                                        size="small"
+                                        slot="reference">
+                                    查看明细
+                                </el-button>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
                             fixed="right"
                             label="操作"
                             width="140">
@@ -103,7 +121,9 @@
     });
 
     import SvModify from "../../../js/components/cifm/svn/Svn";
+    import Manager from "../../../js/components/cifm/cifm/Manager";
     Vue.use(SvModify);
+    Vue.use(Manager);
 
     let getBaseData = function () {
         return {
@@ -125,6 +145,14 @@
                     page: 0,
                     size: 20,
                     sort: "cDate,cTime"
+                },
+
+                associateList: [],
+                target: {
+                    data: getBaseData(),
+                    findUrl: "/admin/cifm/cifm/findBySv",
+                    assoUrl: "/admin/cifm/cifm/associateAcSv",
+                    cancUrl: "",
                 }
             }
         },
@@ -192,7 +220,14 @@
             handleCallback(){
                 this.handleQuerysvn();
                 this.createDialogShow = false;
-            }
+            },
+            handleShowAccount(db, ind, dbs){
+                this.database = db;
+                this.associateList = this.svns.map(function (obj, i) {
+                    return this.associateList[i] || ind == i;
+                }.bind(this));
+                this.target.data = db;
+            },
         }, created() {
             this.handleQueryParam();
             this.handleQuerysvn();
