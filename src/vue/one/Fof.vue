@@ -271,8 +271,8 @@
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
     import Highcharts from 'highcharts';
-    import router from '../js/config/RedRouterConfig';
-    import {Util} from '../js/utils/ValidateUtils';
+    import router from '../../js/config/RedRouterConfig';
+    import {Util} from '../../js/utils/ValidateUtils';
     import {
             Input,
             Button,

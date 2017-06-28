@@ -47,8 +47,8 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
-    import {Util} from '../js/utils/ValidateUtils';
-    import router from '../js/config/RedRouterConfig';
+    import {Util} from '../../js/utils/ValidateUtils';
+    import router from '../../js/config/RedRouterConfig';
     import {Form, FormItem, Input, Button, Message, Row, Col} from "element-ui";
     Vue.use(Form);
     Vue.use(FormItem);

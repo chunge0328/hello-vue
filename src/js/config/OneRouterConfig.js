@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import One from '../../vue/One.vue';
-import OneIndex from '../../vue/OneIndex.vue';
-import Fof from '../../vue/Fof.vue';
-import Point from '../../vue/Point.vue';
-import Topic from '../../vue/Topic.vue';
-import TopicDetail from '../../vue/TopicDetail.vue';
-import Question from '../../vue/Question.vue';
+import One from '../../vue/one/One.vue';
+import OneIndex from '../../vue/one/OneIndex.vue';
+import Fof from '../../vue/one/Fof.vue';
+import Point from '../../vue/one/Point.vue';
+import Topic from '../../vue/one/Topic.vue';
+import TopicDetail from '../../vue/one/TopicDetail.vue';
+import Question from '../../vue/one/Question.vue';
 
 Vue.use(VueRouter);
 const routes = [

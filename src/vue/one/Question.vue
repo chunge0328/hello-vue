@@ -62,7 +62,7 @@
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";
-    import router from '../js/config/RedRouterConfig';
+    import router from '../../js/config/RedRouterConfig';
     import {
         Message, Radio, RadioGroup, Button, Row, Col
     }

@@ -42,8 +42,8 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
-    import {Util} from '../js/utils/ValidateUtils';
-    import router from '../js/config/RedRouterConfig';
+    import {Util} from '../../js/utils/ValidateUtils';
+    import router from '../../js/config/RedRouterConfig';
     import {Button, Message, Row, Col, Tabs, TabPane, Input} from "element-ui";
     Vue.use(Button);
     Vue.use(Row);
