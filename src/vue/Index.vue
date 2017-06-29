@@ -162,18 +162,24 @@
 
         <el-row style="text-align: center">
             <el-row style="display: none;">
-                appid:wxdf454f5f6fb32d41
+                <h3>订阅号</h3>
+                appid: wxdf454f5f6fb32d41
                 <br>
                 secret: 0fe6d04c6bc30d50109ea59f5421801d
                 <br>
-                openid:gh_433a2900f34d
+                openid: gh_433a2900f34d
                 <br>
-                secret:Mm890210
+                secret: Mm890210
                 <br>
+                <h3>测试号</h3>
                 appid: wx32e7840d63f4dbe9
                 <br>
                 secret: a4befe4644e97e5981c6da3bc0af723d
                 <br>
+                <h3>小程序</h3>
+                appid: wx85b4d2fc3f23ea00
+                <br>
+                secret: 4752b60bdf5aab4c497406d0dd3f8f51
             </el-row>
             <div>
                 <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
