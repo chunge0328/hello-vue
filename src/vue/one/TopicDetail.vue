@@ -162,7 +162,7 @@
                         message: data.success ? "点赞成功" : data.message,
                         type: data.success ? 'success' : 'warning'
                     });
-                    if(data.success){
+                    if (data.success) {
                         this.init();
                     }
                 }.bind(this));
@@ -179,7 +179,7 @@
                         message: data.success ? "取消点赞成功" : data.message,
                         type: data.success ? 'success' : 'warning'
                     });
-                    if(data.success){
+                    if (data.success) {
                         this.init();
                     }
                 }.bind(this));

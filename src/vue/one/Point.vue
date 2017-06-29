@@ -115,8 +115,8 @@
                 giftList: null,
                 pointDetail: null,
                 pointDetaillength: null,
-                page:1,
-                limit:5,
+                page: 1,
+                limit: 5,
                 myPoint: '0'
             };
         },
@@ -164,8 +164,8 @@
             getMyPointDetail(){/*获取我的积分明细*/
                 this.$http.jsonp("/app/point/getMyPointDetail", {
                     params: {
-                        page:this.page,
-                        limit:this.limit,
+                        page: this.page,
+                        limit: this.limit,
                         sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
                             "property": "ctime",
                             "direction": "DESC"

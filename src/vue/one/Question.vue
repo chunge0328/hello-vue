@@ -28,7 +28,8 @@
             </el-col>
         </el-row>
 
-        <el-row v-for="(que, ind) in questions" :key="ind" v-show="activeIndex == ind && (!completeAnswer || modifyAnswer)">
+        <el-row v-for="(que, ind) in questions" :key="ind"
+                v-show="activeIndex == ind && (!completeAnswer || modifyAnswer)">
             <h3>{{ind+1}}、{{que.name}}</h3>
             <el-radio-group v-if="answers[ind]" v-model="answers[ind].answerId" class="question-list"
                             @change="handleNext">
@@ -37,7 +38,8 @@
                 </el-radio>
             </el-radio-group>
             <el-row style="text-align: center;">
-                <el-button v-if="completeAnswer" @click="modifyAnswer = false" type="primary" size="large">修改完成</el-button>
+                <el-button v-if="completeAnswer" @click="modifyAnswer = false" type="primary" size="large">修改完成
+                </el-button>
             </el-row>
         </el-row>
 
@@ -125,7 +127,7 @@
                 }.bind(this));
             },
             handleInitAnswer(questions){
-                if(questions!=null){
+                if (questions != null) {
                     let ans = this.answers;
                     ans = [];
                     for (let i = 0; i < questions.length; i++) {
@@ -153,7 +155,7 @@
                     }
                 }).then(function (res) {
                     let data = res.data;
-                    if(data.code == "CIFM_0105") {
+                    if (data.code == "CIFM_0105") {
                         Message({
                             message: data.message
                         });
@@ -162,14 +164,14 @@
                     let items = data.items;
                     this.handleInitAnswer(items);
                     this.questions = items;
-                    if(data.success){
+                    if (data.success) {
                         this.$http.jsonp("/app/question/queUser/getRiskInfo", {
                             params: {}
                         }).then(function (res) {
                             let data = res.data.data;
                             Message({
                                 showClose: true,
-                                message: "您的风险等级为"+data.riskName,
+                                message: "您的风险等级为" + data.riskName,
                                 type: "success"
                             });
                         }.bind(this));

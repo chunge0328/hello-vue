@@ -827,17 +827,17 @@
                         y: fofData[i].totAmount,
                         drilldown: fofData[i].fofName
                     });
-                    let items = fofData[i].items,seriesData = [];
+                    let items = fofData[i].items, seriesData = [];
                     for (j = 0; j < items.length; j++) {
-                        let k = 0,itemData = [];
+                        let k = 0, itemData = [];
                         itemData[k++] = items[j].fundName;
                         itemData[k++] = items[j].totAmount;
                         seriesData[j] = itemData;
                     }
                     drilldownData.push({
-                        name:fofData[i].fofName,
-                        id:fofData[i].fofName,
-                        data:seriesData
+                        name: fofData[i].fofName,
+                        id: fofData[i].fofName,
+                        data: seriesData
                     });
                 }
                 /*双柱状图*/
@@ -891,5 +891,4 @@
             }
         }
     }
-
 </script>

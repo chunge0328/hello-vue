@@ -29,7 +29,8 @@
                         <el-form-item label="验证码：" prop="mobileCode" required>
                             <el-col :span="15">
                                 <el-input type="text" v-model="loginForm.mobileCode" auto-complete="off"></el-input>
-                            </el-col>&nbsp;
+                            </el-col>
+                            &nbsp;
                             <el-button :class="{'sms_disabled': !sendState}"
                                        :disabled="!sendState" @click="sendCode">{{sendText}}
                             </el-button>
@@ -129,7 +130,7 @@
                         try {
                             localStorage.setItem("mobile", this.loginForm.mobile);
                             localStorage.setItem("code", this.loginForm.mobileCode);
-                            router.push('/oneIndex/'+this.loginForm.mobile+'/'+this.loginForm.mobileCode);
+                            router.push('/oneIndex/' + this.loginForm.mobile + '/' + this.loginForm.mobileCode);
                         } catch (e) {
                         }
                     } else if (data.code == "CIFM_9998") {

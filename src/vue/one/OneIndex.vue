@@ -112,7 +112,7 @@
                 }.bind(this))
             },
             question(){/*跳转问卷*/
-                router.push('/question/'+ this.$route.params.mobile);
+                router.push('/question/' + this.$route.params.mobile);
             },
             fof(){/*跳转智能体验馆*/
                 router.push('/fof/' + this.$route.params.mobile + '/' + this.$route.params.mobileCode);
