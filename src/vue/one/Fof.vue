@@ -28,8 +28,8 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
-                <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
+            <el-col :span="6" class="fontTitleStyle"><b>{{balance?balance+"元":""}}</b>
+                <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
@@ -47,6 +47,9 @@
 
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container2"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10" v-show="balance>0">
+            <div id="container3"></div>
         </el-row>
         <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container1"></div>
@@ -241,7 +244,7 @@
                 <el-table-column prop="amount" label="金额"></el-table-column>
                 <el-table-column label="份额">
                     <template scope="scope">
-                        {{scope.row.balance == null?'-':scope.row.balance}}
+                        {{scope.row.balance?'-':scope.row.balance}}
                     </template>
                 </el-table-column>
                 <el-table-column label="净值">
@@ -276,8 +279,10 @@
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
     import Highcharts from 'highcharts';
+    import Drilldown from '../../js/plugins/drilldown';
     import router from '../../js/config/RedRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
+    Drilldown(Highcharts);
     import {
         Input,
         Button,
@@ -319,8 +324,8 @@
                 risk: "",
                 bdate: null,
                 edate: null,
-                balance: "",
-                cusbalance: "",
+                balance: 0.0,
+                cusbalance: 0.0,
                 list: null,
                 items: null,
                 moneyDetaillist: null,//根据资金流水ID查回交易明细
@@ -385,13 +390,13 @@
                         this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
                             params: {}
                         }).then(function (res) {
-                            this.balance = res.data.data.balance;
+                            this.balance = res.data.data ? res.data.data.balance : 0.0;
                         }.bind(this));
                         /*查询客户余额*/
                         this.$http.jsonp("/app/fofApp/getMyBalance", {
                             params: {}
                         }).then(function (res) {
-                            this.cusbalance = res.data.balance;
+                            this.cusbalance = res.data ? res.data.balance : 0.0;
                         }.bind(this));
                         /*获取基金列表信息*/
                         this.$http.jsonp("/app/fofApp/getFundList", {
@@ -591,8 +596,9 @@
                         this.holdFofArray.push(arr);
                     }
                     this.handleDrawChart();
-                    this.getData();
+                    this.getDrawTwoChart();
                     this.drawColumn();
+                    this.drawDrillFof();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
@@ -608,7 +614,7 @@
                         },
                         title: {
                             floating: true,
-                            text: '投资组合分析'
+                            text: '<b>投资组合分析</b>'
                         },
                         tooltip: {
                             headerFormat: '{series.name}<br>',
@@ -660,7 +666,7 @@
                         }]
                     });
             },
-            getData(){
+            getDrawTwoChart(){//画双饼图，内环为组合，外环为组合的基金
                 //对数据进行处理
                 let fofData = this.holdFofList;
                 let colors = Highcharts.getOptions().colors,
@@ -718,15 +724,10 @@
                             type: 'pie'
                         },
                         title: {
-                            text: '智能投资组合'
+                            text: '<b>智能投资组合</b>'
                         },
                         subtitle: {
-                            text: '内环为基金组合占比，外环为组合的基金占比'
-                        },
-                        yAxis: {
-                            title: {
-                                text: '总百分比市场份额'
-                            }
+                            text: '内环为基金组合，外环为组合的基金'
                         },
                         plotOptions: {
                             pie: {
@@ -734,10 +735,7 @@
                                 center: ['50%', '50%']
                             },
 
-                        }/*,
-                     tooltip: {
-                     valueSuffix: '%'
-                     }*/,
+                        },
                         series: [{
                             name: '基金组合',
                             data: browserData,
@@ -800,22 +798,93 @@
                             pointFormat: '<b>{point.name}</b>: <b>{point.y:.2f}</b>'
                         },
                         series: [{
-                            name: '资产',
+                            name: '<b>我的</b>',
                             colorByPoint: true,
                             data: [{
-                                name: '体验金',
+                                name: '<b>体验金</b>',
                                 y: this.balance
                             }, {
-                                name: '余额',
+                                name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
-                                name: '持仓金额',
+                                name: '<b>持仓金额</b>',
                                 y: this.totalAmount
                             }, {
-                                name: '持仓份额',
+                                name: '<b>持仓份额</b>',
                                 y: this.totalBalance
                             }]
                         }]
+                    });
+            },
+            drawDrillFof(){
+                let fofData = this.holdFofList,//基金组合
+                    data = [], drilldownData = [], i, j;
+                for (i = 0; i < fofData.length; i++) {
+                    data.push({
+                        name: fofData[i].fofName,
+                        y: fofData[i].totAmount,
+                        drilldown: fofData[i].fofName
+                    });
+                    let items = fofData[i].items,seriesData = [];
+                    for (j = 0; j < items.length; j++) {
+                        let k = 0,itemData = [];
+                        itemData[k++] = items[j].fundName;
+                        itemData[k++] = items[j].totAmount;
+                        seriesData[j] = itemData;
+                    }
+                    drilldownData.push({
+                        name:fofData[i].fofName,
+                        id:fofData[i].fofName,
+                        data:seriesData
+                    });
+                }
+                /*双柱状图*/
+                new Highcharts.Chart('container3',
+                    {
+                        credits: {
+                            enabled: false//去除版权
+                        },
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: '<b>投资组合</b>'
+                        },
+                        subtitle: {
+                            text: '<b>点击柱状图可查看组合的基金</b>'
+                        },
+                        xAxis: {
+                            type: 'category'
+                        },
+                        yAxis: {
+                            title: {
+                                text: '金额'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            series: {
+                                borderWidth: 0,
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '¥{point.y:.1f}'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b>'
+                        },
+                        series: [{
+                            name: '组合',
+                            colorByPoint: true,
+                            data: data
+                        }],
+                        drilldown: {
+                            series: drilldownData
+                        }
                     });
             }
         }
