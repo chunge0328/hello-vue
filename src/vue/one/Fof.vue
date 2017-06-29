@@ -280,9 +280,11 @@
     import Vue from "vue";
     import Highcharts from 'highcharts';
     import Drilldown from '../../js/plugins/drilldown';
+    import Sandsignika from '../../js/plugins/sand-signika';
     import router from '../../js/config/RedRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
     Drilldown(Highcharts);
+    Sandsignika(Highcharts);
     import {
         Input,
         Button,
