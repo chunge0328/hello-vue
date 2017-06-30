@@ -281,10 +281,12 @@
     import Highcharts from 'highcharts';
     import Drilldown from '../../js/plugins/drilldown';
     import Sandsignika from '../../js/plugins/sand-signika';
+    import Exporting from '../../js/plugins/exporting'
     import router from '../../js/config/RedRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
     Drilldown(Highcharts);
     Sandsignika(Highcharts);
+    Exporting(Highcharts);
     import {
         Input,
         Button,
@@ -312,6 +314,17 @@
     function getBaseData() {
         return {fundCode: "", weight: ""};
     }
+
+    Highcharts.setOptions({
+        lang:{
+            downloadJPEG:"下载 JPEG 图片",
+            downloadPDF:"下载 PDF 文件",
+            downloadPNG:"下载 PNG 文件",
+            downloadSVG:"下载 SVG 文件",
+            printChart:"打印图表"
+        }
+    });
+
     export default {
         data(){
             return {
@@ -627,6 +640,7 @@
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
+
                 new Highcharts.Chart('container',
                     {
                         credits: {
@@ -643,7 +657,7 @@
                         },
                         tooltip: {
                             headerFormat: '{series.name}<br>',
-                            pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                            pointFormat: '{point.name}: <b>{point.percentage:,.2f}%</b>'
                         },
                         legend: {
                             align: "center", //程度标的目标地位
@@ -667,11 +681,21 @@
                                         return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
                                     }
                                 },
+                                slicedOffset: 10,         // 突出间距
                                 point: {
                                     plotShadow: false,
                                     events: {
-                                        click: function () {
-
+                                        // 鼠标滑过是，突出当前扇区
+                                        mouseOver: function() {
+                                            this.slice();
+                                        },
+                                        // 鼠标移出时，收回突出显示
+                                        mouseOut: function() {
+                                            this.slice();
+                                        },
+                                        // 默认是点击突出，这里屏蔽掉
+                                        click: function() {
+                                            return false;
                                         }
                                     }
                                 }
@@ -758,8 +782,7 @@
                             pie: {
                                 shadow: false,
                                 center: ['50%', '50%']
-                            },
-
+                            }
                         },
                         series: [{
                             name: '基金组合',
@@ -814,13 +837,13 @@
                                 borderWidth: 0,
                                 dataLabels: {
                                     enabled: true,
-                                    format: '{point.y:.1f}'
+                                    format: '{point.y:,.2f}'
                                 }
                             }
                         },
                         tooltip: {
                             headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                            pointFormat: '<b>{point.name}</b>: <b>{point.y:.2f}</b>'
+                            pointFormat: '<b>{point.name}</b>: <b>{point.y:,.2f}</b>'
                         },
                         series: [{
                             name: '<b>我的</b>',
@@ -894,13 +917,13 @@
                                 borderWidth: 0,
                                 dataLabels: {
                                     enabled: true,
-                                    format: '¥{point.y:.1f}'
+                                    format: '¥{point.y:,.2f}'
                                 }
                             }
                         },
                         tooltip: {
                             headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b>'
+                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:,.2f}</b>'
                         },
                         series: [{
                             name: '组合',
