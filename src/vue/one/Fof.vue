@@ -359,6 +359,7 @@
         },
         methods: {
             init(){
+                /*判断是否登录*/
                 this.$http.jsonp("/web/act/login/checkLogin", {params: {mobile: this.$route.params.mobile}}).then(function (res) {
                     if (!res.data.success) {
                         Message({showClose: true, message: "请先登录", type: "warning"});
@@ -366,51 +367,69 @@
                     } else {
                         this.cid = res.data.data.cid;
                         /*获取客户风险等级*/
-                        this.$http.jsonp("/app/question/queUser/getRiskInfo", {
-                            params: {}
-                        }).then(function (res) {
-                            let data = res.data.data;
-                            if (data) {
-                                this.riskLevel = data.riskLevel;
-                                this.riskName = data.riskName;
-                            }
-                            /*获取推荐与自建投资组合*/
-                            this.$http.jsonp("/app/fofApp/getAllList", {
-                                params: {
-                                    risk: this.riskLevel,
-                                    sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                        "property": "ctime",
-                                        "direction": "DESC"
-                                    }])
-                                }
-                            }).then(function (res) {
-                                this.list = res.data.items;
-                            }.bind(this));
-                        }.bind(this));
-
+                        this.getRiskInfo();
+                        /*获取推荐与自建投资组合*/
+                        this.getAllList();
                         /*获取用户体验金*/
-                        this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
-                            params: {}
-                        }).then(function (res) {
-                            this.balance = res.data.data ? res.data.data.balance : 0.0;
-                        }.bind(this));
+                        this.getMyFirstMoney();
                         /*查询客户余额*/
-                        this.$http.jsonp("/app/fofApp/getMyBalance", {
-                            params: {}
-                        }).then(function (res) {
-                            this.cusbalance = res.data ? res.data.balance : 0.0;
-                        }.bind(this));
+                        this.getMyBalance();
                         /*获取基金列表信息*/
-                        this.$http.jsonp("/app/fofApp/getFundList", {
-                            params: {}
-                        }).then(function (res) {
-                            this.fundlist = res.data.items;
-                        }.bind(this));
+                        this.getFundList();
+                        /*获取我的资金流水*/
                         this.getMoneyTrade();
+                        /*获取交易记录列表*/
                         this.getTrades();
+                        /*我的持仓组合*/
                         this.getHoldFof();
                     }
                 }.bind(this))
+            },
+            getRiskInfo(){/*获取客户风险等级*/
+                this.$http.jsonp("/app/question/queUser/getRiskInfo", {
+                    params: {}
+                }).then(function (res) {
+                    let data = res.data.data;
+                    if (data) {
+                        this.riskLevel = data.riskLevel;
+                        this.riskName = data.riskName;
+                    }
+                }.bind(this));
+            },
+            getAllList(){
+                /*获取推荐与自建投资组合*/
+                this.$http.jsonp("/app/fofApp/getAllList", {
+                    params: {
+                        risk: this.riskLevel,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.list = res.data.items;
+                }.bind(this));
+            },
+            getMyFirstMoney(){/*获取用户体验金*/
+                this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
+                    params: {}
+                }).then(function (res) {
+                    this.balance = res.data.data ? res.data.data.balance : 0.0;
+                }.bind(this));
+            },
+            getMyBalance(){/*查询客户余额*/
+                this.$http.jsonp("/app/fofApp/getMyBalance", {
+                    params: {}
+                }).then(function (res) {
+                    this.cusbalance = res.data ? res.data.balance : 0.0;
+                }.bind(this));
+            },
+            getFundList(){/*获取基金列表信息*/
+                this.$http.jsonp("/app/fofApp/getFundList", {
+                    params: {}
+                }).then(function (res) {
+                    this.fundlist = res.data.items;
+                }.bind(this));
             },
             getMoneyTrade(){/*获取我的资金流水*/
                 this.$http.jsonp("/app/fofApp/getCapitalFlow", {
@@ -597,9 +616,13 @@
                         arr.push(this.holdFofList[i].totAmount);
                         this.holdFofArray.push(arr);
                     }
+                    /* 绘制饼图表*/
                     this.handleDrawChart();
+                    /*绘制双饼图*/
                     this.getDrawTwoChart();
+                    /*绘制柱状图*/
                     this.drawColumn();
+                    /*绘制双柱状图*/
                     this.drawDrillFof();
                 }.bind(this));
             },
