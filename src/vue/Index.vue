@@ -162,7 +162,7 @@
 
         <el-row style="text-align: center">
             <el-row style="display: none;">
-                appid:wxdf454f5f6fb32d41
+                appid: wxdf454f5f6fb32d41
                 <br>
                 secret: 0fe6d04c6bc30d50109ea59f5421801d
                 <br>
@@ -179,6 +179,10 @@
                 <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
                 <img src="../img/gongzhong.jpeg"
                      style="position: fixed;right: 0px; top:300px; width: 150px;height: 150px;">
+                <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
+                <p style="position: fixed;right: 0px; top:465px; text-align: center;width: 150px;">个人订阅号</p>
+                <img src="../img/gongzhong.jpg"
+                     style="position: fixed;right: 0px; top:500px; width: 150px;height: 150px;">
             </div>
         </el-row>
         <div class="footer">
