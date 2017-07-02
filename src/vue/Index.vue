@@ -166,9 +166,7 @@
                 <br>
                 secret: 0fe6d04c6bc30d50109ea59f5421801d
                 <br>
-                openid:gh_433a2900f34d
-                <br>
-                secret:Mm890210
+                originId: gh_433a2900f34d
                 <br>
                 appid: wx32e7840d63f4dbe9
                 <br>
