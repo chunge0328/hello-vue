@@ -109,8 +109,7 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devServer = {
         host: '0.0.0.0',
         port: 7778,
-        disableHostCheck: true,
-        public: 'QH-DS-712:7778'
+        disableHostCheck: true
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([

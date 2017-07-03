@@ -28,8 +28,8 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{balance}}&nbsp;{{balance?"元":""}}</b>
-                <el-button type="primary" @click="getBalance()" v-show="balance==''">领取体验金</el-button>
+            <el-col :span="6" class="fontTitleStyle"><b>{{balance?balance+"元":""}}</b>
+                <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
@@ -47,6 +47,9 @@
 
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container2"></div>
+        </el-row>
+        <el-row :gutter="20" class="top10" v-show="balance>0">
+            <div id="container3"></div>
         </el-row>
         <el-row :gutter="20" class="top10" v-show="totalAmount>0">
             <div id="container1"></div>
@@ -241,7 +244,7 @@
                 <el-table-column prop="amount" label="金额"></el-table-column>
                 <el-table-column label="份额">
                     <template scope="scope">
-                        {{scope.row.balance == null?'-':scope.row.balance}}
+                        {{scope.row.balance?'-':scope.row.balance}}
                     </template>
                 </el-table-column>
                 <el-table-column label="净值">
@@ -276,8 +279,14 @@
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
     import Highcharts from 'highcharts';
+    import Drilldown from '../../js/plugins/drilldown';
+    import Sandsignika from '../../js/plugins/sand-signika';
+    import Exporting from '../../js/plugins/exporting'
     import router from '../../js/config/RedRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
+    Drilldown(Highcharts);
+    Sandsignika(Highcharts);
+    Exporting(Highcharts);
     import {
         Input,
         Button,
@@ -305,6 +314,17 @@
     function getBaseData() {
         return {fundCode: "", weight: ""};
     }
+
+    Highcharts.setOptions({
+        lang:{
+            downloadJPEG:"下载 JPEG 图片",
+            downloadPDF:"下载 PDF 文件",
+            downloadPNG:"下载 PNG 文件",
+            downloadSVG:"下载 SVG 文件",
+            printChart:"打印图表"
+        }
+    });
+
     export default {
         data(){
             return {
@@ -319,8 +339,8 @@
                 risk: "",
                 bdate: null,
                 edate: null,
-                balance: "",
-                cusbalance: "",
+                balance: 0.0,
+                cusbalance: 0.0,
                 list: null,
                 items: null,
                 moneyDetaillist: null,//根据资金流水ID查回交易明细
@@ -352,6 +372,7 @@
         },
         methods: {
             init(){
+                /*判断是否登录*/
                 this.$http.jsonp("/web/act/login/checkLogin", {params: {mobile: this.$route.params.mobile}}).then(function (res) {
                     if (!res.data.success) {
                         Message({showClose: true, message: "请先登录", type: "warning"});
@@ -359,51 +380,69 @@
                     } else {
                         this.cid = res.data.data.cid;
                         /*获取客户风险等级*/
-                        this.$http.jsonp("/app/question/queUser/getRiskInfo", {
-                            params: {}
-                        }).then(function (res) {
-                            let data = res.data.data;
-                            if (data) {
-                                this.riskLevel = data.riskLevel;
-                                this.riskName = data.riskName;
-                            }
-                            /*获取推荐与自建投资组合*/
-                            this.$http.jsonp("/app/fofApp/getAllList", {
-                                params: {
-                                    risk: this.riskLevel,
-                                    sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
-                                        "property": "ctime",
-                                        "direction": "DESC"
-                                    }])
-                                }
-                            }).then(function (res) {
-                                this.list = res.data.items;
-                            }.bind(this));
-                        }.bind(this));
-
+                        this.getRiskInfo();
+                        /*获取推荐与自建投资组合*/
+                        this.getAllList();
                         /*获取用户体验金*/
-                        this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
-                            params: {}
-                        }).then(function (res) {
-                            this.balance = res.data.data.balance;
-                        }.bind(this));
+                        this.getMyFirstMoney();
                         /*查询客户余额*/
-                        this.$http.jsonp("/app/fofApp/getMyBalance", {
-                            params: {}
-                        }).then(function (res) {
-                            this.cusbalance = res.data.balance;
-                        }.bind(this));
+                        this.getMyBalance();
                         /*获取基金列表信息*/
-                        this.$http.jsonp("/app/fofApp/getFundList", {
-                            params: {}
-                        }).then(function (res) {
-                            this.fundlist = res.data.items;
-                        }.bind(this));
+                        this.getFundList();
+                        /*获取我的资金流水*/
                         this.getMoneyTrade();
+                        /*获取交易记录列表*/
                         this.getTrades();
+                        /*我的持仓组合*/
                         this.getHoldFof();
                     }
                 }.bind(this))
+            },
+            getRiskInfo(){/*获取客户风险等级*/
+                this.$http.jsonp("/app/question/queUser/getRiskInfo", {
+                    params: {}
+                }).then(function (res) {
+                    let data = res.data.data;
+                    if (data) {
+                        this.riskLevel = data.riskLevel;
+                        this.riskName = data.riskName;
+                    }
+                }.bind(this));
+            },
+            getAllList(){
+                /*获取推荐与自建投资组合*/
+                this.$http.jsonp("/app/fofApp/getAllList", {
+                    params: {
+                        risk: this.riskLevel,
+                        sort: JSON.stringify([{"property": "cdate", "direction": "DESC"}, {
+                            "property": "ctime",
+                            "direction": "DESC"
+                        }])
+                    }
+                }).then(function (res) {
+                    this.list = res.data.items;
+                }.bind(this));
+            },
+            getMyFirstMoney(){/*获取用户体验金*/
+                this.$http.jsonp("/app/fofApp/getMyFirstMoney", {
+                    params: {}
+                }).then(function (res) {
+                    this.balance = res.data.data ? res.data.data.balance : 0.0;
+                }.bind(this));
+            },
+            getMyBalance(){/*查询客户余额*/
+                this.$http.jsonp("/app/fofApp/getMyBalance", {
+                    params: {}
+                }).then(function (res) {
+                    this.cusbalance = res.data ? res.data.balance : 0.0;
+                }.bind(this));
+            },
+            getFundList(){/*获取基金列表信息*/
+                this.$http.jsonp("/app/fofApp/getFundList", {
+                    params: {}
+                }).then(function (res) {
+                    this.fundlist = res.data.items;
+                }.bind(this));
             },
             getMoneyTrade(){/*获取我的资金流水*/
                 this.$http.jsonp("/app/fofApp/getCapitalFlow", {
@@ -590,12 +629,18 @@
                         arr.push(this.holdFofList[i].totAmount);
                         this.holdFofArray.push(arr);
                     }
+                    /* 绘制饼图表*/
                     this.handleDrawChart();
-                    this.getData();
+                    /*绘制双饼图*/
+                    this.getDrawTwoChart();
+                    /*绘制柱状图*/
                     this.drawColumn();
+                    /*绘制双柱状图*/
+                    this.drawDrillFof();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
+
                 new Highcharts.Chart('container',
                     {
                         credits: {
@@ -608,11 +653,11 @@
                         },
                         title: {
                             floating: true,
-                            text: '投资组合分析'
+                            text: '<b>投资组合分析</b>'
                         },
                         tooltip: {
                             headerFormat: '{series.name}<br>',
-                            pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                            pointFormat: '{point.name}: <b>{point.percentage:,.2f}%</b>'
                         },
                         legend: {
                             align: "center", //程度标的目标地位
@@ -636,11 +681,21 @@
                                         return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + '¥' + this.y : null;
                                     }
                                 },
+                                slicedOffset: 10,         // 突出间距
                                 point: {
                                     plotShadow: false,
                                     events: {
-                                        click: function () {
-
+                                        // 鼠标滑过是，突出当前扇区
+                                        mouseOver: function() {
+                                            this.slice();
+                                        },
+                                        // 鼠标移出时，收回突出显示
+                                        mouseOut: function() {
+                                            this.slice();
+                                        },
+                                        // 默认是点击突出，这里屏蔽掉
+                                        click: function() {
+                                            return false;
                                         }
                                     }
                                 }
@@ -660,7 +715,7 @@
                         }]
                     });
             },
-            getData(){
+            getDrawTwoChart(){//画双饼图，内环为组合，外环为组合的基金
                 //对数据进行处理
                 let fofData = this.holdFofList;
                 let colors = Highcharts.getOptions().colors,
@@ -718,26 +773,17 @@
                             type: 'pie'
                         },
                         title: {
-                            text: '智能投资组合'
+                            text: '<b>智能投资组合</b>'
                         },
                         subtitle: {
-                            text: '内环为基金组合占比，外环为组合的基金占比'
-                        },
-                        yAxis: {
-                            title: {
-                                text: '总百分比市场份额'
-                            }
+                            text: '内环为基金组合，外环为组合的基金'
                         },
                         plotOptions: {
                             pie: {
                                 shadow: false,
                                 center: ['50%', '50%']
-                            },
-
-                        }/*,
-                     tooltip: {
-                     valueSuffix: '%'
-                     }*/,
+                            }
+                        },
                         series: [{
                             name: '基金组合',
                             data: browserData,
@@ -791,34 +837,104 @@
                                 borderWidth: 0,
                                 dataLabels: {
                                     enabled: true,
-                                    format: '{point.y:.1f}'
+                                    format: '{point.y:,.2f}'
                                 }
                             }
                         },
                         tooltip: {
                             headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                            pointFormat: '<b>{point.name}</b>: <b>{point.y:.2f}</b>'
+                            pointFormat: '<b>{point.name}</b>: <b>{point.y:,.2f}</b>'
                         },
                         series: [{
-                            name: '资产',
+                            name: '<b>我的</b>',
                             colorByPoint: true,
                             data: [{
-                                name: '体验金',
+                                name: '<b>体验金</b>',
                                 y: this.balance
                             }, {
-                                name: '余额',
+                                name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
-                                name: '持仓金额',
+                                name: '<b>持仓金额</b>',
                                 y: this.totalAmount
                             }, {
-                                name: '持仓份额',
+                                name: '<b>持仓份额</b>',
                                 y: this.totalBalance
                             }]
                         }]
                     });
+            },
+            drawDrillFof(){
+                let fofData = this.holdFofList,//基金组合
+                    data = [], drilldownData = [], i, j;
+                for (i = 0; i < fofData.length; i++) {
+                    data.push({
+                        name: fofData[i].fofName,
+                        y: fofData[i].totAmount,
+                        drilldown: fofData[i].fofName
+                    });
+                    let items = fofData[i].items, seriesData = [];
+                    for (j = 0; j < items.length; j++) {
+                        let k = 0, itemData = [];
+                        itemData[k++] = items[j].fundName;
+                        itemData[k++] = items[j].totAmount;
+                        seriesData[j] = itemData;
+                    }
+                    drilldownData.push({
+                        name: fofData[i].fofName,
+                        id: fofData[i].fofName,
+                        data: seriesData
+                    });
+                }
+                /*双柱状图*/
+                new Highcharts.Chart('container3',
+                    {
+                        credits: {
+                            enabled: false//去除版权
+                        },
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: '<b>投资组合</b>'
+                        },
+                        subtitle: {
+                            text: '<b>点击柱状图可查看组合的基金</b>'
+                        },
+                        xAxis: {
+                            type: 'category'
+                        },
+                        yAxis: {
+                            title: {
+                                text: '金额'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            series: {
+                                borderWidth: 0,
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '¥{point.y:,.2f}'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:,.2f}</b>'
+                        },
+                        series: [{
+                            name: '组合',
+                            colorByPoint: true,
+                            data: data
+                        }],
+                        drilldown: {
+                            series: drilldownData
+                        }
+                    });
             }
         }
     }
-
 </script>
