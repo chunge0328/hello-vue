@@ -201,6 +201,13 @@
                             Message({
                                 message: data.success ? "提交成功" : data.message
                             });
+                        }.bind(this),
+                        function () {
+                            this.submiting = false;
+                            this.switchModal();
+                            Message({
+                                message: "后台服务没有开启"
+                            });
                         }.bind(this));
                     }
                 }

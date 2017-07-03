@@ -111,7 +111,7 @@ if (CONFIG.NODE_ENV === 'development') {
         headers: {
             "Access-Control-Allow-Origin": "*"
         },
-        port: 7777
+        port: 7779
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([

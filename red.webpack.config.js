@@ -15,7 +15,7 @@ const NODE_ENV = process.env.NODE_ENV,
         'CONTEXT_ROOT': CONTEXT_ROOT,
         'OUTPUT_PATH': path.resolve(ROOT_PATH, CONTEXT_ROOT),
         'PUBLIC_PATH': (CONTEXT_ROOT == null || CONTEXT_ROOT.length == 0) ? '/' : '/' + CONTEXT_ROOT + '/',
-        'RED_HTML': 'index.html'
+        'INDEX_HTML': NODE_ENV === 'production' ? path.resolve(ROOT_PATH, 'index.html') : 'index.html'
     };
 
 /*debugger*/
@@ -97,7 +97,7 @@ module.exports.plugins = (module.exports.plugins || []).concat(
         hash: true,
         js: ["red", "common"],
         excludeChunks: ["index"],
-        filename: CONFIG.RED_HTML
+        filename: CONFIG.INDEX_HTML
     }),
     extractCSS,
     extractLESS,
@@ -108,7 +108,7 @@ module.exports.plugins = (module.exports.plugins || []).concat(
 if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
-        port: 7777
+        port: 7778
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
