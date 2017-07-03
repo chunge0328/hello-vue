@@ -162,21 +162,12 @@
 
         <el-row style="text-align: center">
             <el-row style="display: none;">
-<<<<<<< HEAD
                 <h3>订阅号</h3>
-=======
->>>>>>> e62217e52507ac8c8e2a93a0a3dfdf432dfbcd3c
                 appid: wxdf454f5f6fb32d41
                 <br>
                 secret: 0fe6d04c6bc30d50109ea59f5421801d
                 <br>
-<<<<<<< HEAD
-                openid: gh_433a2900f34d
-                <br>
-                secret: Mm890210
-=======
                 originId: gh_433a2900f34d
->>>>>>> e62217e52507ac8c8e2a93a0a3dfdf432dfbcd3c
                 <br>
                 <h3>测试号</h3>
                 appid: wx32e7840d63f4dbe9
