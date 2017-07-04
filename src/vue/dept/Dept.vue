@@ -22,6 +22,16 @@
 <template>
     <div>
 
+        <el-row>
+            <el-col :span="12">&nbsp;</el-col>
+            <el-col :span="6">
+                <header id="header" class="mui-bar mui-bar-nav">
+                    <a class="mui-action-back mui-pull-left"></a>
+                    <h1 class="mui-title">问卷调查</h1>
+                </header>
+            </el-col>
+        </el-row>
+
         <el-form>
             <el-row v-if = "seen">
                 <h3>请先填写以下信息：</h3><br>
@@ -37,7 +47,7 @@
 
                 <el-form-item
                         label="证件编号">
-                    <el-input v-model="idNo" placeholder="证件编号（必输数值类型）"></el-input>
+                    <el-input v-model="idNo" placeholder="证件编号（必输）"></el-input>
                 </el-form-item>
 
                 <el-button id="beginbtn" type="primary" @click="beginTest">开始测评</el-button>
@@ -73,6 +83,7 @@
             </el-row>
             <el-row style="margin-top: 40px; text-align: center;">
                 <el-button @click="submitAnswer" type="default" size="large">提交</el-button>
+                <el-button @click="exportQue"  v-if = "!seen1" type="default" size="large">导出Pdf</el-button>
             </el-row>
         </el-row>
     </div>
@@ -112,7 +123,8 @@
                 fundAccoName: '',
                 idType: '',
                 idNo: '',
-                seen:'true'
+                seen:'true',
+                seen1:'true'
             }
         },
         created() {
@@ -150,6 +162,43 @@
 
                 this.seen = false;
                 this.handleListQuestion();
+            },
+            exportQue(){
+                var host=process.env.BASE_PATH;
+                window.open(host+"/web/question/question/createPdf?topicId="+this.topicId+"&idType="+this.idType+"&fundAccoName="+this.fundAccoName+"&idNo="+this.idNo);
+
+//                this.$http.get('/web/question/question/createPdf',{params:{
+//                    topicId: this.topicId,
+//                    idType:this.idType,
+//                    idNo:this.idNo,
+//                    fundAccoName:this.fundAccoName
+//                }}).then(function(res){
+//
+//                },function(){
+//                    console.log('请求失败处理');
+//                });
+
+               // window.location.href = "http://localhost:8066/one/web/question/question/createPdf?topicId="+this.topicId+"&idType="+this.idType+"&fundAccoName="+this.fundAccoName
+//                this.$http.jsonp("", {
+//                    params: {
+//                        topicId: this.topicId,
+//                        idType:this.idType,
+//                        idNo:this.idNo,
+//                        fundAccoName:this.fundAccoName
+//                    }
+//                }).then(function (res) {
+//                    alert('111');
+//                    if (!res.data.success) {
+//                        Message({
+//                            showClose: true,
+//                            message: "",
+//                            type: "warning"
+//                        });
+//                    } else {
+//
+//                        // this.handleListQuestion();
+//                    }
+//                }.bind(this));
             },
             handleListQuestion() {
                 this.$http.jsonp("/web/question/question/list", {
@@ -221,6 +270,7 @@
                                 message: "您的风险等级为" + data.riskName,
                                 type: "success"
                             });
+                            this.seen1 = !this.seen1
                         }.bind(this));
                     }
                 }.bind(this));

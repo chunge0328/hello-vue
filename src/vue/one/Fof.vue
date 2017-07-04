@@ -35,12 +35,12 @@
             <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
-            <el-col :span="4"><b>持仓金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalAmount}}&nbsp;{{totalAmount?"元":""}}</b>
+        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+            <el-col :span="4"><b>未确认金额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance}}&nbsp;{{totalEnEnsureBalance?"元":""}}</b>
             </el-col>
-            <el-col :span="4"><b>持仓份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalBalance.toFixed(4)}}&nbsp;{{totalBalance?"元":""}}</b>
+            <el-col :span="4"><b>已确认份额：</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(4)}}&nbsp;{{totalEnsureBalance?"元":""}}</b>
             </el-col>
         </el-row>
 
@@ -51,10 +51,10 @@
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container3"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
             <div id="container1"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalAmount>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
             <div id="container"></div>
         </el-row>
 
@@ -321,6 +321,7 @@
             downloadPDF:"下载 PDF 文件",
             downloadPNG:"下载 PNG 文件",
             downloadSVG:"下载 SVG 文件",
+            downloadXML:"下载 XML 文件",
             printChart:"打印图表"
         }
     });
@@ -363,8 +364,8 @@
                 tradeLimit: 5,
                 holdFofList: null,
                 holdFofArray: [],
-                totalAmount: 0.0,
-                totalBalance: 0.0
+                totalEnEnsureBalance: 0.0,//未确认金额
+                totalEnsureBalance: 0.0//已确认份额
             };
         },
         created: function () {
@@ -623,10 +624,10 @@
                     this.holdFofList = res.data.items;
                     for (let i = 0; i < res.data.total; i++) {
                         let arr = [];
-                        this.totalAmount += this.holdFofList[i].totAmount;
-                        this.totalBalance += this.holdFofList[i].totBalance;
+                        this.totalEnEnsureBalance += this.holdFofList[i].unEnsureBalance;
+                        this.totalEnsureBalance += this.holdFofList[i].ensureBalance;
                         arr.push(this.holdFofList[i].fofName);
-                        arr.push(this.holdFofList[i].totAmount);
+                        arr.push(this.holdFofList[i].ensureBalance);
                         this.holdFofArray.push(arr);
                     }
                     /* 绘制饼图表*/
@@ -728,12 +729,12 @@
                     let items = fofData[i].items;
                     let itemData = [], itemcategories = [];
                     for (j = 0; j < items.length; j++) {
-                        itemData.push(items[j].totAmount);
+                        itemData.push(items[j].ensureBalance);
                         itemcategories.push(items[j].fundName);
                     }
                     categories.push(fofData[i].fofName);
                     data.push({
-                        y: fofData[i].totAmount,
+                        y: fofData[i].ensureBalance,
                         color: colors[i],
                         drilldown: {
                             name: '基金',
@@ -855,11 +856,11 @@
                                 name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
-                                name: '<b>持仓金额</b>',
-                                y: this.totalAmount
+                                name: '<b>未确认金额</b>',
+                                y: this.totalEnEnsureBalance
                             }, {
-                                name: '<b>持仓份额</b>',
-                                y: this.totalBalance
+                                name: '<b>已确认份额</b>',
+                                y: this.totalEnsureBalance
                             }]
                         }]
                     });
@@ -870,14 +871,14 @@
                 for (i = 0; i < fofData.length; i++) {
                     data.push({
                         name: fofData[i].fofName,
-                        y: fofData[i].totAmount,
+                        y: fofData[i].ensureBalance,
                         drilldown: fofData[i].fofName
                     });
                     let items = fofData[i].items, seriesData = [];
                     for (j = 0; j < items.length; j++) {
                         let k = 0, itemData = [];
                         itemData[k++] = items[j].fundName;
-                        itemData[k++] = items[j].totAmount;
+                        itemData[k++] = items[j].ensureBalance;
                         seriesData[j] = itemData;
                     }
                     drilldownData.push({
