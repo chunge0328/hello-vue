@@ -32,15 +32,15 @@
                 <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}&nbsp;{{cusbalance?"元":""}}</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}元</b></el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+        <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>未确认金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance}}&nbsp;{{totalEnEnsureBalance?"元":""}}</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance}}&nbsp;元</b>
             </el-col>
             <el-col :span="4"><b>已确认份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(4)}}&nbsp;{{totalEnsureBalance?"元":""}}</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(4)}}&nbsp;元</b>
             </el-col>
         </el-row>
 
@@ -244,7 +244,7 @@
                 <el-table-column prop="amount" label="金额"></el-table-column>
                 <el-table-column label="份额">
                     <template scope="scope">
-                        {{scope.row.balance?'-':scope.row.balance}}
+                        {{scope.row.balance == null?'-':scope.row.balance}}
                     </template>
                 </el-table-column>
                 <el-table-column label="净值">
@@ -269,10 +269,38 @@
             </div>
         </el-row>
 
-
+        <el-row :gutter="20" class="top10">
+            <el-col ><b>客户资产排名</b>
+                <el-button @click="exportExcel()" type="danger" size="small">
+                    导出Excel
+                </el-button>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="top10">
+            <el-table :data="fofAssetRanklist" style="width: 100%">
+                <el-table-column prop="rankNum" label="排名" width="80"></el-table-column>
+                <el-table-column prop="customerName" label="客户姓名"></el-table-column>
+                <el-table-column prop="mobile" label="手机号" width="130"></el-table-column>
+                <el-table-column prop="useableBalance" label="余额"></el-table-column>
+                <el-table-column prop="unEnsureBalance" label="未确认金额"></el-table-column>
+                <el-table-column prop="ensureBalance" label="已确认金额"></el-table-column>
+                <el-table-column prop="totBalance" label="总资产"></el-table-column>
+            </el-table>
+            <div style="margin-top: 20px;">
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleAssetRankSizeChange"
+                            @current-change="handleAssetRankCurrentChange"
+                            :current-page="1"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="tradeLimit"
+                            layout="total, sizes, prev, pager, next"
+                            :total="fofAssetRanklistlength">
+                    </el-pagination>
+                </div>
+            </div>
+        </el-row>
     </div>
-
-
 </template>
 
 <script>
@@ -316,19 +344,20 @@
     }
 
     Highcharts.setOptions({
-        lang:{
-            downloadJPEG:"下载 JPEG 图片",
-            downloadPDF:"下载 PDF 文件",
-            downloadPNG:"下载 PNG 文件",
-            downloadSVG:"下载 SVG 文件",
-            downloadXML:"下载 XML 文件",
-            printChart:"打印图表"
+        lang: {
+            downloadJPEG: "下载 JPEG 图片",
+            downloadPDF: "下载 PDF 文件",
+            downloadPNG: "下载 PNG 文件",
+            downloadSVG: "下载 SVG 文件",
+            downloadXML: "下载 XML 文件",
+            printChart: "打印图表"
         }
     });
 
     export default {
         data(){
             return {
+                basePath: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankExcel',
                 dialogTableVisible: false,
                 dialogMoneyDetailVisible: false,
                 cid: null,
@@ -365,7 +394,11 @@
                 holdFofList: null,
                 holdFofArray: [],
                 totalEnEnsureBalance: 0.0,//未确认金额
-                totalEnsureBalance: 0.0//已确认份额
+                totalEnsureBalance: 0.0,//已确认份额
+                fofAssetRanklist: null,//资产排名
+                fofAssetRanklistlength: 0,
+                rankPage: 1,
+                rankLimit: 5
             };
         },
         created: function () {
@@ -396,6 +429,8 @@
                         this.getTrades();
                         /*我的持仓组合*/
                         this.getHoldFof();
+                        /*获取资产排名*/
+                        this.getFofAssetRank();
                     }
                 }.bind(this))
             },
@@ -617,6 +652,14 @@
                 this.tradePage = val;
                 this.getTrades();
             },
+            handleAssetRankSizeChange(val) {
+                this.rankLimit = val;
+                this.getFofAssetRank();
+            },
+            handleAssetRankCurrentChange(val) {
+                this.rankPage = val;
+                this.getFofAssetRank();
+            },
             getHoldFof(){/*我的持仓组合*/
                 this.$http.jsonp("/app/fofApp/getHoldFof", {
                     params: {}
@@ -641,7 +684,6 @@
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
-
                 new Highcharts.Chart('container',
                     {
                         credits: {
@@ -687,15 +729,15 @@
                                     plotShadow: false,
                                     events: {
                                         // 鼠标滑过是，突出当前扇区
-                                        mouseOver: function() {
+                                        mouseOver: function () {
                                             this.slice();
                                         },
                                         // 鼠标移出时，收回突出显示
-                                        mouseOut: function() {
+                                        mouseOut: function () {
                                             this.slice();
                                         },
                                         // 默认是点击突出，这里屏蔽掉
-                                        click: function() {
+                                        click: function () {
                                             return false;
                                         }
                                     }
@@ -716,7 +758,7 @@
                         }]
                     });
             },
-            getDrawTwoChart(){//画双饼图，内环为组合，外环为组合的基金
+            getDrawTwoChart(){/*画双饼图，内环为组合，外环为组合的基金*/
                 //对数据进行处理
                 let fofData = this.holdFofList;
                 let colors = Highcharts.getOptions().colors,
@@ -856,6 +898,9 @@
                                 name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
+                                name: '<b>已确认份额</b>',
+                                y: this.totalEnsureBalance
+                            }, {
                                 name: '<b>未确认金额</b>',
                                 y: this.totalEnEnsureBalance
                             }, {
@@ -865,7 +910,7 @@
                         }]
                     });
             },
-            drawDrillFof(){
+            drawDrillFof(){/*绘制双柱状图*/
                 let fofData = this.holdFofList,//基金组合
                     data = [], drilldownData = [], i, j;
                 for (i = 0; i < fofData.length; i++) {
@@ -935,6 +980,17 @@
                             series: drilldownData
                         }
                     });
+            },
+            getFofAssetRank(){/*获取资产排名*/
+                this.$http.jsonp("/app/fofApp/queryFofAssetRank", {
+                    params: {}
+                }).then(function (res) {
+                    this.fofAssetRanklist = res.data.items;
+                    this.fofAssetRanklistlength = res.data.total;
+                }.bind(this));
+            },
+            exportExcel(){/*导出资产排名*/
+                window.open(this.basePath);
             }
         }
     }
