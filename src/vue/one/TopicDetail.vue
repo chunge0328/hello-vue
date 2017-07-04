@@ -39,7 +39,7 @@
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
             <el-row>
                 <el-col>
-                    <b>{{result.disUserName}}</b>&nbsp;{{result.coverUserId!=result.disUserId?"回复":''}}<b>&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
+                    <b>{{result.disUserName}}</b>&nbsp;{{result.coverUserId!=result.disUserId?"@":''}}<b>&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
                 </el-col>
             </el-row>
             <el-row>
@@ -51,7 +51,7 @@
         <el-row :gutter="20" class="top10" v-show="flag">
             <el-row>
                 <el-col>
-                    <b>{{nickname}}</b>&nbsp;{{nickid!=reid?"回复":''}}&nbsp;<b>{{nickid!=reid?rename:''}}</b></el-col>
+                    <b>{{nickname}}</b>&nbsp;{{nickid!=reid?"@":''}}&nbsp;<b>{{nickid!=reid?rename:''}}</b></el-col>
                 <el-col>
                     <el-input type="textarea" v-model="desc"></el-input>
                     <el-button type="primary" @click="submit()" class="top10">提交</el-button>
