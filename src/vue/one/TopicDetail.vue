@@ -26,14 +26,18 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <b>{{author}}:{{content}}&nbsp;<i @click="laud()" class="el-icon-star-on aa bb">点赞</i></b>
+            <b>{{author}}&nbsp;:&nbsp;{{content}}&nbsp;</b>
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="3"><b>点赞：</b></el-col>
+            <el-col :span="3">
+                <i @click="laud()" class="el-icon-star-on aa bb">
+                    <span v-if="!isLaud">点赞</span>
+                    <span v-else>取消点赞</span>
+                </i>
+            </el-col>
             <el-col v-for="(result, index) in laudlist" :key="'laudlist'+index" :span="3">
-                <span v-if="result.laudId == nickid" @click="qxlaud(result)" class="aa">{{result.laudName}}</span>
-                <span v-else>{{result.laudName}}</span>
+                {{result.laudName}}
             </el-col>
         </el-row>
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
@@ -85,7 +89,8 @@
                 themeId: this.$route.params.id,
                 nickname: '',
                 nickid: '',
-                desc: ''
+                desc: '',
+                isLaud:false
             };
         },
         created: function () {
@@ -124,6 +129,14 @@
                                 this.reid = this.nickid;
                             }
                         }.bind(this));
+                        /*查询客户自己是否点赞*/
+                        this.$http.jsonp("/app/themeLaud/isLaud", {
+                            params: {
+                                themeId: this.$route.params.id
+                            }
+                        }).then(function (res) {
+                            this.isLaud = res.data.success;
+                        }.bind(this));
                         /*查询评论列表*/
                         this.$http.jsonp("/app/themeDis/list", {
                             params: {
@@ -142,9 +155,8 @@
                         }.bind(this));
                     }
                 }.bind(this));
-
             },
-            reply(result){
+            reply(result){/*评论*/
                 this.flag = true;
                 this.reid = result.disUserId;
                 this.rename = result.disUserName;
@@ -159,25 +171,8 @@
                     let data = res.data;
                     Message({
                         showClose: true,
-                        message: data.success ? "点赞成功" : data.message,
-                        type: data.success ? 'success' : 'warning'
-                    });
-                    if (data.success) {
-                        this.init();
-                    }
-                }.bind(this));
-            },
-            qxlaud(result){
-                this.$http.jsonp("/app/themeLaud/del", {
-                    params: {
-                        id: result.id
-                    }
-                }).then(function (res) {
-                    let data = res.data;
-                    Message({
-                        showClose: true,
-                        message: data.success ? "取消点赞成功" : data.message,
-                        type: data.success ? 'success' : 'warning'
+                        message: data.data.stat==1 ? "点赞成功" : "取消点赞成功",
+                        type:  'success'
                     });
                     if (data.success) {
                         this.init();
