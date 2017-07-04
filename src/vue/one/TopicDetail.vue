@@ -185,7 +185,7 @@
                 }.bind(this));
             },
             submit(){
-                if (Util.isEmpty(this.des)) {
+                if (!Util.isEmpty(this.des)) {
                     Message({showClose: true, message: "请输入评论内容", type: 'warning'});
                     return false;
                 } else {
