@@ -39,7 +39,7 @@
                 <el-input type="text" v-model="sid"></el-input>
             </el-col>
         </el-row>
-        <el-row :gutter="20" class="top10">
+<!--        <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>上传图片：</b></el-col>
             <el-col :span="12">
                 <el-upload
@@ -51,7 +51,7 @@
                     <div slot="tip" class="el-upload__tip">只能上传图片文件，且不超过500kb</div>
                 </el-upload>
             </el-col>
-        </el-row>
+        </el-row>-->
         <el-row :gutter="20" class="top10">
             <el-col :span="4">&nbsp;</el-col>
             <el-col :span="12">

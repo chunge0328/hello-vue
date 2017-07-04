@@ -9,7 +9,7 @@
     }
 
     .content {
-        color: #13CE66;
+        color: #0D0D0D;
     }
 
 </style>
@@ -26,7 +26,7 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <b>作者:{{author}} &nbsp;话题:{{content}}&nbsp;<i @click="laud()" class="el-icon-star-on aa bb">点赞</i></b>
+            <b>{{author}}:{{content}}&nbsp;<i @click="laud()" class="el-icon-star-on aa bb">点赞</i></b>
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -43,18 +43,18 @@
                 </el-col>
             </el-row>
             <el-row>
-                <el-col class="content">{{result.discontent}}&nbsp;&nbsp;
-                    <a @click="reply(result)" class="aa">回复</a></el-col>
+                <el-col class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{result.discontent}}&nbsp;&nbsp;
+                    <a @click="reply(result)" class="aa"><img src="../../img/pl.png" style="width:30px;height: 20px;"/></a></el-col>
             </el-row>
         </el-row>
 
         <el-row :gutter="20" class="top10" v-show="flag">
             <el-row>
-                <el-col :span="6">
+                <el-col>
                     <b>{{nickname}}</b>&nbsp;{{nickid!=reid?"回复":''}}&nbsp;<b>{{nickid!=reid?rename:''}}</b></el-col>
-                <el-col :span="12">
+                <el-col>
                     <el-input type="textarea" v-model="desc"></el-input>
-                    <el-button type="primary" @click="submit()">提交</el-button>
+                    <el-button type="primary" @click="submit()" class="top10">提交</el-button>
                 </el-col>
             </el-row>
         </el-row>

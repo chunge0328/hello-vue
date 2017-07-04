@@ -76,8 +76,8 @@
                 <el-table-column prop="point" label="需要积分"></el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button @click.native.prevent="convert(scope.$index, scope.row)" type="text" size="small">
-                            兑换
+                        <el-button @click.native.prevent="convert(scope.$index, scope.row)" type="danger" size="small">
+                            兑&nbsp;换
                         </el-button>
                     </template>
                 </el-table-column>
