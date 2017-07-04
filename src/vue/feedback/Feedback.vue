@@ -1,13 +1,13 @@
 <style>
     .icon-user input {
-        background: url("../img/user.png") no-repeat;
+        background: url("../../img/user.png") no-repeat;
         padding: 2px 0 2px 36px;
         background-size: 28px auto;
         background-position: 0 center;
     }
 
     .icon-mobile input {
-        background: url("../img/mobile.png") no-repeat;
+        background: url("../../img/mobile.png") no-repeat;
         padding: 2px 0 2px 36px;
         background-size: 28px auto;
         background-position: 0 center;
@@ -71,7 +71,7 @@
                 <div class="grid-content"></div>
             </el-col>
             <el-col :xs="22" :sm="20" :md="18" :lg="16">
-                <img src="../img/pudding.png" alt="" style="display: block;width: 90%;max-width: 400px;margin: 0 auto">
+                <img src="../../img/pudding.png" alt="" style="display: block;width: 90%;max-width: 400px;margin: 0 auto">
             </el-col>
             <el-col :xs="1" :sm="2" :md="3" :lg="4">
                 <div class="grid-content bg-white"></div>
@@ -130,7 +130,7 @@
                     <div class="grid-content bg-white"></div>
                 </el-col>
                 <el-col :xs="22" :sm="20" :md="18" :lg="16"class="mg-top-20">
-                    <img src="../img/pudding2.png" alt="" >
+                    <img src="../../img/pudding2.png" alt="" >
                     <p class="mg-top-20">感谢您提的宝贵意见，么么哒！</p>
                     <el-button type="danger" @click="switchModal" style="width: 100%;background-color: #fb7a52;">关闭</el-button>
                 </el-col>

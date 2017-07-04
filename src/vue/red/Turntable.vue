@@ -68,7 +68,7 @@
         </div><!--活动规则...end-->
 
         <div class="mui-text-center logo_bg"><!--上投摩根logo-->
-            <img src="../img/draw_icon.png"/>
+            <img src="../../img/draw_icon.png"/>
         </div><!--上投摩根logo...end-->
 
         <div class="p_bg" v-show="luckAlert || loginVisible"><!--模态框--></div><!--模态框...end-->
@@ -116,18 +116,18 @@
 <script>
 
     import 'mint-ui/lib/style.css'
-    import '../css/mui.min.css'
-    import '../css/share.css'
-    import '../css/choiceness.css'
-    import Turntable from '../js/utils/turntable'
+    import '../../css/mui.min.css'
+    import '../../css/share.css'
+    import '../../css/choiceness.css'
+    import Turntable from '../../js/utils/turntable'
     import Vue from 'vue'
     import {Toast, MessageBox, Field, Popup, Actionsheet} from 'mint-ui'
     Vue.component(Field.name, Field);
     Vue.component(Popup.name, Popup);
     Vue.component(Actionsheet.name, Actionsheet);
 
-    import router from '../js/config/RedRouterConfig'
-    import {Util} from '../js/utils/CommonUtil'
+    import router from '../../js/config/RedRouterConfig'
+    import {Util} from '../../js/utils/CommonUtil'
 
     export default {
         name: 'turntable',

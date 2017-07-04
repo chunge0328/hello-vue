@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import $ from './src/js/utils/Util';
-import router from './src/js/config/FeedbackRouterConfig';
-require('./src/js/config/FeedbackRequestConfig');
+import $ from '../../src/js/utils/Util';
+import router from '../../src/js/config/RedRouterConfig';
+require('./../../src/js/config/RedRequestConfig');
 
 
 /*debugger*/
@@ -19,6 +19,7 @@ console.info("process.env.PRODUCTION => " + process.env.PRODUCTION);
     $("meta").attr(attr).appendTo(document.head);
 });
 
+router.push("/turntable")
 const app = new Vue({
     router
 }).$mount($("div", {class: "container"}).html("<router-view></router-view>").appendTo(document.body)[0]);

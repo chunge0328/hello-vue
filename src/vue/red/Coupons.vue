@@ -21,7 +21,7 @@
             <div v-show="activeTab == tabs[0]"><!--红包列表-->
 
                 <div class="hint" v-show="activeTab.list.length == 0"><!--空白显示页-->
-                    <img src="../img/hint_icon1.png"/>
+                    <img src="../../img/hint_icon1.png"/>
                     <p class="c_g pt20 pb30 f24">你的账户，空空如也</p>
                     <a :href="activityHref" class="c_c f12">快去参加活动吧</a>
                 </div><!--空白显示页...end-->
@@ -53,7 +53,7 @@
             <div v-show="activeTab == tabs[1]"><!--卡卷列表-->
 
                 <div class="hint Card" v-show="activeTab.list.length == 0"><!--空白显示页-->
-                    <img src="../img/hint_icon.png"/>
+                    <img src="../../img/hint_icon.png"/>
                     <p class="c_g pt20 pb30 f24">你的账户，空空如也</p>
                     <a :href="activityHref" class="c_c f12">快去参加活动吧</a>
                 </div><!--空白显示页...end-->
@@ -183,10 +183,10 @@
 <script>
 
     import Vue from 'vue';
-    import router from '../js/config/RedRouterConfig'
-    import {Util} from '../js/utils/CommonUtil'
+    import router from '../../js/config/RedRouterConfig'
+    import {Util} from '../../js/utils/CommonUtil'
     import {Base64} from 'js-base64'
-    import '../css/mui.min.css'
+    import '../../css/mui.min.css'
 
     import {
         Loadmore,

@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import $ from './src/js/utils/Util';
-import router from './src/js/config/CifmRouterConfig';
-require('./src/js/config/CifmRequestConfig');
+import $ from '../../src/js/utils/Util';
+import router from '../../src/js/config/CifmRouterConfig';
+require('./../../src/js/config/CifmRequestConfig');
 
 
 /*debugger*/

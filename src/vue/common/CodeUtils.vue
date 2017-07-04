@@ -156,7 +156,7 @@
 </template>
 
 <script>
-    import $ from "../js/utils/Util";
+    import $ from "../../js/utils/Util";
     import Vue from "vue";
     import {
         Row, Col, Input, Autocomplete, Button, Message

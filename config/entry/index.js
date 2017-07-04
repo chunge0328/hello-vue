@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import $ from './src/js/utils/Util';
-import router from './src/js/config/IndexRouterConfig';
-require('./src/js/config/IndexRequestConfig');
+import $ from '../../src/js/utils/Util';
+import router from '../../src/js/config/IndexRouterConfig';
+require('./../../src/js/config/IndexRequestConfig');
 
 
 /*debugger*/

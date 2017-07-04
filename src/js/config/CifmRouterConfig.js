@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Cifm from '../../vue/Cifm.vue';
+import Cifm from '../../vue/cifm/Cifm.vue';
 import Database from '../../vue/cifm/database/Index.vue';
 import Link from '../../vue/cifm/link/Index.vue';
 

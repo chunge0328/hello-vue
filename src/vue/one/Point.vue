@@ -93,7 +93,7 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
-    import router from '../../js/config/RedRouterConfig';
+    import router from '../../js/config/OneRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
     import {Input, Button, Message, Row, Col, Select, Option, Table, TableColumn, Icon, Pagination} from "element-ui";
     Vue.use(Input);
