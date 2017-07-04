@@ -15,10 +15,10 @@
     }
 </style>
 <template>
-    <div class="bg-white">
+    <div class="bg-white bgwidth">
         <el-row>
-            <el-col :span="12">&nbsp</el-col>
-            <el-col :span="6">
+            <el-col :span="8">&nbsp</el-col>
+            <el-col :span="10">
                 <header id="header" class="mui-bar mui-bar-nav">
                     <a class="mui-action-back mui-pull-left"></a>
                     <h1 class="mui-title">智能投资体验馆</h1>
@@ -78,7 +78,7 @@
             <el-col :span="4" v-if="ind == '0'"><b>组合基金：</b></el-col>
             <el-col :span="4" v-if="ind != '0'">&nbsp;</el-col>
             <el-col :span="6">
-                <el-select v-model="fund.fundCode" placeholder="请选择">
+                <el-select v-model="fund.fundCode" @change="filterFundList" placeholder="请选择">
                     <el-option
                             v-for="item in fundlist"
                             :key="item.fundCode"
@@ -128,7 +128,7 @@
             <el-col :span="6"><b>组合列表查询</b></el-col>
         </el-row>
         <el-row :gutter="20" class="top10">
-            <el-table :data="list" style="width: 100%">
+            <el-table :data="list" width="100%">
                 <el-table-column type="expand">
                     <template scope="props">
                         <el-form label-position="left" inline class="demo-table-expand">
@@ -293,7 +293,7 @@
                             @current-change="handleAssetRankCurrentChange"
                             :current-page="1"
                             :page-sizes="[5, 10, 15, 20]"
-                            :page-size="tradeLimit"
+                            :page-size="rankLimit"
                             layout="total, sizes, prev, pager, next"
                             :total="fofAssetRanklistlength">
                     </el-pagination>
@@ -375,6 +375,7 @@
                 items: null,
                 moneyDetaillist: null,//根据资金流水ID查回交易明细
                 myfundlist: null,//根据组合ID查回的基金列表
+                cacheFundlist: null,//基金列表
                 fundlist: null,//基金列表
                 capitallist: null,//资金流水列表
                 capitallistlength: 0,
@@ -477,7 +478,7 @@
                 this.$http.jsonp("/app/fofApp/getFundList", {
                     params: {}
                 }).then(function (res) {
-                    this.fundlist = res.data.items;
+                    this.cacheFundlist = this.fundlist = res.data.items;
                 }.bind(this));
             },
             getMoneyTrade(){/*获取我的资金流水*/
@@ -521,6 +522,21 @@
             }, /*删除组合基金*/
             delFundForm(obj, ind) {
                 this.funds.pop(ind);
+                this.filterFundList();
+            },
+            filterFundList() {/*处理下拉框的选项*/
+                this.fundlist = this.cacheFundlist.filter(function (fund, funds) {
+                    let contains = false;
+                    for(let i =0; i<this.funds.length; i++) {
+                        let tmpFund = this.funds[i];
+                        let tmpFundCode = tmpFund.fundCode;
+                        if(tmpFundCode === fund.fundCode) {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    return !contains;
+                }.bind(this));
             },
             inputCheck(){/*输入校验*/
                 let name = this.name;
@@ -983,7 +999,10 @@
             },
             getFofAssetRank(){/*获取资产排名*/
                 this.$http.jsonp("/app/fofApp/queryFofAssetRank", {
-                    params: {}
+                    params: {
+                        page:this.rankPage,
+                        limit:this.rankLimit
+                    }
                 }).then(function (res) {
                     this.fofAssetRanklist = res.data.items;
                     this.fofAssetRanklistlength = res.data.total;

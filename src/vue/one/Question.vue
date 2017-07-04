@@ -16,7 +16,7 @@
 
 </style>
 <template>
-    <div>
+    <div class="bg-white bgwidth">
 
         <el-row>
             <el-col :span="12">&nbsp;</el-col>
