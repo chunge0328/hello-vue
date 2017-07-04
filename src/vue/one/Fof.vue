@@ -888,6 +888,8 @@
                     });
                 }
                 /*双柱状图*/
+                console.info(JSON
+                    .stringify(data))
                 new Highcharts.Chart('container3',
                     {
                         credits: {
