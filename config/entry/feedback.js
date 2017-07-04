@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import $ from './src/js/utils/Util';
-import router from './src/js/config/InvestigatesRouterConfig';
-require('./src/js/config/InvestigatesRequestConfig');
+import $ from '../../src/js/utils/Util';
+import router from '../../src/js/config/FeedbackRouterConfig';
+require('./../../src/js/config/FeedbackRequestConfig');
 
 
 /*debugger*/

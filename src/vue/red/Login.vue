@@ -62,7 +62,7 @@
 
     import Vue from 'vue'
     import {Toast, MessageBox, Actionsheet, Picker, Popup} from 'mint-ui'
-    import Turntable from '../js/utils/turntable'
+    import Turntable from '../../js/utils/turntable'
     import {Button} from 'mint-ui'
     import {Field} from 'mint-ui';
     import {Indicator} from 'mint-ui';
@@ -70,7 +70,7 @@
     Vue.component(Picker.name, Picker);
     Vue.component(Popup.name, Popup);
 
-    import router from '../js/config/RedRouterConfig'
+    import router from '../../js/config/RedRouterConfig'
     Vue.component(Button.name, Button);
     Vue.component(Field.name, Field);
     Vue.component(Actionsheet.name, Actionsheet);

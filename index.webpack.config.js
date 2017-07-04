@@ -8,7 +8,7 @@ let path = require('path'),
 
 const NODE_ENV = process.env.NODE_ENV,
     ROOT_PATH = path.resolve(__dirname, ''),
-    CONTEXT_ROOT = NODE_ENV === 'production' ? 'dist' : '',
+    CONTEXT_ROOT = NODE_ENV === 'production' ? 'index' : '',
     CONFIG = {
         'NODE_ENV': NODE_ENV,
         'ROOT_PATH': ROOT_PATH,
@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './index.js'
+        index: './config/entry/index.js'
     },
     output: {
         filename: './js/[name].js',

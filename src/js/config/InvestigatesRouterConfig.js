@@ -4,7 +4,7 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 const routes = [
     {
-        path: '/', component: require('../../vue/Investigates.vue')
+        path: '/', component: require('../../vue/investigates/Investigates.vue')
     }
 ], router = new VueRouter({
     routes

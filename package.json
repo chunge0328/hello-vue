@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "indexdev": "cross-env NODE_ENV=development webpack-dev-server --config index.webpack.config.js --inline --hot",
+    "indexbuild": "cross-env NODE_ENV=production webpack --config index.webpack.config.js --progress --hide-modules",
     "invdev": "cross-env NODE_ENV=development webpack-dev-server --config investigates.webpack.config.js --inline --hot",
     "invbuild": "cross-env NODE_ENV=production webpack --config investigates.webpack.config.js --progress --hide-modules",
     "reddev": "cross-env NODE_ENV=development webpack-dev-server --config red.webpack.config.js --inline --hot",

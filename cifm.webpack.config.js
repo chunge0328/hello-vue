@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './cifm.js'
+        index: './config/entry/cifm.js'
     },
     output: {
         filename: './js/[name].js',

@@ -38,15 +38,15 @@
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";
-    import Database from "../js/components/cifm/database/Database";
+    import Database from "../../js/components/cifm/database/Database";
     Vue.use(Database);
-    import Account from "../js/components/cifm/account/Account";
+    import Account from "../../js/components/cifm/account/Account";
     Vue.use(Account);
-    import PchLink from "../js/components/cifm/link/Link";
+    import PchLink from "../../js/components/cifm/link/Link";
     Vue.use(PchLink);
-    import PchSvn from "../js/components/cifm/svn/Svn";
+    import PchSvn from "../../js/components/cifm/svn/Svn";
     Vue.use(PchSvn);
-    import PchVmware from "../js/components/cifm/vmware/Vmware";
+    import PchVmware from "../../js/components/cifm/vmware/Vmware";
     Vue.use(PchVmware);
 
 

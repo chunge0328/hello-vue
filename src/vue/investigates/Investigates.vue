@@ -65,7 +65,7 @@
 </template>
 
 <script>
-    require("../css/investigates.css");
+    require("../../css/investigates.css");
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";

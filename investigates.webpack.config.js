@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        investigates: './investigates.js'
+        investigates: './config/entry/investigates.js'
     },
     output: {
         filename: './js/[name].js',

@@ -181,11 +181,11 @@
             </el-row>
             <div>
                 <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
-                <img src="../img/gongzhong.jpeg"
+                <img src="../../img/gongzhong.jpeg"
                      style="position: fixed;right: 0px; top:300px; width: 150px;height: 150px;">
                 <p style="position: fixed;right: 0px; top:265px; text-align: center;width: 150px;">微信测试号</p>
                 <p style="position: fixed;right: 0px; top:465px; text-align: center;width: 150px;">个人订阅号</p>
-                <img src="../img/gongzhong.jpg"
+                <img src="../../img/gongzhong.jpg"
                      style="position: fixed;right: 0px; top:500px; width: 150px;height: 150px;">
             </div>
         </el-row>
@@ -197,7 +197,7 @@
 </template>
 
 <script>
-    require("../css/index.css");
+    require("../../css/index.css");
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";
@@ -216,8 +216,8 @@
     Vue.use(Button);
     Vue.use(Upload);
 
-    import Markdown from "../js/components/Markdown";
-    import CodeUtils from "../js/components/CodeUtils";
+    import Markdown from "../../js/components/Markdown";
+    import CodeUtils from "../../js/components/CodeUtils";
     Vue.use(Markdown);
     Vue.use(CodeUtils);
 

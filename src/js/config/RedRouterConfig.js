@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Turntable from '../../vue/Turntable.vue';
-import Coupons from '../../vue/Coupons.vue';
-import Login from '../../vue/Login.vue';
-import OneLogin from '../../vue/OneLogin.vue';
+import Turntable from '../../vue/red/Turntable.vue';
+import Coupons from '../../vue/red/Coupons.vue';
+import Login from '../../vue/red/Login.vue';
+import OneLogin from '../../vue/red/OneLogin.vue';
 
 Vue.use(VueRouter);
 const routes = [

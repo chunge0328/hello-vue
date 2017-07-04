@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'mint-ui'],
-        red: './red.js'
+        red: './config/entry/red.js'
     },
     output: {
         filename: './js/[name].js',

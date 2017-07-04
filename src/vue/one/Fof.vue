@@ -282,7 +282,7 @@
     import Drilldown from '../../js/plugins/drilldown';
     import Sandsignika from '../../js/plugins/sand-signika';
     import Exporting from '../../js/plugins/exporting'
-    import router from '../../js/config/RedRouterConfig';
+    import router from '../../js/config/OneRouterConfig';
     import {Util} from '../../js/utils/ValidateUtils';
     Drilldown(Highcharts);
     Sandsignika(Highcharts);

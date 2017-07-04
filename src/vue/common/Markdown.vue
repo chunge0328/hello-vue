@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    require("../../resources/css/markdown.css")
+    require("../../../resources/css/markdown.css")
     let md = require("markdown").markdown;
     export default {
         data(){

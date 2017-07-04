@@ -9,7 +9,7 @@ export default {
                 console.info(el)
             }
         })*/
-        Vue.component("markdown", require("../../vue/Markdown"));
+        Vue.component("markdown", require("../../vue/common/Markdown"));
         // 3. 注入组件
         Vue.mixin({
             data(){

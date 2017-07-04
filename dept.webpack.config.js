@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './dept.js'
+        index: './config/entry/dept.js'
     },
     output: {
         filename: './js/[name].js',
@@ -108,7 +108,7 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devtool = '#eval-source-map';
     module.exports.devServer = {
         host: '0.0.0.0',
-        port: 7780,
+        port: 7782,
         disableHostCheck: true
     };
     module.exports.devtool = false;

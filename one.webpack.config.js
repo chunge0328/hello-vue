@@ -29,7 +29,7 @@ for (let i in CONFIG) {
 module.exports = {
     entry: {
         common: ['vue', 'vue-router', 'vue-resource'],
-        index: './one.js'
+        index: './config/entry/one.js'
     },
     output: {
         filename: './js/[name].js',
@@ -109,8 +109,7 @@ if (CONFIG.NODE_ENV === 'development') {
     module.exports.devServer = {
         host: '0.0.0.0',
         port: 7779,
-        disableHostCheck: true,
-        public: 'QH-DS-384-B:7779'
+        disableHostCheck: true
     };
     module.exports.devtool = false;
     module.exports.plugins = (module.exports.plugins || []).concat([
