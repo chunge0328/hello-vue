@@ -51,10 +51,10 @@
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container3"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
             <div id="container1"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
             <div id="container"></div>
         </el-row>
 
@@ -696,7 +696,7 @@
                     /*绘制柱状图*/
                     this.drawColumn();
                     /*绘制双柱状图*/
-                    this.drawDrillFof();
+                   this.drawDrillFof();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
