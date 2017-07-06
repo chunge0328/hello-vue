@@ -50,7 +50,8 @@
                 </i>
             </el-col>
             <el-col v-for="(result, index) in laudlist" :key="'laudlist'+index" :span="3">
-                {{result.laudName}}
+                <span v-if="result.laudId == nickid"><b class="aa">{{result.laudName}}</b></span>
+                <span v-else><b>{{result.laudName}}</b></span>
             </el-col>
         </el-row>
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
@@ -175,7 +176,6 @@
                 }.bind(this));
             },
             reply(userId, userName){/*评论*/
-                alert(userId + "-----" + userName);
                 this.flag = true;
                 this.reid = userId;
                 this.rename = userName;
