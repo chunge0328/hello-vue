@@ -219,7 +219,7 @@
             },
             topicDis(index, row){
                 let item = row;
-                router.push('/topicDetail/' + this.$route.params.mobile + '/' + item.id + '/' + item.author + '/' + item.content);
+                router.push('/topicDetail/' + this.$route.params.mobile + '/' + item.id + '/' + item.author +'/' + item.customerId + '/' + item.content);
             },
             handleSizeChange(val) {
                 this.limit = val;

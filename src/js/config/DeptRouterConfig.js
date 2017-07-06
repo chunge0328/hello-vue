@@ -4,7 +4,7 @@ import Dept from '../../vue/dept/Dept.vue';
 
 Vue.use(VueRouter);
 const routes = [
-    {path: '/', component: Dept},
+    {path: '/', component: Dept}
 ], router = new VueRouter({
     routes
 });

@@ -92,7 +92,7 @@ module.exports = {
 
 module.exports.plugins = (module.exports.plugins || []).concat(
     new HtmlWebpackPlugin({
-        title: 'hello-dept',
+        title: '基金投资者风险测评问卷（机构版）',
         hash: true,
         js: ["index", "common"],
         excludeChunks: ["investigates"],
@@ -127,7 +127,7 @@ if (CONFIG.NODE_ENV === 'development') {
             'process.env.TOPIC_ID': JSON.stringify('785d6441-1e70-41bb-94ae-47b0f5f19b5b'),
             'process.env.NODE_ENV': JSON.stringify('production'),
             'process.env.PRODUCTION': JSON.stringify(true),
-            'process.env.BASE_PATH': JSON.stringify('http://app.cifm.com/one')
+            'process.env.BASE_PATH': JSON.stringify('https://app.cifm.com/one')
         }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: module.exports.devtool && (module.exports.devtool.indexOf("sourcemap") >= 0 || module.exports.devtool.indexOf("source-map") >= 0),

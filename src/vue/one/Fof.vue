@@ -28,19 +28,19 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{balance?balance+"元":""}}</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{balance?balance.toFixed(2)+"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance}}元</b></el-col>
+            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance.toFixed(2)}}元</b></el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>未确认金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance}}&nbsp;元</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance.toFixed(2)}}&nbsp;元</b>
             </el-col>
             <el-col :span="4"><b>已确认份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(4)}}&nbsp;元</b>
+            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(2)}}&nbsp;元</b>
             </el-col>
         </el-row>
 
@@ -51,10 +51,10 @@
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container3"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
             <div id="container1"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="totalEnEnsureBalance>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
             <div id="container"></div>
         </el-row>
 
@@ -696,7 +696,7 @@
                     /*绘制柱状图*/
                     this.drawColumn();
                     /*绘制双柱状图*/
-                    this.drawDrillFof();
+                   this.drawDrillFof();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/

@@ -12,6 +12,19 @@
         color: #0D0D0D;
     }
 
+    .classA {
+        cursor: pointer;
+        color: #FF4949
+    }
+
+    .classB {
+        color: #0D0D0D;
+    }
+
+    .name:hover {
+        cursor: pointer;
+        color: red;
+    }
 </style>
 <template>
     <div class="bg-white bgwidth">
@@ -26,25 +39,32 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <b>{{author}}:{{content}}&nbsp;<i @click="laud()" class="el-icon-star-on aa bb">点赞</i></b>
+            <b class="name" @click="reply(customerId,author)">{{author}}</b>&nbsp;:&nbsp;{{content}}&nbsp;
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="3"><b>点赞：</b></el-col>
+            <el-col :span="3">
+                <i @click="laud()" class="el-icon-star-on aa bb">
+                    <span v-if="!isLaud">点赞</span>
+                    <span v-else>取消点赞</span>
+                </i>
+            </el-col>
             <el-col v-for="(result, index) in laudlist" :key="'laudlist'+index" :span="3">
-                <span v-if="result.laudId == nickid" @click="qxlaud(result)" class="aa">{{result.laudName}}</span>
-                <span v-else>{{result.laudName}}</span>
+                <span v-if="result.laudId == nickid"><b class="aa">{{result.laudName}}</b></span>
+                <span v-else><b>{{result.laudName}}</b></span>
             </el-col>
         </el-row>
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
             <el-row>
                 <el-col>
-                    <b>{{result.disUserName}}</b>&nbsp;{{result.coverUserId!=result.disUserId?"@":''}}<b>&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
+                    <b class="name" @click="reply(result.disUserId,result.disUserName)">{{result.disUserName}}</b>&nbsp;
+                    {{result.coverUserId!=result.disUserId?"@":''}}
+                    <b class="name" @click="reply(result.coverUserId,result.coverUserName)">&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
                 </el-col>
             </el-row>
             <el-row>
                 <el-col class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{result.discontent}}&nbsp;&nbsp;
-                    <a @click="reply(result)" class="aa"><img src="../../img/pl.png" style="width:30px;height: 20px;"/></a></el-col>
+                </el-col>
             </el-row>
         </el-row>
 
@@ -64,6 +84,7 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
+    import $ from '../../js/utils/Util';
     import {Util} from '../../js/utils/ValidateUtils';
     import router from '../../js/config/OneRouterConfig';
     import {Button, Message, Row, Col, Input} from "element-ui";
@@ -76,6 +97,7 @@
         data(){
             return {
                 flag: false,
+                customerId: this.$route.params.customerId,
                 author: this.$route.params.author,
                 content: this.$route.params.content,
                 dislist: null,
@@ -85,7 +107,9 @@
                 themeId: this.$route.params.id,
                 nickname: '',
                 nickid: '',
-                desc: ''
+                desc: '',
+                isLaud: false,
+                classmouse: false
             };
         },
         created: function () {
@@ -124,6 +148,14 @@
                                 this.reid = this.nickid;
                             }
                         }.bind(this));
+                        /*查询客户自己是否点赞*/
+                        this.$http.jsonp("/app/themeLaud/isLaud", {
+                            params: {
+                                themeId: this.$route.params.id
+                            }
+                        }).then(function (res) {
+                            this.isLaud = res.data.success;
+                        }.bind(this));
                         /*查询评论列表*/
                         this.$http.jsonp("/app/themeDis/list", {
                             params: {
@@ -142,13 +174,11 @@
                         }.bind(this));
                     }
                 }.bind(this));
-
             },
-            reply(result){
+            reply(userId, userName){/*评论*/
                 this.flag = true;
-                this.reid = result.disUserId;
-                this.rename = result.disUserName;
-                this.themeId = result.themeId;
+                this.reid = userId;
+                this.rename = userName;
             },
             laud(){/*点赞*/
                 this.$http.jsonp("/app/themeLaud/save", {
@@ -159,25 +189,8 @@
                     let data = res.data;
                     Message({
                         showClose: true,
-                        message: data.success ? "点赞成功" : data.message,
-                        type: data.success ? 'success' : 'warning'
-                    });
-                    if (data.success) {
-                        this.init();
-                    }
-                }.bind(this));
-            },
-            qxlaud(result){
-                this.$http.jsonp("/app/themeLaud/del", {
-                    params: {
-                        id: result.id
-                    }
-                }).then(function (res) {
-                    let data = res.data;
-                    Message({
-                        showClose: true,
-                        message: data.success ? "取消点赞成功" : data.message,
-                        type: data.success ? 'success' : 'warning'
+                        message: data.data.stat == 1 ? "点赞成功" : "取消点赞成功",
+                        type: 'success'
                     });
                     if (data.success) {
                         this.init();
@@ -192,7 +205,7 @@
                     /*提交评论内容*/
                     this.$http.jsonp("/app/themeDis/save", {
                         params: {
-                            themeId: this.themeId,
+                            themeId: this.$route.params.id,
                             coverUserId: this.reid,
                             content: this.desc
                         }

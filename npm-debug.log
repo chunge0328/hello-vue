@@ -1,0 +1,37 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\soft\\nodejs\\node.exe',
+1 verbose cli   'C:\\soft\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run',
+1 verbose cli   'deptdev' ]
+2 info using npm@3.10.10
+3 info using node@v6.11.0
+4 verbose run-script [ 'predeptdev', 'deptdev', 'postdeptdev' ]
+5 info lifecycle hello-vue@1.0.0~predeptdev: hello-vue@1.0.0
+6 silly lifecycle hello-vue@1.0.0~predeptdev: no script for predeptdev, continuing
+7 info lifecycle hello-vue@1.0.0~deptdev: hello-vue@1.0.0
+8 verbose lifecycle hello-vue@1.0.0~deptdev: unsafe-perm in lifecycle true
+9 verbose lifecycle hello-vue@1.0.0~deptdev: PATH: C:\soft\nvm\v6.11.0\node_modules\npm\bin\node-gyp-bin;C:\resource\git\hello-vue\node_modules\.bin;C:\ProgramData\Oracle\Java\javapath;C:\soft\python\Scripts\;C:\soft\python\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\soft\java\bin;C:\soft\oracleClient\bin;C:\soft\slikSvn\bin;C:\soft\git\cmd;C:\soft\nvm;C:\soft\nodejs;C:\soft\sencha\cmd_6.5.0.180;C:\soft\maven\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\soft\curl\bin;C:\soft\sencha;C:\soft\nvm;C:\soft\nodejs
+10 verbose lifecycle hello-vue@1.0.0~deptdev: CWD: C:\resource\git\hello-vue
+11 silly lifecycle hello-vue@1.0.0~deptdev: Args: [ '/d /s /c',
+11 silly lifecycle   'cross-env NODE_ENV=development webpack-dev-server --config dept.webpack.config.js --inline --hot' ]
+12 verbose stack Error: kill ENOSYS
+12 verbose stack     at exports._errnoException (util.js:1018:11)
+12 verbose stack     at process.kill (internal/process.js:190:13)
+12 verbose stack     at process.listener (C:\soft\nvm\v6.11.0\node_modules\npm\node_modules\npmlog\node_modules\gauge\node_modules\signal-exit\index.js:86:15)
+12 verbose stack     at emitNone (events.js:91:20)
+12 verbose stack     at process.emit (events.js:185:7)
+12 verbose stack     at processEmit (C:\soft\nvm\v6.11.0\node_modules\npm\node_modules\npmlog\node_modules\gauge\node_modules\signal-exit\index.js:146:32)
+12 verbose stack     at processEmit (C:\soft\nvm\v6.11.0\node_modules\npm\node_modules\npm-registry-client\node_modules\npmlog\node_modules\gauge\node_modules\signal-exit\index.js:146:32)
+12 verbose stack     at Signal.wrap.onsignal (internal/process.js:217:44)
+13 verbose cwd C:\resource\git\hello-vue
+14 error Windows_NT 6.1.7601
+15 error argv "C:\\soft\\nodejs\\node.exe" "C:\\soft\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run" "deptdev"
+16 error node v6.11.0
+17 error npm  v3.10.10
+18 error code ENOSYS
+19 error errno ENOSYS
+20 error syscall kill
+21 error kill ENOSYS
+22 error If you need help, you may report this error at:
+22 error     <https://github.com/npm/npm/issues>
+23 verbose exit [ 1, true ]
