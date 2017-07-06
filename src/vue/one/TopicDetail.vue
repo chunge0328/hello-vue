@@ -12,6 +12,19 @@
         color: #0D0D0D;
     }
 
+    .classA {
+        cursor: pointer;
+        color: #FF4949
+    }
+
+    .classB {
+        color: #0D0D0D;
+    }
+
+    .name:hover {
+        cursor: pointer;
+        color: red;
+    }
 </style>
 <template>
     <div class="bg-white bgwidth">
@@ -26,7 +39,7 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <b>{{author}}&nbsp;:&nbsp;{{content}}&nbsp;</b>
+            <b class="name" @click="reply(customerId,author)">{{author}}</b>&nbsp;:&nbsp;{{content}}&nbsp;
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -43,12 +56,14 @@
         <el-row v-for="(result, index) in dislist" :key="'dislist'+index" :gutter="20" class="top10">
             <el-row>
                 <el-col>
-                    <b>{{result.disUserName}}</b>&nbsp;{{result.coverUserId!=result.disUserId?"@":''}}<b>&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
+                    <b class="name" @click="reply(result.disUserId,result.disUserName)">{{result.disUserName}}</b>&nbsp;
+                    {{result.coverUserId!=result.disUserId?"@":''}}
+                    <b class="name" @click="reply(result.coverUserId,result.coverUserName)">&nbsp;{{result.coverUserId!=result.disUserId?result.coverUserName:''}}</b>:
                 </el-col>
             </el-row>
             <el-row>
                 <el-col class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{result.discontent}}&nbsp;&nbsp;
-                    <a @click="reply(result)" class="aa"><img src="../../img/pl.png" style="width:30px;height: 20px;"/></a></el-col>
+                </el-col>
             </el-row>
         </el-row>
 
@@ -68,6 +83,7 @@
 <script>
     require("element-ui/lib/theme-default/index.css");
     import Vue from "vue";
+    import $ from '../../js/utils/Util';
     import {Util} from '../../js/utils/ValidateUtils';
     import router from '../../js/config/OneRouterConfig';
     import {Button, Message, Row, Col, Input} from "element-ui";
@@ -80,6 +96,7 @@
         data(){
             return {
                 flag: false,
+                customerId: this.$route.params.customerId,
                 author: this.$route.params.author,
                 content: this.$route.params.content,
                 dislist: null,
@@ -90,7 +107,8 @@
                 nickname: '',
                 nickid: '',
                 desc: '',
-                isLaud:false
+                isLaud: false,
+                classmouse: false
             };
         },
         created: function () {
@@ -156,11 +174,11 @@
                     }
                 }.bind(this));
             },
-            reply(result){/*评论*/
+            reply(userId, userName){/*评论*/
+                alert(userId + "-----" + userName);
                 this.flag = true;
-                this.reid = result.disUserId;
-                this.rename = result.disUserName;
-                this.themeId = result.themeId;
+                this.reid = userId;
+                this.rename = userName;
             },
             laud(){/*点赞*/
                 this.$http.jsonp("/app/themeLaud/save", {
@@ -171,8 +189,8 @@
                     let data = res.data;
                     Message({
                         showClose: true,
-                        message: data.data.stat==1 ? "点赞成功" : "取消点赞成功",
-                        type:  'success'
+                        message: data.data.stat == 1 ? "点赞成功" : "取消点赞成功",
+                        type: 'success'
                     });
                     if (data.success) {
                         this.init();
@@ -187,7 +205,7 @@
                     /*提交评论内容*/
                     this.$http.jsonp("/app/themeDis/save", {
                         params: {
-                            themeId: this.themeId,
+                            themeId: this.$route.params.id,
                             coverUserId: this.reid,
                             content: this.desc
                         }
