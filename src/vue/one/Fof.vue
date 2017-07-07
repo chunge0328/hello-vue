@@ -270,9 +270,20 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col ><b>客户资产排名</b>
+            <el-col><b>客户资产排名</b>
+                <el-select v-model="exportLimit" placeholder="请选择">
+                    <el-option
+                            v-for="item in rankLimitList"
+                            :key="item.exportLimit"
+                            :label="item.limitName"
+                            :value="item.exportLimit">
+                    </el-option>
+                </el-select>
                 <el-button @click="exportExcel()" type="danger" size="small">
-                    导出Excel
+                    导出excel
+                </el-button>
+                <el-button @click="exportPdf()" type="danger" size="small">
+                    导出pdf
                 </el-button>
             </el-col>
         </el-row>
@@ -357,7 +368,8 @@
     export default {
         data(){
             return {
-                basePath: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankExcel',
+                basePathExcel: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankExcel',
+                basePathPdf: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankPdf',
                 dialogTableVisible: false,
                 dialogMoneyDetailVisible: false,
                 cid: null,
@@ -399,7 +411,27 @@
                 fofAssetRanklist: null,//资产排名
                 fofAssetRanklistlength: 0,
                 rankPage: 1,
-                rankLimit: 5
+                rankLimit: 5,
+                exportLimit:10,
+                rankLimitList: [{
+                    exportLimit: 10,
+                    limitName: "前10名"
+                }, {
+                    exportLimit: 20,
+                    limitName: "前20名"
+                }, {
+                    exportLimit: 30,
+                    limitName: "前30名"
+                }, {
+                    exportLimit: 50,
+                    limitName: "前50名"
+                }, {
+                    exportLimit: 100,
+                    limitName: "前100名"
+                }, {
+                    exportLimit: "",
+                    limitName: "全部"
+                }]
             };
         },
         created: function () {
@@ -527,10 +559,10 @@
             filterFundList() {/*处理下拉框的选项*/
                 this.fundlist = this.cacheFundlist.filter(function (fund, funds) {
                     let contains = false;
-                    for(let i =0; i<this.funds.length; i++) {
+                    for (let i = 0; i < this.funds.length; i++) {
                         let tmpFund = this.funds[i];
                         let tmpFundCode = tmpFund.fundCode;
-                        if(tmpFundCode === fund.fundCode) {
+                        if (tmpFundCode === fund.fundCode) {
                             contains = true;
                             break;
                         }
@@ -696,7 +728,7 @@
                     /*绘制柱状图*/
                     this.drawColumn();
                     /*绘制双柱状图*/
-                   this.drawDrillFof();
+                    this.drawDrillFof();
                 }.bind(this));
             },
             handleDrawChart() {/* 绘制饼图表*/
@@ -1000,16 +1032,19 @@
             getFofAssetRank(){/*获取资产排名*/
                 this.$http.jsonp("/app/fofApp/queryFofAssetRank", {
                     params: {
-                        page:this.rankPage,
-                        limit:this.rankLimit
+                        page: this.rankPage,
+                        limit: this.rankLimit
                     }
                 }).then(function (res) {
                     this.fofAssetRanklist = res.data.items;
                     this.fofAssetRanklistlength = res.data.total;
                 }.bind(this));
             },
-            exportExcel(){/*导出资产排名*/
-                window.open(this.basePath);
+            exportExcel(){/*导出excel资产排名*/
+                window.open(this.basePathExcel+'?limit='+this.exportLimit);
+            },
+            exportPdf(){/*导出pdf资产排名*/
+                window.open(this.basePathPdf+'?limit='+this.exportLimit);
             }
         }
     }

@@ -73,8 +73,8 @@
                 timeGap: 1000, /*间隔时间（毫秒）*/
                 loginState: false, /*已经登录？*/
                 loginForm: {
-                    mobile: '',
-                    mobileCode: "" /*验证码*/
+                    mobile: "18516276526",
+                    mobileCode: "66" /*验证码*/
                 }
             };
         },
