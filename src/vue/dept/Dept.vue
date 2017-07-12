@@ -1,4 +1,16 @@
 <style>
+    .margin-top-20 {
+        margin-top: 20px;
+    }
+
+    .margin-top-40 {
+        margin-top: 40px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
     .question-list {
         padding-left: 0px;
     }
@@ -10,18 +22,6 @@
         margin-left: 0px !important;
     }
 
-    .question-list label.el-radio {
-    !important margin-left: 0 px;
-    }
-
-    #beginbtn {
-        margin-left: 600px;
-    }
-
-    #nextbtn {
-        margin-left: 600px;
-    }
-
     .ckquestion-list {
         display: block;
         padding-left: 50px;
@@ -30,7 +30,7 @@
         margin-left: 0px !important;
     }
 
-    #remark {
+    .remark {
         margin-top: 20px;
         margin-left: 50px !important;
     }
@@ -45,67 +45,110 @@
 </style>
 <template>
     <div class="bg-white bgwidth">
+
         <el-row v-show="!completeAnswer || modifyAnswer">
-            <el-col :span="12">&nbsp;</el-col>
-            <el-col :span="6">
-                <header id="header" class="mui-bar mui-bar-nav">
-                    <a class="mui-action-back mui-pull-left"></a>
-                    <h1 class="mui-title">问卷调查</h1>
+            <el-col :span="6" :offset="12">
+                <header>
+                    <h1>问卷调查</h1>
                 </header>
             </el-col>
         </el-row>
 
         <el-row>
-            <el-progress v-if="questions && questions.length > 0" :text-inside="true" :stroke-width="18" :percentage="Math.floor(activeIndex * 100 / questions.length)"></el-progress>
+            <el-progress v-if="questions && questions.length > 0"
+                         :text-inside="true"
+                         :stroke-width="18"
+                         :percentage="Math.floor(activeIndex * 100 / questions.length)">
+            </el-progress>
         </el-row>
 
-        <el-form>
-            <el-row v-if="seen">
-                <h3>请先填写以下信息：</h3><br>
-                <el-form-item
-                        label="基金账户名称"
-                >
-                    <el-input v-model="fundAccoName" placeholder="基金账户名称(必输)"></el-input>
-                </el-form-item>
-                <el-form-item
-                        label="证件类型">
-                    <el-input v-model="idType" placeholder="证件类型（必输）"></el-input>
-                </el-form-item>
+        <el-row v-if="!prepareAnswer">
+            <el-form>
+                <el-row>
 
-                <el-form-item
-                        label="证件编号">
-                    <el-input v-model="idNo" placeholder="证件编号（必输）"></el-input>
-                </el-form-item>
+                    <h3>请先填写以下信息：</h3>
+                    <el-alert
+                            title=""
+                            type="info"
+                            description="机构信息"
+                            show-icon>
+                    </el-alert>
+                    <el-form-item
+                            label="基金账户名称">
+                        <el-input v-model="fundAccoName" placeholder="基金账户名称(必输)"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="证件类型">
+                        <el-input v-model="idType" placeholder="证件类型（必输）"></el-input>
+                    </el-form-item>
 
-                <el-button id="beginbtn" type="primary" @click="beginTest">开始测评</el-button>
-            </el-row>
-        </el-form>
+                    <el-form-item
+                            label="证件编号">
+                        <el-input v-model="idNo" placeholder="证件编号（必输）"></el-input>
+                    </el-form-item>
+                </el-row>
 
+                <el-row class="margin-top-40">
+                    <el-alert
+                            title=""
+                            type="info"
+                            description="授权经办人信息"
+                            show-icon>
+                    </el-alert>
+                    <el-form-item
+                            label="经办人姓名">
+                        <el-input v-model="operName" placeholder="经办人姓名（非必输）"></el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                            label="经办人职务">
+                        <el-input v-model="operJob" placeholder="经办人职务（非必输）"></el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                            label="经办人证件类型">
+                        <el-input v-model="operIdType" placeholder="经办人证件类型（非必输）"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="经办人证件号码">
+                        <el-input v-model="operIdNo" placeholder="经办人证件号码（非必输）"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row class="text-center margin-top-20">
+                    <el-button type="primary" @click="beginTest">开始测评</el-button>
+                </el-row>
+            </el-form>
+        </el-row>
 
         <!--单选题-->
-        <el-row v-for="(que, ind) in questions" :key="ind"
-                v-show="activeIndex == ind && (!completeAnswer || modifyAnswer)">
+        <el-row
+                v-for="(que, ind) in questions"
+                v-show="activeIndex == ind && (!completeAnswer || modifyAnswer)"
+                :key="'question-' + ind"
+        >
             <h3>{{ind+1+checkList.length}}、{{que.name}}</h3>
-            <el-radio-group v-if="answers[ind] && que.type =='单选'" v-model="answers[ind].answerId" class="question-list"
-                            @change="handleNext">
+            <el-radio-group
+                    v-if="answers[ind] && que.type =='单选'"
+                    v-model="answers[ind].answerId"
+                    class="question-list"
+                    @change="handleNext">
                 <el-radio v-for="(ans, ind1) in que.answerListList" :label="ans.id" :key="ind+'-'+ind1">
                     {{seqs[ind1]}}、{{ans.name}}
                 </el-radio>
             </el-radio-group>
-
-
             <!--多选-->
-            <el-checkbox-group v-model="answers[ind].answerId" v-if="answers[ind] && que.type !='单选'"
-                               class="ckquestion-list">
+            <el-checkbox-group
+                    v-model="answers[ind].answerId" v-if="answers[ind] && que.type !='单选'"
+                    class="ckquestion-list">
                 <el-checkbox v-for="(ans,ind1) in que.answerListList" :label="ans.id" :key="ind+'-'+ind1"
                              class="multi-sel">
                     {{seqs[ind1]}}、{{ans.name}}
                 </el-checkbox>
             </el-checkbox-group>
 
-            <el-row id="remark">{{(que.remark == "" || que.remark == undefined )?"": ("（"+que.remark+"）")}}</el-row>
+            <el-row class="remark">{{(que.remark == "" || que.remark == undefined )?"": ("（"+que.remark+"）")}}</el-row>
 
-            <el-row style="text-align: center;">
+            <el-row class="text-center margin-top-20">
                 <el-button type="primary" @click="handlePrev" v-if="ind > 0">
                     上一题
                 </el-button>
@@ -118,8 +161,6 @@
                 </el-button>
             </el-row>
         </el-row>
-
-
         <div class="bg-white bgwidth" id="test" v-show="completeAnswer && !modifyAnswer">
             <el-row :gutter="20" class="top10">
                 <el-col :span="12">&nbsp;</el-col>
@@ -155,6 +196,7 @@
             </el-row>
 
         </div>
+
     </div>
 </template>
 
@@ -165,9 +207,10 @@
     import $ from '../../js/utils/Util';
     import router from '../../js/config/DeptRouterConfig';
     import {
-        Message, Radio, RadioGroup, Button, Row, Col, Input, Form, FormItem, CheckboxGroup, Checkbox,Progress
+        Message, Radio, RadioGroup, Button, Row, Col, Input, Form, FormItem, CheckboxGroup, Checkbox, Progress, Alert
     }
-        from "element-ui";
+        from
+            "element-ui";
 
     Vue.use(Radio);
     Vue.use(RadioGroup);
@@ -180,13 +223,22 @@
     Vue.use(CheckboxGroup);
     Vue.use(Checkbox);
     Vue.use(Progress);
+    Vue.use(Alert);
 
 
     export default {
 
         data(){
             return {
-                arr: [],
+                fundAccoName: '',
+                idType: '',
+                idNo: '',
+
+                operName: '',
+                operJob: '',
+                operIdType: '',
+                operIdNo: '',
+
                 topicId: process.env.TOPIC_ID,
                 seqs: ["A", "B", "C", "D", "E", "F"],
                 questions: [],
@@ -196,16 +248,12 @@
                 activeIndex: 0,
                 completeAnswer: false,
                 modifyAnswer: true,
-                fundAccoName: '',
-                idType: '',
-                idNo: '',
-
-                seen: 'true',
-                seen1: 'true',
+                prepareAnswer: false,
+                prepareAnswer1: 'true',
                 show1: 'true',
                 count: 0,
                 score: 0,
-                riskName: ''
+                riskName: ""
             }
         },
         created() {
@@ -225,7 +273,6 @@
                             type: "warning"
                         });
                     } else {
-                        // this.handleListQuestion();
                     }
                 }.bind(this));
             },
@@ -238,13 +285,13 @@
                     Message("请输入正确的证件号码！")
                     return;
                 }
-
-                this.seen = false;
+                this.prepareAnswer = true;
                 this.handleListQuestion();
             },
             exportQue(){
                 var host = process.env.BASE_PATH;
-                window.open(host + "/web/question/question/createPdf?topicId=" + this.topicId + "&idType=" + this.idType + "&fundAccoName=" + this.fundAccoName + "&idNo=" + this.idNo);
+                window.open(host + "/web/question/question/createPdf?topicId=" + this.topicId + "&idType=" + this.idType + "&fundAccoName=" + this.fundAccoName + "&idNo=" + this.idNo + "&operName=" + this.operName
+                    + "&operJob=" + this.operJob + "&operIdType=" + this.operIdType + "&operIdNo=" + this.operIdNo);
             },
             handleListQuestion() {
                 this.$http.jsonp("/web/question/question/list", {
@@ -339,7 +386,13 @@
                         topicId: this.topicId,
                         fundAccoName: this.fundAccoName,
                         idType: this.idType,
-                        idNo: this.idNo
+                        idNo: this.idNo,
+                        remark: JSON.stringify({
+                            operName: this.operName,
+                            operJob: this.operJob,
+                            operIdType: this.operIdType,
+                            operIdNo: this.operIdNo
+                        })
                     }
                 }).then(function (res) {
                     let data = res.data;
@@ -362,14 +415,14 @@
                         }).then(function (res) {
                             let data = res.data.data;
                             this.score = data.score;
-                            this.riskName =  data.riskName;
+                            this.riskName = data.riskName;
 //                            router.push('/result/' + data.score + '/' + data.riskName);
 //                            Message({
 //                                showClose: true,
 //                                message: "您的风险等级为" + data.riskName,
 //                                type: "success"
 //                            });
-                            //this.seen1 = !this.seen1
+                            //this.prepareAnswer1 = !this.prepareAnswer1
                         }.bind(this));
                     }
                 }.bind(this));
