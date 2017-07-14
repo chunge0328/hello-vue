@@ -23,17 +23,23 @@
     }
 
     .ckquestion-list {
-        display: block;
+        display:block;
         padding-left: 50px;
         margin-top: 30px;
         padding-right: 450px;
         margin-left: 0px !important;
-
     }
+
+    #remark {
+        margin-top: 20px;
+        margin-left: 50px !important;
+    }
+
+
 
 </style>
 <template>
-    <div>
+    <div class="bg-white bgwidth">
         <el-row>
             <el-col :span="12">&nbsp;</el-col>
             <el-col :span="6">
@@ -50,16 +56,16 @@
                 <el-form-item
                         label="基金账户名称"
                 >
-                    <el-input v-model="fundAccoName" placeholder="基金账户名称(必输)"></el-input>
+                    <el-input  v-model="fundAccoName" placeholder="基金账户名称(必输)"></el-input>
                 </el-form-item>
                 <el-form-item
                         label="证件类型">
-                    <el-input v-model="idType" placeholder="证件类型（必输）"></el-input>
+                    <el-input  v-model="idType" placeholder="证件类型（必输）"></el-input>
                 </el-form-item>
 
                 <el-form-item
                         label="证件编号">
-                    <el-input v-model="idNo" placeholder="证件编号（必输）"></el-input>
+                    <el-input  v-model="idNo" placeholder="证件编号（必输）"></el-input>
                 </el-form-item>
 
                 <el-button id="beginbtn" type="primary" @click="beginTest">开始测评</el-button>
@@ -78,18 +84,25 @@
                 </el-radio>
             </el-radio-group>
 
+
+            <!--多选-->
             <el-checkbox-group v-model="answers[ind].answerId" v-if="answers[ind] && que.type !='单选'"
                                class="ckquestion-list">
-                <el-checkbox v-for="(ans,ind1) in que.answerListList" :label="ans.id" :key="ind+'-'+ind1">
+                <el-checkbox v-for="(ans,ind1) in que.answerListList" :label="ans.id" :key="ind+'-'+ind1" >
                     {{seqs[ind1]}}、{{ans.name}}
                 </el-checkbox>
-                <el-button @click="handleNext(ind)" id="nextbtn" v-if="answers[ind].answerId.length">下一题</el-button>
+                <el-button  type="primary" @click="handleNext(ind)" id="nextbtn" v-if="answers[ind].answerId.length">下一题</el-button>
             </el-checkbox-group>
+
+            <el-row id="remark">{{que.remark?"":que.remark}}</el-row>
+
             <el-row style="text-align: center;">
                 <el-button v-if="completeAnswer" @click="modifyAnswer = false" type="primary" size="large">修改完成
                 </el-button>
             </el-row>
         </el-row>
+
+
         <el-row v-show="completeAnswer && !modifyAnswer">
             <el-row :gutter="80">
                 <el-col v-for="(ans, ind) in answers" :key="'result-'+ind" :span="24/4" style="margin-top: 20px">
@@ -102,10 +115,9 @@
             </el-row>
             <el-row style="margin-top: 40px; text-align: center;">
                 <el-button @click="submitAnswer" type="default" size="large">提交</el-button>
-                <el-button @click="exportQue" v-if="!seen1" type="default" size="large">导出Pdf</el-button>
+                <!--<el-button @click="exportQue" v-if="!seen1" type="default" size="large">导出Pdf</el-button>-->
             </el-row>
         </el-row>
-
     </div>
 </template>
 
@@ -309,12 +321,13 @@
                             }
                         }).then(function (res) {
                             let data = res.data.data;
-                            Message({
-                                showClose: true,
-                                message: "您的风险等级为" + data.riskName,
-                                type: "success"
-                            });
-                            this.seen1 = !this.seen1
+                            router.push('/result/'+data.score+'/'+data.riskName);
+//                            Message({
+//                                showClose: true,
+//                                message: "您的风险等级为" + data.riskName,
+//                                type: "success"
+//                            });
+                            //this.seen1 = !this.seen1
                         }.bind(this));
                     }
                 }.bind(this));
