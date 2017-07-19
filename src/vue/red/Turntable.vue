@@ -332,7 +332,6 @@
                                 } else {
                                     this.lotteryMsg = msg["6"];
                                 }
-
                             } else {
                                 let itemInd = -1;
                                 this.items.map(function (dat, ind) {

@@ -32,15 +32,22 @@
                 <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
-            <el-col :span="8" class="fontTitleStyle" v-show="cusbalance>0"><b>{{cusbalance>0?cusbalance.toFixed(2):0.00}}元</b></el-col>
+            <el-col :span="8" class="fontTitleStyle" v-show="cusbalance>0"><b>{{cusbalance>0?cusbalance.toFixed(2):0.00}}元</b>
+            </el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>未确认金额：</b></el-col>
-            <el-col :span="8" class="fontTitleStyle"><b>{{totalEnEnsureBalance>0?totalEnEnsureBalance.toFixed(2):0.00}}&nbsp;元</b>
+            <el-col :span="8" class="fontTitleStyle"><b>{{totalUnEnsureAmount>0?totalUnEnsureAmount.toFixed(2):0.00}}&nbsp;元</b>
             </el-col>
-            <el-col :span="4"><b>已确认份额：</b></el-col>
+            <el-col :span="4"><b>可赎回份额：</b></el-col>
             <el-col :span="8" class="fontTitleStyle"><b>{{totalEnsureBalance>0?totalEnsureBalance.toFixed(2):0.00}}&nbsp;元</b>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>赎回未确认份额：</b></el-col>
+            <el-col :span="8" class="fontTitleStyle"><b>{{totalUnEnsureBalance>0?totalUnEnsureBalance.toFixed(2):0.00}}&nbsp;元</b>
             </el-col>
         </el-row>
 
@@ -99,25 +106,6 @@
         </el-row>
 
         <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>日期：</b></el-col>
-            <el-col :span="6">
-                <el-date-picker
-                        v-model="bdate"
-                        type="date"
-                        placeholder="起始日期"
-                        :picker-options="pickerOptions">
-                </el-date-picker>
-            </el-col>
-            <el-col :span="6">
-                <el-date-picker
-                        v-model="edate"
-                        type="date"
-                        placeholder="截止日期"
-                        :picker-options="pickerOptions">
-                </el-date-picker>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20" class="top10">
             <el-col :span="4">&nbsp;</el-col>
             <el-col :span="12">
                 <el-button type="primary" @click="newFof()">新建</el-button>
@@ -164,6 +152,13 @@
                         </el-button>
                     </template>
                 </el-table-column>
+                <el-table-column label="基金走势">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="fofYieldQuery(scope.row.id)" type="danger" size="small">
+                            查看
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-row>
 
@@ -174,6 +169,46 @@
                 <el-table-column property="fundName" label="基金名称"></el-table-column>
                 <el-table-column property="weight" label="仓位(%)"></el-table-column>
             </el-table>
+        </el-dialog>
+
+        <el-dialog title="基金组合走势图" :visible.sync="dialogYieldTableVisible">
+            <!--            <el-row :gutter="20">
+                            <el-col :span="3"><b>日期：</b></el-col>
+                            <el-col :span="8">
+                                <el-date-picker
+                                        v-model="fofYieldBdate"
+                                        type="date"
+                                        placeholder="起始日期"
+                                        :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-date-picker
+                                        v-model="fofYieldEdate"
+                                        type="date"
+                                        placeholder="截止日期"
+                                        :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3"><el-button type="primary">查询</el-button></el-col>
+                        </el-row>-->
+            <el-row :gutter="20" v-show="fofYieldLength>0">
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-30)">近1月</el-button>
+                </el-col>
+                <el-col :span="4">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-180)">近6个月</el-button>
+                </el-col>
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-360)">近1年</el-button>
+                </el-col>
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-1080)">近3年</el-button>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20" class="top10" v-show="fofYieldLength>0">
+                <div id="yieldcontainer"></div>
+            </el-row>
         </el-dialog>
 
         <el-row :gutter="20" class="top10">
@@ -293,8 +328,9 @@
                 <el-table-column prop="customerName" label="客户姓名"></el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="130"></el-table-column>
                 <el-table-column prop="useableBalance" label="余额"></el-table-column>
-                <el-table-column prop="unEnsureBalance" label="未确认金额"></el-table-column>
-                <el-table-column prop="ensureBalance" label="已确认金额"></el-table-column>
+                <el-table-column prop="unEnsureAmount" label="未确认金额"></el-table-column>
+                <el-table-column prop="unEnsureBalance" label="未确认份额"></el-table-column>
+                <el-table-column prop="ensureBalance" label="可赎回"></el-table-column>
                 <el-table-column prop="totBalance" label="总资产"></el-table-column>
             </el-table>
             <div style="margin-top: 20px;">
@@ -372,6 +408,7 @@
                 basePathPdf: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankPdf',
                 dialogTableVisible: false,
                 dialogMoneyDetailVisible: false,
+                dialogYieldTableVisible: false,
                 cid: null,
                 Util: Util,
                 riskLevel: "",
@@ -379,8 +416,6 @@
                 labelPosition: 'left',
                 name: "",
                 risk: "",
-                bdate: null,
-                edate: null,
                 balance: 0.0,
                 cusbalance: 0.0,
                 list: null,
@@ -406,13 +441,14 @@
                 tradeLimit: 5,
                 holdFofList: null,
                 holdFofArray: [],
-                totalEnEnsureBalance: 0.0,//未确认金额
-                totalEnsureBalance: 0.0,//已确认份额
+                totalUnEnsureAmount: 0.0,//未确认金额
+                totalUnEnsureBalance: 0.0,//赎回未确认份额
+                totalEnsureBalance: 0.0,//可赎回份额
                 fofAssetRanklist: null,//资产排名
                 fofAssetRanklistlength: 0,
                 rankPage: 1,
                 rankLimit: 5,
-                exportLimit:10,
+                exportLimit: 10,
                 rankLimitList: [{
                     exportLimit: 10,
                     limitName: "前10名"
@@ -431,7 +467,12 @@
                 }, {
                     exportLimit: "",
                     limitName: "全部"
-                }]
+                }],
+                fofYieldLength: 0,
+                fofYieldData: null,
+                fofYieldBdate: Util.getDateStr(-30),//默认开始日期为当天
+                fofYieldEdate: Util.getDateStr(0),//默认查近1月
+                fofId: ''
             };
         },
         created: function () {
@@ -572,16 +613,8 @@
             },
             inputCheck(){/*输入校验*/
                 let name = this.name;
-                let bdate = this.bdate;
-                let edate = this.edate;
                 if (!Util.isEmpty(name)) {
                     Message({showClose: true, message: "请输入新建组合名称", type: 'warning'});
-                    return false;
-                } else if (!Util.isEmpty(bdate)) {
-                    Message({showClose: true, message: "请选择组合开始日期", type: 'warning'});
-                    return false;
-                } else if (!Util.isEmpty(edate)) {
-                    Message({showClose: true, message: "请选择组合结束日期", type: 'warning'});
                     return false;
                 } else if (this.funds.length < 2) {
                     Message({showClose: true, message: "组合至少添加2个基金", type: "warning"});
@@ -596,9 +629,7 @@
                         params: {
                             name: this.name,
                             risk: this.risk,
-                            funds: JSON.stringify(this.funds),
-                            bdate: this.bdate.format('yyyyMMdd'),
-                            edate: this.edate.format('yyyyMMdd')
+                            funds: JSON.stringify(this.funds)
                         }
                     }).then(function (res) {
                         let data = res.data;
@@ -647,10 +678,9 @@
                     });
                     return;
                 } else {
-                    this.$http.jsonp("/app/fofApp/fofTrs", {
+                    this.$http.jsonp("/app/fofApp/fofTrsBuy", {
                         params: {
                             fofId: row.id,
-                            stype: "1",//申购
                             amount: this.amount
                         }
                     }).then(function (res) {
@@ -715,8 +745,9 @@
                     this.holdFofList = res.data.items;
                     for (let i = 0; i < res.data.total; i++) {
                         let arr = [];
-                        this.totalEnEnsureBalance += this.holdFofList[i].unEnsureBalance;
-                        this.totalEnsureBalance += this.holdFofList[i].ensureBalance;
+                        this.totalUnEnsureAmount += this.holdFofList[i].unEnsureAmount;//申购未确认金额
+                        this.totalUnEnsureBalance += this.holdFofList[i].unEnsureBalance;//赎回未确认份额
+                        this.totalEnsureBalance += this.holdFofList[i].ensureBalance;//可赎回份额
                         arr.push(this.holdFofList[i].fofName);
                         arr.push(this.holdFofList[i].ensureBalance);
                         this.holdFofArray.push(arr);
@@ -946,14 +977,14 @@
                                 name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
-                                name: '<b>已确认份额</b>',
+                                name: '<b>可赎回份额</b>',
                                 y: this.totalEnsureBalance
                             }, {
                                 name: '<b>未确认金额</b>',
-                                y: this.totalEnEnsureBalance
+                                y: this.totalUnEnsureAmount
                             }, {
-                                name: '<b>已确认份额</b>',
-                                y: this.totalEnsureBalance
+                                name: '<b>赎回未确认份额</b>',
+                                y: this.totalUnEnsureBalance
                             }]
                         }]
                     });
@@ -1041,10 +1072,91 @@
                 }.bind(this));
             },
             exportExcel(){/*导出excel资产排名*/
-                window.open(this.basePathExcel+'?limit='+this.exportLimit);
+                window.open(this.basePathExcel + '?limit=' + this.exportLimit);
             },
             exportPdf(){/*导出pdf资产排名*/
-                window.open(this.basePathPdf+'?limit='+this.exportLimit);
+                window.open(this.basePathPdf + '?limit=' + this.exportLimit);
+            },
+            fofYieldQuery(id){//根据组合ID获取基金组合的产品表现，利率等
+                this.$http.jsonp("/app/fofApp/fofYieldQuery", {
+                    params: {
+                        fofId: id,
+                        bdate: this.fofYieldBdate,
+                        edate: this.fofYieldEdate
+                    }
+                }).then(function (res) {
+                    this.fofYieldLength = res.data.total;
+                    this.fofYieldData = res.data.items;
+                    this.dialogYieldTableVisible = true;
+                    this.handleYieldDrawChart();//基金组合走势图
+                    this.fofId = id;
+                }.bind(this));
+            },
+            handleYieldDrawChart(){//基金组合走势图
+                let dateData = [], yieldRateData = [], rateData = [], i;
+                for (i = 0; i < this.fofYieldLength; i++) {
+                    dateData.push(this.fofYieldData[i].date);//categories  data
+                    yieldRateData.push(parseFloat(this.fofYieldData[i].yieldRate));//series data
+                    rateData.push(parseFloat(this.fofYieldData[i].rate));
+                }
+                console.info(JSON.stringify(dateData));
+                console.info(JSON.stringify(yieldRateData));
+                if (dateData.length > 0 && yieldRateData.length > 0) {
+                    if (document.getElementById("yieldcontainer")) {
+                        new Highcharts.Chart('yieldcontainer',
+                            {
+                                credits: {
+                                    enabled: false//去除版权
+                                },
+                                chart: {
+                                    type: 'area'
+                                },
+                                title: {
+                                    text: '模拟历史数据'
+                                },
+                                xAxis: {
+                                    categories: dateData,
+                                    tickmarkPlacement: 'on',
+                                    title: {
+                                        enabled: false
+                                    }
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    pointFormat: '<span style="color:{point.color}">{series.name}</span>: <b>{point.y}%</b><br>',
+                                    shared:true
+                                },
+                                plotOptions: {
+                                    area: {
+                                        stacking: 'normal',
+                                        lineColor: '#666666',
+                                        lineWidth: 1,
+                                        marker: {
+                                            lineWidth: 1,
+                                            lineColor: '#666666'
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    name: '产品表现',
+                                    data: yieldRateData
+                                },{
+                                    name: '基准表现',
+                                    data: rateData
+                                }]
+                            });
+                    } else {
+                        setTimeout(function () {
+                            this.handleYieldDrawChart.call(this);
+                        }.bind(this), 100);
+                    }
+                }
+            },
+            timeYieldQuery(fofId, day){
+                this.fofYieldBdate = Util.getDateStr(day);
+                this.fofYieldQuery(fofId);
             }
         }
     }
