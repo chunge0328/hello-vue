@@ -1201,7 +1201,7 @@
                     }
                 }
             },
-            timeYieldQuery(fofId, day){
+            timeYieldQuery(fofId, day){//1个月 3个月 一年 3年
                 this.fofYieldBdate = Util.getDateStr(day);
                 this.fofYieldQuery(fofId);
             }
