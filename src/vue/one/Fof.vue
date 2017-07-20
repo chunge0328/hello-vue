@@ -157,7 +157,14 @@
                 <el-table-column label="基金走势">
                     <template scope="scope">
                         <el-button @click.native.prevent="fofYieldQuery(scope.row.id)" type="danger" size="small">
-                            查看
+                            基金走势
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="投资分析">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="getFofAnalysis(scope.row.id)" type="danger" size="small">
+                            投资分析
                         </el-button>
                     </template>
                 </el-table-column>
@@ -210,6 +217,12 @@
             </el-row>
             <el-row :gutter="20" class="top10" v-show="fofYieldLength>0">
                 <div id="yieldcontainer"></div>
+            </el-row>
+        </el-dialog>
+
+        <el-dialog title="投资组合分析" :visible.sync="dialogfofAnalysisTableVisible">
+            <el-row :gutter="20" class="top10" v-show="fofAnalysisLength>0">
+                <div id="fofAnalysiscontainer"></div>
             </el-row>
         </el-dialog>
 
@@ -474,7 +487,11 @@
                 fofYieldData: null,
                 fofYieldBdate: Util.getDateStr(-30),//默认开始日期为当天
                 fofYieldEdate: Util.getDateStr(0),//默认查近1月
-                fofId: ''
+                fofId: '',
+                fofAnalysisLength: 0,
+                fofAnalysisList: null,
+                dialogfofAnalysisTableVisible: false,
+                fofAnalysisArray: []
             };
         },
         created: function () {
@@ -777,7 +794,7 @@
                         },
                         title: {
                             floating: true,
-                            text: '<b>投资组合分析</b>'
+                            text: '<b>我的持仓组合</b>'
                         },
                         tooltip: {
                             headerFormat: '{series.name}<br>',
@@ -1101,9 +1118,6 @@
                     yieldRateData.push(parseFloat(this.fofYieldData[i].yieldRate));//series data
                     rateData.push(parseFloat(this.fofYieldData[i].rate));
                 }
-                console.info(JSON.stringify(dateData));
-                console.info(JSON.stringify(yieldRateData));
-                console.info(JSON.stringify(rateData));
                 if (dateData.length > 0 && yieldRateData.length > 0) {
                     if (document.getElementById("yieldcontainer")) {
                         new Highcharts.Chart('yieldcontainer',
@@ -1188,7 +1202,7 @@
                                     color: "#fff",
                                     name: '产品表现',
                                     data: rateData
-                                },{
+                                }, {
                                     color: "#fff",
                                     name: '基准表现',
                                     data: yieldRateData
@@ -1204,6 +1218,101 @@
             timeYieldQuery(fofId, day){//1个月 3个月 一年 3年
                 this.fofYieldBdate = Util.getDateStr(day);
                 this.fofYieldQuery(fofId);
+            },
+            getFofAnalysis(id){
+                this.$http.jsonp("/app/fofApp/getFofAnalysis", {
+                    params: {
+                        fofId: id
+                    }
+                }).then(function (res) {
+                    this.fofAnalysisLength = res.data.total;
+                    this.fofAnalysisList = res.data.items;
+                    console.info(JSON.stringify(this.fofAnalysisList));
+                    this.dialogfofAnalysisTableVisible = true;
+                    this.fofAnalysisArray = [];
+                    for (let i = 0; i < this.fofAnalysisLength; i++) {
+                        let arr = [];
+                        arr.push(this.fofAnalysisList[i].name);
+                        arr.push(parseFloat(this.fofAnalysisList[i].weight));
+                        this.fofAnalysisArray.push(arr);
+                    }
+                    console.info(JSON.stringify(this.fofAnalysisArray));
+                    this.handlefofAnalysisDrawChart();//基金组合投资分析
+                }.bind(this));
+            },
+            handlefofAnalysisDrawChart(){
+                if (document.getElementById("fofAnalysiscontainer")) {
+                    new Highcharts.Chart('fofAnalysiscontainer',
+                        {
+                            credits: {
+                                enabled: false//去除版权
+                            },
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            title: {
+                                floating: true,
+                                text: '<b>投资组合分析</b>'
+                            },
+                            tooltip: {
+                                headerFormat: '{series.name}<br>',
+                                pointFormat: '{point.name}: <b>{point.percentage:,.2f}%</b>'
+                            },
+                            legend: {
+                                align: "center", //程度标的目标地位
+                                verticalAlign: "bottom", //垂直标的目标地位
+                                x: 0, //间隔x轴的间隔
+                                y: 0, //间隔Y轴的间隔
+                                labelFormatter: function () {
+                                    return this.name + '<br>' + this.y + '%';
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    showInLegend: true,
+                                    colors: Highcharts.getOptions().colors,
+                                    slicedOffset: 10,         // 突出间距
+                                    point: {
+                                        plotShadow: false,
+                                        events: {
+                                            // 鼠标滑过是，突出当前扇区
+                                            mouseOver: function () {
+                                                this.slice();
+                                            },
+                                            // 鼠标移出时，收回突出显示
+                                            mouseOut: function () {
+                                                this.slice();
+                                            },
+                                            // 默认是点击突出，这里屏蔽掉
+                                            click: function () {
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                size: 200,
+                                innerSize: '60%',
+                                name: '组合类型分配',
+                                data: this.fofAnalysisArray,
+                                states: {
+                                    hover: {
+                                        enabled: false //去除鼠标浮上去时饼图的阴影
+                                    }
+                                }
+                            }]
+                        });
+                } else {
+                    setTimeout(function () {
+                        this.handlefofAnalysisDrawChart.call(this);
+                    }.bind(this), 100);
+                }
             }
         }
     }
