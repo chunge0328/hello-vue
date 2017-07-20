@@ -95,7 +95,9 @@
                 </el-select>
             </el-col>
             <el-col :span="6">
-                <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
+                <el-input type="text" v-model="fund.weight" placeholder="仓位">
+                    <template slot="append">%</template>
+                </el-input>
             </el-col>
             <el-col :span="4" v-if="ind == '0'">
                 <el-button type="primary" @click="addFundForm()"><i class="el-icon-plus"></i></el-button>
