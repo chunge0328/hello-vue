@@ -1103,6 +1103,7 @@
                 }
                 console.info(JSON.stringify(dateData));
                 console.info(JSON.stringify(yieldRateData));
+                console.info(JSON.stringify(rateData));
                 if (dateData.length > 0 && yieldRateData.length > 0) {
                     if (document.getElementById("yieldcontainer")) {
                         new Highcharts.Chart('yieldcontainer',
@@ -1117,36 +1118,80 @@
                                     text: '模拟历史数据'
                                 },
                                 xAxis: {
+                                    lineColor: '#fff',
                                     categories: dateData,
                                     tickmarkPlacement: 'on',
                                     title: {
                                         enabled: false
+                                    },
+                                    tickWidth: 0,
+                                    type: 'datetime',
+                                    labels: {
+                                        formatter: function () {
+                                            return this.value;
+                                        }
                                     }
                                 },
                                 legend: {
                                     enabled: false
                                 },
                                 tooltip: {
+                                    valueDecimals: 4,
+                                    shared: true,
+                                    backgroundColor: '#c56340', //提示框颜色
+                                    borderRadius: 10,
+                                    shadow: false, //提示框影子
+                                    style: {
+                                        color: '#fff',
+                                    },
                                     pointFormat: '<span style="color:{point.color}">{series.name}</span>: <b>{point.y}%</b><br>',
-                                    shared:true
+                                    crosshairs: [{ //纵横坐标线
+                                        width: 1,
+                                        color: '#DEAA71'
+                                    }, {
+                                        width: 1,
+                                        color: '#DEAA71'
+                                    }]
                                 },
                                 plotOptions: {
+                                    series: {
+                                        fillOpacity: 0.1
+                                    },
                                     area: {
-                                        stacking: 'normal',
-                                        lineColor: '#666666',
-                                        lineWidth: 1,
+                                        lineWidth: 0,
+                                        fillColor: {
+                                            linearGradient: {
+                                                x1: 0,
+                                                y1: 0,
+                                                x2: 0,
+                                                y2: 1
+                                            },
+                                            stops: [
+                                                [0, '#c56340'],
+                                                [1, Highcharts.Color('#c56340').setOpacity(0).get('rgba')]
+                                            ]
+                                        },
                                         marker: {
-                                            lineWidth: 1,
-                                            lineColor: '#666666'
-                                        }
+                                            radius: 2,
+                                            enabled: false
+                                        },
+                                        shadow: false,
+                                        states: {
+                                            hover: {
+                                                lineWidth: 0
+                                            }
+                                        },
+                                        threshold: null
                                     }
                                 },
                                 series: [{
+                                    color: "#fff",
                                     name: '产品表现',
-                                    data: yieldRateData
-                                },{
-                                    name: '基准表现',
                                     data: rateData
+                                },{
+                                    color: "#fff",
+                                    name: '基准表现',
+                                    data: yieldRateData
                                 }]
                             });
                     } else {
