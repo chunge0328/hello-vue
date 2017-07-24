@@ -3,8 +3,11 @@
 <template>
     <div>
         <div>
-            <el-dialog title="请输入信息" v-model="loginShow">
-                <el-input v-model="input" placeholder="请输入身份证号或证券账号"></el-input>
+            <el-dialog title="请输入信息" v-model="inputShow">
+                <div class="el-input">
+                    <input v-model="ivstLog.idNo" class="el-input__inner" placeholder="请输入身份证号/证券账号"
+                           @keyup.enter="custExist"></input>
+                </div>
                 <div slot="footer" class="dialog-footer">
                     <el-button type="primary" @click="custExist">确 定</el-button>
                 </div>
@@ -27,18 +30,14 @@
                             </li>
                         </el-radio-group>
                     </ul>
+                    <el-row v-show="answerComplete" style="margin-top: 60px;">
+                        <el-col :span="24" style="text-align: center;">
+                            <el-button type="success" @click="readySubmit = true">修改完成</el-button>
+                        </el-col>
+                    </el-row>
                 </el-carousel-item>
             </el-carousel>
-
-            <el-row v-show="answerComplete" style="margin-top: 30px;">
-                <el-col :span="6">
-                    &nbsp;
-                </el-col>
-                <el-col :span="12" style="text-align: center;">
-                    <el-button type="success" @click="readySubmit = true">修改完成</el-button>
-                </el-col>
-                <!--<el-button type="success" @click="continueAnswer">继续修改</el-button>-->
-            </el-row>
+        </el-row>
         </el-row>
 
         <el-row v-show="answerComplete && readySubmit">
@@ -69,7 +68,7 @@
 
     import Vue from "vue";
     import {
-        Message, Carousel, CarouselItem, Radio, RadioGroup, Button, Row, Col, Dialog, Input
+        Message, Carousel, CarouselItem, Radio, RadioGroup, Button, Row, Col, Dialog, Input, MessageBox
     }
         from "element-ui";
 
@@ -94,8 +93,8 @@
 
                 ivstLog: {
                     fundCode: "空",
-                    resultType: "json",
                     idType: "身份证",
+                    idNo: "",
                     resultType: "json",
                     resultText: []
                 },
@@ -103,10 +102,9 @@
                 answerComplete: false,
                 readySubmit: false,
 
-                unLogin: false,
-                loginShow: false,
+                inputCorrect: false,
+                inputShow: true,
 
-                input: ""
             }
         },
         methods: {
@@ -137,22 +135,18 @@
                     this.$refs.carousel.next();
                 }
             },
-            ensureAnswer() {
-
-            },
-            continueAnswer() {
-
-            },
             listContent() {
-                this.$http.jsonp("/web/ivst/content/list", {
-                    params: {
+                this.$http.post("/web/ivst/content/list", {
                         activityId: this.activityId,
                         sort: JSON.stringify([{
                             pro: "parentId",
                             dir: "asc"
                         }, {pro: "seq", dir: "asc"}])
+                    }, {
+                        headers: {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"},
+                        emulateJSON: true,
                     }
-                }).then(function (data) {
+                ).then(function (data) {
                     let items = data.data.items, parent = {}, cou = 0;
                     this.contentList = [];
                     this.ivstLog.resultText = [];
@@ -172,43 +166,69 @@
                 }.bind(this));
             },
             custExist(){
-                this.$http.jsonp("/web/ivst/findCust", {
-                    params: {input: this.input}
+                this.$http.post("/web/ivst/findCust", {input: this.ivstLog.idNo}, {
+                    headers: {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"},
+                    emulateJSON: true,
                 }).then(function (res) {
                     let data = res.data;
-                    this.loginShow = this.unLogin = !data.success;
-                    /*Message({
-                        message: data.success ? "登录成功" : data.message
-                    });*/
+                    if (data && !data.success) {
+                        this.inputShow = true;
+                        this.inputCorrect = false;
+                        Message({
+                            message: "不存在的身份证号/证券账号"
+                        });
+                    } else {
+                        this.inputShow = false;
+                        this.inputCorrect = true;
+                        this.ivstLog.idNo = data.data.idNo;
+                        if (this.answerComplete) {
+                            MessageBox({
+                                title: '消息',
+                                message: "确认提交？",
+                                showCancelButton: true,
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                beforeClose: function (action, instance, done) {
+                                    if (action === 'confirm') {
+                                        instance.confirmButtonLoading = true;
+                                        instance.confirmButtonText = '提交中...';
+                                        this.submitAnswer();
+                                        instance.confirmButtonLoading = false;
+                                        done();
+                                    } else {
+                                        done();
+                                    }
+                                }.bind(this)
+                            }).then(action => {
+                                /*Message({
+                                 type: 'info',
+                                 message: 'action: ' + action
+                                 });*/
+                            });
+                        }
+                    }
                 }.bind(this));
             },
-            /*checkLogin(){
-                this.$http.jsonp("/web/trade/checkLogin", {}).then(function (res) {
-                    let data = res.data;
-                    this.loginShow = this.unLogin = !data.success;
-                }.bind(this));
-            },*/
             submitAnswer(){
-                this.$http.jsonp("/web/ivst/submit", {}).then(function (res) {
-                        let data = res.data.data;
-                        this.ivstLog.activityId = this.activityId;
-                        this.ivstLog.idNo = data.idNo;
-                        let param = JSON.parse(JSON.stringify(this.ivstLog));
-                        param.resultText = JSON.stringify(param.resultText);
-                        this.$http.jsonp("/trade/ivst/submit", {params: param}).then(function (res) {
-                            data = res.data;
-                            Message({
-                                message: data.success ? "提交成功" : data.message
-                            });
-                        });
-                    }.bind(this),
-                    function () {
-                        this.loginShow = true;
-                    }.bind(this));
+                if (!this.inputCorrect) {
+                    this.inputShow = true;
+                    Message({
+                        message: "请输入身份证号/证券账号"
+                    });
+                    return;
+                }
+                this.ivstLog.activityId = this.activityId;
+                let param = JSON.parse(JSON.stringify(this.ivstLog));
+                param.resultText = JSON.stringify(param.resultText);
+                this.$http.jsonp("/web/ivst/submit", {params: param}).then(function (res) {
+                    let data = res.data;
+                    Message({
+                        message: data.success ? "提交成功" : data.message
+                    });
+                }.bind(this));
             }
-        }, created() {
-//            this.checkLogin();
-            this.custExist();
+        },
+        created() {
             this.listContent();
         }
     }

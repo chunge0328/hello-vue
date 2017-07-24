@@ -116,7 +116,7 @@ if (CONFIG.NODE_ENV === 'development') {
             'process.env.NODE_ENV': JSON.stringify('development'),
             'process.env.PRODUCTION': JSON.stringify(false),
             'process.env.activityId': JSON.stringify('bb798f87-211e-479a-bd4f-0b007ca7edce'),
-            'process.env.BASE_PATH': JSON.stringify('http://localhost:8066/one')
+            'process.env.BASE_PATH': JSON.stringify('https://app.cifm.com/one')
         })
     ]);
 } else if (CONFIG.NODE_ENV === 'production') {
