@@ -32,7 +32,8 @@
                 <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
-            <el-col :span="8" class="fontTitleStyle" v-show="cusbalance>0"><b>{{cusbalance>0?cusbalance.toFixed(2):0.00}}元</b></el-col>
+            <el-col :span="8" class="fontTitleStyle" v-show="cusbalance>0"><b>{{cusbalance>0?cusbalance.toFixed(2):0.00}}元</b>
+            </el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
@@ -94,7 +95,9 @@
                 </el-select>
             </el-col>
             <el-col :span="6">
-                <el-input type="text" v-model="fund.weight" placeholder="仓位"></el-input>
+                <el-input type="text" v-model="fund.weight" placeholder="仓位">
+                    <template slot="append">%</template>
+                </el-input>
             </el-col>
             <el-col :span="4" v-if="ind == '0'">
                 <el-button type="primary" @click="addFundForm()"><i class="el-icon-plus"></i></el-button>
@@ -104,25 +107,6 @@
             </el-col>
         </el-row>
 
-        <el-row :gutter="20" class="top10">
-            <el-col :span="4"><b>日期：</b></el-col>
-            <el-col :span="6">
-                <el-date-picker
-                        v-model="bdate"
-                        type="date"
-                        placeholder="起始日期"
-                        :picker-options="pickerOptions">
-                </el-date-picker>
-            </el-col>
-            <el-col :span="6">
-                <el-date-picker
-                        v-model="edate"
-                        type="date"
-                        placeholder="截止日期"
-                        :picker-options="pickerOptions">
-                </el-date-picker>
-            </el-col>
-        </el-row>
         <el-row :gutter="20" class="top10">
             <el-col :span="4">&nbsp;</el-col>
             <el-col :span="12">
@@ -170,6 +154,20 @@
                         </el-button>
                     </template>
                 </el-table-column>
+                <el-table-column label="基金走势">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="fofYieldQuery(scope.row.id)" type="danger" size="small">
+                            基金走势
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="投资分析">
+                    <template scope="scope">
+                        <el-button @click.native.prevent="getFofAnalysis(scope.row.id)" type="danger" size="small">
+                            投资分析
+                        </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-row>
 
@@ -180,6 +178,52 @@
                 <el-table-column property="fundName" label="基金名称"></el-table-column>
                 <el-table-column property="weight" label="仓位(%)"></el-table-column>
             </el-table>
+        </el-dialog>
+
+        <el-dialog title="基金组合走势图" :visible.sync="dialogYieldTableVisible">
+            <!--            <el-row :gutter="20">
+                            <el-col :span="3"><b>日期：</b></el-col>
+                            <el-col :span="8">
+                                <el-date-picker
+                                        v-model="fofYieldBdate"
+                                        type="date"
+                                        placeholder="起始日期"
+                                        :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-date-picker
+                                        v-model="fofYieldEdate"
+                                        type="date"
+                                        placeholder="截止日期"
+                                        :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3"><el-button type="primary">查询</el-button></el-col>
+                        </el-row>-->
+            <el-row :gutter="20" v-show="fofYieldLength>0">
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-30)">近1月</el-button>
+                </el-col>
+                <el-col :span="4">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-180)">近6个月</el-button>
+                </el-col>
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-360)">近1年</el-button>
+                </el-col>
+                <el-col :span="3">
+                    <el-button type="primary" @click="timeYieldQuery(fofId,-1080)">近3年</el-button>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20" class="top10" v-show="fofYieldLength>0">
+                <div id="yieldcontainer"></div>
+            </el-row>
+        </el-dialog>
+
+        <el-dialog title="投资组合分析" :visible.sync="dialogfofAnalysisTableVisible">
+            <el-row :gutter="20" class="top10" v-show="fofAnalysisLength>0">
+                <div id="fofAnalysiscontainer"></div>
+            </el-row>
         </el-dialog>
 
         <el-row :gutter="20" class="top10">
@@ -379,6 +423,7 @@
                 basePathPdf: process.env.BASE_PATH + '/app/fofApp/exportFofAssetRankPdf',
                 dialogTableVisible: false,
                 dialogMoneyDetailVisible: false,
+                dialogYieldTableVisible: false,
                 cid: null,
                 Util: Util,
                 riskLevel: "",
@@ -386,8 +431,6 @@
                 labelPosition: 'left',
                 name: "",
                 risk: "",
-                bdate: null,
-                edate: null,
                 balance: 0.0,
                 cusbalance: 0.0,
                 list: null,
@@ -420,7 +463,7 @@
                 fofAssetRanklistlength: 0,
                 rankPage: 1,
                 rankLimit: 5,
-                exportLimit:10,
+                exportLimit: 10,
                 rankLimitList: [{
                     exportLimit: 10,
                     limitName: "前10名"
@@ -439,7 +482,16 @@
                 }, {
                     exportLimit: "",
                     limitName: "全部"
-                }]
+                }],
+                fofYieldLength: 0,
+                fofYieldData: null,
+                fofYieldBdate: Util.getDateStr(-30),//默认开始日期为当天
+                fofYieldEdate: Util.getDateStr(0),//默认查近1月
+                fofId: '',
+                fofAnalysisLength: 0,
+                fofAnalysisList: null,
+                dialogfofAnalysisTableVisible: false,
+                fofAnalysisArray: []
             };
         },
         created: function () {
@@ -580,16 +632,8 @@
             },
             inputCheck(){/*输入校验*/
                 let name = this.name;
-                let bdate = this.bdate;
-                let edate = this.edate;
                 if (!Util.isEmpty(name)) {
                     Message({showClose: true, message: "请输入新建组合名称", type: 'warning'});
-                    return false;
-                } else if (!Util.isEmpty(bdate)) {
-                    Message({showClose: true, message: "请选择组合开始日期", type: 'warning'});
-                    return false;
-                } else if (!Util.isEmpty(edate)) {
-                    Message({showClose: true, message: "请选择组合结束日期", type: 'warning'});
                     return false;
                 } else if (this.funds.length < 2) {
                     Message({showClose: true, message: "组合至少添加2个基金", type: "warning"});
@@ -604,9 +648,7 @@
                         params: {
                             name: this.name,
                             risk: this.risk,
-                            funds: JSON.stringify(this.funds),
-                            bdate: this.bdate.format('yyyyMMdd'),
-                            edate: this.edate.format('yyyyMMdd')
+                            funds: JSON.stringify(this.funds)
                         }
                     }).then(function (res) {
                         let data = res.data;
@@ -655,10 +697,9 @@
                     });
                     return;
                 } else {
-                    this.$http.jsonp("/app/fofApp/fofTrs", {
+                    this.$http.jsonp("/app/fofApp/fofTrsBuy", {
                         params: {
                             fofId: row.id,
-                            stype: "1",//申购
                             amount: this.amount
                         }
                     }).then(function (res) {
@@ -753,7 +794,7 @@
                         },
                         title: {
                             floating: true,
-                            text: '<b>投资组合分析</b>'
+                            text: '<b>我的持仓组合</b>'
                         },
                         tooltip: {
                             headerFormat: '{series.name}<br>',
@@ -1050,10 +1091,228 @@
                 }.bind(this));
             },
             exportExcel(){/*导出excel资产排名*/
-                window.open(this.basePathExcel+'?limit='+this.exportLimit);
+                window.open(this.basePathExcel + '?limit=' + this.exportLimit);
             },
             exportPdf(){/*导出pdf资产排名*/
-                window.open(this.basePathPdf+'?limit='+this.exportLimit);
+                window.open(this.basePathPdf + '?limit=' + this.exportLimit);
+            },
+            fofYieldQuery(id){//根据组合ID获取基金组合的产品表现，利率等
+                this.$http.jsonp("/app/fofApp/fofYieldQuery", {
+                    params: {
+                        fofId: id,
+                        bdate: this.fofYieldBdate,
+                        edate: this.fofYieldEdate
+                    }
+                }).then(function (res) {
+                    this.fofYieldLength = res.data.total;
+                    this.fofYieldData = res.data.items;
+                    this.dialogYieldTableVisible = true;
+                    this.handleYieldDrawChart();//基金组合走势图
+                    this.fofId = id;
+                }.bind(this));
+            },
+            handleYieldDrawChart(){//基金组合走势图
+                let dateData = [], yieldRateData = [], rateData = [], i;
+                for (i = 0; i < this.fofYieldLength; i++) {
+                    dateData.push(this.fofYieldData[i].date);//categories  data
+                    yieldRateData.push(parseFloat(this.fofYieldData[i].yieldRate));//series data
+                    rateData.push(parseFloat(this.fofYieldData[i].rate));
+                }
+                if (dateData.length > 0 && yieldRateData.length > 0) {
+                    if (document.getElementById("yieldcontainer")) {
+                        new Highcharts.Chart('yieldcontainer',
+                            {
+                                credits: {
+                                    enabled: false//去除版权
+                                },
+                                chart: {
+                                    type: 'area'
+                                },
+                                title: {
+                                    text: '模拟历史数据'
+                                },
+                                xAxis: {
+                                    lineColor: '#fff',
+                                    categories: dateData,
+                                    tickmarkPlacement: 'on',
+                                    title: {
+                                        enabled: false
+                                    },
+                                    tickWidth: 0,
+                                    type: 'datetime',
+                                    labels: {
+                                        formatter: function () {
+                                            return this.value;
+                                        }
+                                    }
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                tooltip: {
+                                    valueDecimals: 4,
+                                    shared: true,
+                                    backgroundColor: '#c56340', //提示框颜色
+                                    borderRadius: 10,
+                                    shadow: false, //提示框影子
+                                    style: {
+                                        color: '#fff',
+                                    },
+                                    pointFormat: '<span style="color:{point.color}">{series.name}</span>: <b>{point.y}%</b><br>',
+                                    crosshairs: [{ //纵横坐标线
+                                        width: 1,
+                                        color: '#DEAA71'
+                                    }, {
+                                        width: 1,
+                                        color: '#DEAA71'
+                                    }]
+                                },
+                                plotOptions: {
+                                    series: {
+                                        fillOpacity: 0.1
+                                    },
+                                    area: {
+                                        lineWidth: 0,
+                                        fillColor: {
+                                            linearGradient: {
+                                                x1: 0,
+                                                y1: 0,
+                                                x2: 0,
+                                                y2: 1
+                                            },
+                                            stops: [
+                                                [0, '#c56340'],
+                                                [1, Highcharts.Color('#c56340').setOpacity(0).get('rgba')]
+                                            ]
+                                        },
+                                        marker: {
+                                            radius: 2,
+                                            enabled: false
+                                        },
+                                        shadow: false,
+                                        states: {
+                                            hover: {
+                                                lineWidth: 0
+                                            }
+                                        },
+                                        threshold: null
+                                    }
+                                },
+                                series: [{
+                                    color: "#fff",
+                                    name: '产品表现',
+                                    data: rateData
+                                }, {
+                                    color: "#fff",
+                                    name: '基准表现',
+                                    data: yieldRateData
+                                }]
+                            });
+                    } else {
+                        setTimeout(function () {
+                            this.handleYieldDrawChart.call(this);
+                        }.bind(this), 100);
+                    }
+                }
+            },
+            timeYieldQuery(fofId, day){//1个月 3个月 一年 3年
+                this.fofYieldBdate = Util.getDateStr(day);
+                this.fofYieldQuery(fofId);
+            },
+            getFofAnalysis(id){
+                this.$http.jsonp("/app/fofApp/getFofAnalysis", {
+                    params: {
+                        fofId: id
+                    }
+                }).then(function (res) {
+                    this.fofAnalysisLength = res.data.total;
+                    this.fofAnalysisList = res.data.items;
+                    console.info(JSON.stringify(this.fofAnalysisList));
+                    this.dialogfofAnalysisTableVisible = true;
+                    this.fofAnalysisArray = [];
+                    for (let i = 0; i < this.fofAnalysisLength; i++) {
+                        let arr = [];
+                        arr.push(this.fofAnalysisList[i].name);
+                        arr.push(parseFloat(this.fofAnalysisList[i].weight));
+                        this.fofAnalysisArray.push(arr);
+                    }
+                    console.info(JSON.stringify(this.fofAnalysisArray));
+                    this.handlefofAnalysisDrawChart();//基金组合投资分析
+                }.bind(this));
+            },
+            handlefofAnalysisDrawChart(){
+                if (document.getElementById("fofAnalysiscontainer")) {
+                    new Highcharts.Chart('fofAnalysiscontainer',
+                        {
+                            credits: {
+                                enabled: false//去除版权
+                            },
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            title: {
+                                floating: true,
+                                text: '<b>投资组合分析</b>'
+                            },
+                            tooltip: {
+                                headerFormat: '{series.name}<br>',
+                                pointFormat: '{point.name}: <b>{point.percentage:,.2f}%</b>'
+                            },
+                            legend: {
+                                align: "center", //程度标的目标地位
+                                verticalAlign: "bottom", //垂直标的目标地位
+                                x: 0, //间隔x轴的间隔
+                                y: 0, //间隔Y轴的间隔
+                                labelFormatter: function () {
+                                    return this.name + '<br>' + this.y + '%';
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    showInLegend: true,
+                                    colors: Highcharts.getOptions().colors,
+                                    slicedOffset: 10,         // 突出间距
+                                    point: {
+                                        plotShadow: false,
+                                        events: {
+                                            // 鼠标滑过是，突出当前扇区
+                                            mouseOver: function () {
+                                                this.slice();
+                                            },
+                                            // 鼠标移出时，收回突出显示
+                                            mouseOut: function () {
+                                                this.slice();
+                                            },
+                                            // 默认是点击突出，这里屏蔽掉
+                                            click: function () {
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                size: 200,
+                                innerSize: '60%',
+                                name: '组合类型分配',
+                                data: this.fofAnalysisArray,
+                                states: {
+                                    hover: {
+                                        enabled: false //去除鼠标浮上去时饼图的阴影
+                                    }
+                                }
+                            }]
+                        });
+                } else {
+                    setTimeout(function () {
+                        this.handlefofAnalysisDrawChart.call(this);
+                    }.bind(this), 100);
+                }
             }
         }
     }
