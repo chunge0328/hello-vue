@@ -28,19 +28,25 @@
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>体验金：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{balance?balance.toFixed(2)+"元":""}}</b>
+            <el-col :span="8" class="fontTitleStyle"><b>{{balance!=0?balance.toFixed(2)+"元":""}}</b>
                 <el-button type="primary" @click="getBalance()" v-show="balance==0">领取体验金</el-button>
             </el-col>
             <el-col :span="4" v-show="cusbalance>0"><b>余额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{cusbalance.toFixed(2)}}元</b></el-col>
+            <el-col :span="8" class="fontTitleStyle" v-show="cusbalance>0"><b>{{cusbalance>0?cusbalance.toFixed(2):0.00}}元</b></el-col>
         </el-row>
 
         <el-row :gutter="20" class="top10">
             <el-col :span="4"><b>未确认金额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnEnsureBalance.toFixed(2)}}&nbsp;元</b>
+            <el-col :span="8" class="fontTitleStyle"><b>{{totalUnEnsureAmount>0?totalUnEnsureAmount.toFixed(2):0.00}}&nbsp;元</b>
             </el-col>
-            <el-col :span="4"><b>已确认份额：</b></el-col>
-            <el-col :span="6" class="fontTitleStyle"><b>{{totalEnsureBalance.toFixed(2)}}&nbsp;元</b>
+            <el-col :span="4"><b>可赎回份额：</b></el-col>
+            <el-col :span="8" class="fontTitleStyle"><b>{{totalEnsureBalance>0?totalEnsureBalance.toFixed(2):0.00}}&nbsp;元</b>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="20" class="top10">
+            <el-col :span="4"><b>赎回未确认份额：</b></el-col>
+            <el-col :span="8" class="fontTitleStyle"><b>{{totalUnEnsureBalance>0?totalUnEnsureBalance.toFixed(2):0.00}}&nbsp;元</b>
             </el-col>
         </el-row>
 
@@ -48,7 +54,7 @@
         <el-row :gutter="20" class="top10" v-show="balance>0">
             <div id="container2"></div>
         </el-row>
-        <el-row :gutter="20" class="top10" v-show="balance>0">
+        <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
             <div id="container3"></div>
         </el-row>
         <el-row :gutter="20" class="top10" v-show="totalEnsureBalance>0">
@@ -293,8 +299,9 @@
                 <el-table-column prop="customerName" label="客户姓名"></el-table-column>
                 <el-table-column prop="mobile" label="手机号" width="130"></el-table-column>
                 <el-table-column prop="useableBalance" label="余额"></el-table-column>
-                <el-table-column prop="unEnsureBalance" label="未确认金额"></el-table-column>
-                <el-table-column prop="ensureBalance" label="已确认金额"></el-table-column>
+                <el-table-column prop="unEnsureAmount" label="未确认金额"></el-table-column>
+                <el-table-column prop="unEnsureBalance" label="未确认份额"></el-table-column>
+                <el-table-column prop="ensureBalance" label="可赎回"></el-table-column>
                 <el-table-column prop="totBalance" label="总资产"></el-table-column>
             </el-table>
             <div style="margin-top: 20px;">
@@ -406,8 +413,9 @@
                 tradeLimit: 5,
                 holdFofList: null,
                 holdFofArray: [],
-                totalEnEnsureBalance: 0.0,//未确认金额
-                totalEnsureBalance: 0.0,//已确认份额
+                totalUnEnsureAmount: 0.0,//未确认金额
+                totalUnEnsureBalance: 0.0,//赎回未确认份额
+                totalEnsureBalance: 0.0,//可赎回份额
                 fofAssetRanklist: null,//资产排名
                 fofAssetRanklistlength: 0,
                 rankPage: 1,
@@ -715,8 +723,9 @@
                     this.holdFofList = res.data.items;
                     for (let i = 0; i < res.data.total; i++) {
                         let arr = [];
-                        this.totalEnEnsureBalance += this.holdFofList[i].unEnsureBalance;
-                        this.totalEnsureBalance += this.holdFofList[i].ensureBalance;
+                        this.totalUnEnsureAmount += this.holdFofList[i].unEnsureAmount;//申购未确认金额
+                        this.totalUnEnsureBalance += this.holdFofList[i].unEnsureBalance;//赎回未确认份额
+                        this.totalEnsureBalance += this.holdFofList[i].ensureBalance;//可赎回份额
                         arr.push(this.holdFofList[i].fofName);
                         arr.push(this.holdFofList[i].ensureBalance);
                         this.holdFofArray.push(arr);
@@ -946,14 +955,14 @@
                                 name: '<b>余额</b>',
                                 y: this.cusbalance
                             }, {
-                                name: '<b>已确认份额</b>',
+                                name: '<b>可赎回份额</b>',
                                 y: this.totalEnsureBalance
                             }, {
                                 name: '<b>未确认金额</b>',
-                                y: this.totalEnEnsureBalance
+                                y: this.totalUnEnsureAmount
                             }, {
-                                name: '<b>已确认份额</b>',
-                                y: this.totalEnsureBalance
+                                name: '<b>赎回未确认份额</b>',
+                                y: this.totalUnEnsureBalance
                             }]
                         }]
                     });

@@ -3,11 +3,10 @@
 <template>
     <div>
         <div>
-            <el-dialog title="请登录" v-model="loginShow">
-                <el-input v-model="loginParam.username" placeholder="请输入身份证号或基金账号"></el-input>
-                <el-input v-model="loginParam.password" placeholder="请输入密码" type="password"></el-input>
+            <el-dialog title="请输入信息" v-model="loginShow">
+                <el-input v-model="input" placeholder="请输入身份证号或证券账号"></el-input>
                 <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="tradeLogin">确 定</el-button>
+                    <el-button type="primary" @click="custExist">确 定</el-button>
                 </div>
             </el-dialog>
         </div>
@@ -107,10 +106,7 @@
                 unLogin: false,
                 loginShow: false,
 
-                loginParam: {
-                    username: "",
-                    password: ""
-                }
+                input: ""
             }
         },
         methods: {
@@ -175,27 +171,25 @@
                     }
                 }.bind(this));
             },
-            tradeLogin(){
-                this.$http.jsonp("/web/trade/login", {
-                    params: this.loginParam
+            custExist(){
+                this.$http.jsonp("/web/ivst/findCust", {
+                    params: {input: this.input}
                 }).then(function (res) {
                     let data = res.data;
                     this.loginShow = this.unLogin = !data.success;
-                    Message({
+                    /*Message({
                         message: data.success ? "登录成功" : data.message
-                    });
-
+                    });*/
                 }.bind(this));
             },
-            checkLogin(){
+            /*checkLogin(){
                 this.$http.jsonp("/web/trade/checkLogin", {}).then(function (res) {
                     let data = res.data;
                     this.loginShow = this.unLogin = !data.success;
                 }.bind(this));
-            },
+            },*/
             submitAnswer(){
-                this.$http.jsonp("/trade/info/dsInfo", {}).then(function (res) {
-                        debugger;
+                this.$http.jsonp("/web/ivst/submit", {}).then(function (res) {
                         let data = res.data.data;
                         this.ivstLog.activityId = this.activityId;
                         this.ivstLog.idNo = data.idNo;
@@ -213,7 +207,8 @@
                     }.bind(this));
             }
         }, created() {
-            this.checkLogin();
+//            this.checkLogin();
+            this.custExist();
             this.listContent();
         }
     }
