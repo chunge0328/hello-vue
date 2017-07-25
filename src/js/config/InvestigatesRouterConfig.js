@@ -5,6 +5,8 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: '/', component: require('../../vue/investigates/Investigates.vue')
+    }, {
+        path: '/success', component: require('../../vue/investigates/Success.vue')
     }
 ], router = new VueRouter({
     routes

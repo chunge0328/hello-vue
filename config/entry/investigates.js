@@ -19,6 +19,7 @@ console.info("process.env.PRODUCTION => " + process.env.PRODUCTION);
     $("meta").attr(attr).appendTo(document.head);
 });
 
+router.push("/");
 const app = new Vue({
     router
 }).$mount($("div", {class: "container"}).html("<router-view></router-view>").appendTo(document.body)[0]);

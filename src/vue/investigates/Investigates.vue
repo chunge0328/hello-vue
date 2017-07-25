@@ -67,6 +67,7 @@
     require("element-ui/lib/theme-default/index.css");
 
     import Vue from "vue";
+    import router from '../../js/config/InvestigatesRouterConfig';
     import {
         Message, Carousel, CarouselItem, Radio, RadioGroup, Button, Row, Col, Dialog, Input, MessageBox
     }
@@ -181,6 +182,9 @@
                         this.inputShow = false;
                         this.inputCorrect = true;
                         this.ivstLog.idNo = data.data.idNo;
+                        Message({
+                            message: "您好，"+data.data.name+"！"
+                        });
                         if (this.answerComplete) {
                             MessageBox({
                                 title: '消息',
@@ -225,6 +229,7 @@
                     Message({
                         message: data.success ? "提交成功" : data.message
                     });
+                    router.push("success");
                 }.bind(this));
             }
         },
