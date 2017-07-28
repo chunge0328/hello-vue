@@ -145,8 +145,16 @@
                         {{scope.row.riskName == null?'-':scope.row.riskName}}
                     </template>
                 </el-table-column>
-                <el-table-column prop="bdate" label="开始日期" sortable></el-table-column>
-                <el-table-column prop="edate" label="截止日期" sortable></el-table-column>
+                <el-table-column label="开始日期">
+                    <template scope="scope">
+                        {{scope.row.type == 'rec'?scope.row.bdate:scope.row.cdate}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="截止日期">
+                    <template scope="scope">
+                        {{scope.row.type == 'rec'?scope.row.edate:'-'}}
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
                         <el-button @click.native.prevent="queryFund(scope.row)" type="danger" size="small">
@@ -181,26 +189,6 @@
         </el-dialog>
 
         <el-dialog title="基金组合走势图" :visible.sync="dialogYieldTableVisible">
-            <!--            <el-row :gutter="20">
-                            <el-col :span="3"><b>日期：</b></el-col>
-                            <el-col :span="8">
-                                <el-date-picker
-                                        v-model="fofYieldBdate"
-                                        type="date"
-                                        placeholder="起始日期"
-                                        :picker-options="pickerOptions">
-                                </el-date-picker>
-                            </el-col>
-                            <el-col :span="8">
-                                <el-date-picker
-                                        v-model="fofYieldEdate"
-                                        type="date"
-                                        placeholder="截止日期"
-                                        :picker-options="pickerOptions">
-                                </el-date-picker>
-                            </el-col>
-                            <el-col :span="3"><el-button type="primary">查询</el-button></el-col>
-                        </el-row>-->
             <el-row :gutter="20" v-show="fofYieldLength>0">
                 <el-col :span="3">
                     <el-button type="primary" @click="timeYieldQuery(fofId,-30)">近1月</el-button>
@@ -648,7 +636,7 @@
                         params: {
                             name: this.name,
                             risk: this.risk,
-                            funds: JSON.stringify(this.funds)
+                            funds: JSON.stringify(this.funds).replace("[", "").replace("]", "").replace(new RegExp("{", "gm"), "[").replace(new RegExp("}", "gm"), "]")
                         }
                     }).then(function (res) {
                         let data = res.data;
